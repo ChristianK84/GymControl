@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__ide__getDiagnostics",
+      "Bash(Get-ChildItem -Recurse -Depth 4 -Directory -Path \"C:\\\\Users\\\\CRamos.SPA09NMW000102\\\\Desktop\\\\GymControl\\\\src\")",
+      "Bash(Select-Object FullName)",
+      "Bash(npm install *)",
+      "Bash(npm view *)",
+      "Bash(Select-Object -Last 30)",
+      "PowerShell(npm view *)",
+      "PowerShell(npm install *)",
+      "Bash(npm ls *)",
+      "Bash(npx ng *)",
+      "PowerShell(npm uninstall *)"
+    ]
+  }
+}

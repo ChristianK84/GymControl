@@ -1,0 +1,249 @@
+/* ========== Page Layout ========== */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: whitesmoke;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 28rem;
+  padding: 3rem 1.5rem;
+}
+
+/* ========== Card ========== */
+.login-card {
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  box-shadow: 0 25px 25px rgba(15, 15, 15, 0.05);
+  border: 1px solid lightgray;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (min-width: 992px) {
+  .login-card {
+    padding: 2.5rem;
+  }
+}
+
+/* ========== Header ========== */
+.login-header {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-logo {
+  width: 10rem;
+  height: 10rem;
+  border-radius: 50%;
+  object-fit: contain;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.login-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 32px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  font-weight: 700;
+  color: #2a1714;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #5e3f3b;
+  text-align: center;
+  margin: 0;
+}
+
+/* ========== Form ========== */
+.login-form {
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 600;
+  color: #2a1714;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+/* ========== Input Wrapper ========== */
+.input-wrapper {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  transform: translateY(-50%);
+  color: #5e3f3b;
+  font-size: 20px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.form-input {
+  appearance: none;
+  display: block;
+  width: 100%;
+  padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+  border: 1px solid #e2e2e2;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+  color: #2a1714;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
+  transition: border-color 0.2s, border-width 0.2s;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.form-input::placeholder {
+  color: #936e69;
+}
+
+.form-input:focus {
+  border-color: #2a1714;
+  border-width: 2px;
+  padding: 0.75rem 0.75rem 0.75rem calc(2.5rem - 1px);
+}
+
+/* Password input has right padding for the toggle button */
+input[type="password"].form-input,
+input[type="text"].form-input {
+  padding-right: 2.75rem;
+}
+
+input[type="password"].form-input:focus,
+input[type="text"].form-input:focus {
+  padding-right: calc(2.75rem - 1px);
+}
+
+/* ========== Password Toggle ========== */
+.toggle-visibility {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  padding: 0 0.75rem;
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #5e3f3b;
+  transition: color 0.2s;
+}
+
+.toggle-visibility:hover {
+  color: #2a1714;
+}
+
+.toggle-visibility .material-symbols-outlined {
+  font-size: 20px;
+}
+
+/* ========== Submit Button ========== */
+.form-submit {
+  padding-top: 1rem;
+}
+
+.submit-btn {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  background-color: #e30613;
+  color: #fff5f3;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.submit-btn:hover {
+  background-color: #b5000b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.submit-btn:active {
+  transform: scale(0.98);
+}
+
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.submit-btn:disabled:hover {
+  background-color: #e30613;
+  transform: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.submit-icon {
+  position: absolute;
+  right: 0.75rem;
+  font-size: 20px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.submit-btn:hover .submit-icon {
+  opacity: 1;
+}
+
+/* ========== Footer ========== */
+.login-footer {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e2e2;
+  width: 100%;
+  text-align: center;
+}
+
+.footer-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 500;
+  color: #5e3f3b;
+  margin: 0;
+}
