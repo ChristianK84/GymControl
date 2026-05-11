@@ -167,7 +167,7 @@ input[type="text"].form-input:focus {
   color: #2a1714;
 }
 
-.toggle-visibility .material-symbols-outlined {
+.toggle-visibility ion-icon {
   font-size: 20px;
 }
 

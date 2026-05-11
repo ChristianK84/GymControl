@@ -1,53 +1,55 @@
-<div class="login-page">
-  <div class="login-container">
-    <div class="login-card">
+<ion-content>
+  <div class="login-page">
+    <div class="login-container">
+      <div class="login-card">
 
-      <!-- Logo & Header -->
-      <div class="login-header">
-        <img alt="Katiras's Gymnastics Logo" class="login-logo" src="/assets/Logo.jpg" />
-        <h1 class="login-title">Katiras's Gymnastics</h1>
-        <p class="login-subtitle">Athletica Gym Portal</p>
-      </div>
-
-      <!-- Login Form -->
-      <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <!-- Username -->
-        <div class="form-group">
-          <label class="form-label" for="usuario">Usuario</label>
-          <div class="input-wrapper">
-            <span class="input-icon material-symbols-outlined">person</span>
-            <input class="form-input" type="text" id="usuario" formControlName="user" />
-          </div>
+        <!-- Logo & Header -->
+        <div class="login-header">
+          <img alt="Katira's Gymnastics Logo" class="login-logo" src="/assets/Logo.jpg" />
+          <h1 class="login-title">Katira's Gymnastics</h1>
+          <p class="login-subtitle">Athletica Gym Portal</p>
         </div>
 
-        <!-- Password -->
-        <div class="form-group">
-          <label class="form-label" for="password">Contraseña</label>
-          <div class="input-wrapper">
-            <span class="input-icon material-symbols-outlined">lock</span>
-            <input class="form-input" [type]="hidePassword() ? 'password' : 'text'" id="password"
-              formControlName="password" autocomplete="current-password" placeholder="••••••••" />
-            <button class="toggle-visibility" type="button" (click)="togglePasswordVisibility()"
-              [attr.aria-label]="hidePassword() ? 'Show password' : 'Hide password'">
-              <span class="material-symbols-outlined">{{ hidePassword() ? 'visibility' : 'visibility_off' }}</span>
+        <!-- Login Form -->
+        <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <!-- Username -->
+          <div class="form-group">
+            <label class="form-label" for="usuario">Usuario</label>
+            <div class="input-wrapper">
+              <ion-icon class="input-icon" name="person-outline"></ion-icon>
+              <input class="form-input" type="text" id="usuario" formControlName="user" />
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label class="form-label" for="password">Contraseña</label>
+            <div class="input-wrapper">
+              <ion-icon class="input-icon" name="lock-closed-outline"></ion-icon>
+              <input class="form-input" [type]="hidePassword() ? 'password' : 'text'" id="password"
+                formControlName="password" autocomplete="current-password" placeholder="••••••••" />
+              <button class="toggle-visibility" type="button" (click)="togglePasswordVisibility()"
+                [attr.aria-label]="hidePassword() ? 'Show password' : 'Hide password'">
+                <ion-icon [name]="hidePassword() ? 'eye-outline' : 'eye-off-outline'"></ion-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="form-submit">
+            <button class="submit-btn" type="submit" [disabled]="loginForm.invalid">
+              Iniciar Sesión
+              <ion-icon class="submit-icon" name="log-in-outline"></ion-icon>
             </button>
           </div>
+        </form>
+
+        <!-- Footer -->
+        <div class="login-footer">
+          <p class="footer-text">Secure Access &bull; High Performance Management</p>
         </div>
 
-        <!-- Submit Button -->
-        <div class="form-submit">
-          <button class="submit-btn" type="submit" [disabled]="loginForm.invalid">
-            Iniciar Sesión
-            <span class="material-symbols-outlined submit-icon">login</span>
-          </button>
-        </div>
-      </form>
-
-      <!-- Footer -->
-      <div class="login-footer">
-        <p class="footer-text">Secure Access • High Performance Management</p>
       </div>
-
     </div>
   </div>
-</div>
+</ion-content>

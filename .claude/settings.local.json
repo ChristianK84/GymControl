@@ -11,7 +11,11 @@
       "PowerShell(npm install *)",
       "Bash(npm ls *)",
       "Bash(npx ng *)",
-      "PowerShell(npm uninstall *)"
+      "PowerShell(npm uninstall *)",
+      "Bash(New-Item -ItemType Directory -Path \"electron\" -Force)",
+      "PowerShell(npx ng build --configuration production 2>&1)",
+      "PowerShell(npx cap add android 2>&1)",
+      "PowerShell(npx ng build 2>&1)"
     ]
   }
 }

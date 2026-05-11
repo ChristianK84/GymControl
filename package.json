@@ -1,13 +1,19 @@
 {
   "name": "gym-control",
   "version": "0.0.0",
+  "main": "electron/main.js",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:GymControl": "node dist/GymControl/server/server.mjs"
+    "serve:ssr:GymControl": "node dist/GymControl/server/server.mjs",
+    "electron:dev": "concurrently -k \"ng serve\" \"wait-on http://localhost:4200 && cross-env ELECTRON_DEV=true electron .\"",
+    "electron:build": "ng build --configuration capacitor && electron-builder",
+    "electron:dist": "electron-builder",
+    "capacitor:build": "ng build --configuration capacitor && npx cap sync",
+    "capacitor:open": "npx cap open android"
   },
   "prettier": {
     "printWidth": 100,
@@ -22,6 +28,26 @@
     ]
   },
   "private": true,
+  "build": {
+    "appId": "com.gymcontrol.app",
+    "productName": "GymControl",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "public/favicon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
   "dependencies": {
     "@angular/animations": "^20.3.19",
     "@angular/common": "^20.3.0",
@@ -32,8 +58,11 @@
     "@angular/platform-server": "^20.3.0",
     "@angular/router": "^20.3.0",
     "@angular/ssr": "^20.3.8",
+    "@ionic/angular": "^8.8.6",
+    "@ionic/core": "^8.8.6",
     "bootstrap": "^5.3.8",
     "express": "^5.1.0",
+    "ionicons": "^8.0.13",
     "ngx-toastr": "^19.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
@@ -42,15 +71,23 @@
     "@angular/build": "^20.3.8",
     "@angular/cli": "^20.3.8",
     "@angular/compiler-cli": "^20.3.0",
+    "@capacitor/android": "^8.3.3",
+    "@capacitor/cli": "^8.3.3",
+    "@capacitor/core": "^8.3.3",
     "@types/express": "^5.0.1",
     "@types/jasmine": "~5.1.0",
     "@types/node": "^20.17.19",
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
+    "electron": "^42.0.1",
+    "electron-builder": "^26.8.1",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "wait-on": "^9.0.10"
   }
 }

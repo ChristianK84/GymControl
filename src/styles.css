@@ -1,7 +1,8 @@
-html, body {
+html, body, ion-app {
   height: 100%;
   margin: 0;
-  font-family: 'Inter', sans-serif;
-  background-color: #000;
-  color: #2a1714;
+}
+
+:root {
+  --ion-font-family: 'Inter', sans-serif;
 }
