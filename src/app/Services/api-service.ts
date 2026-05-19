@@ -3,18 +3,170 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { TokenResponse } from '../Models/token-response';
+import { Rol } from '../Models/catalogs';
+import { User } from '../Models/users';
+import { Alumno } from '../Models/alumnos';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class ApiService {
-  private Auth = 'auth/';
-  authToken: string = '';
+  private readonly baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
-  login(username: string, password: string): Observable<TokenResponse> {
-    const url = environment.apiUrl + this.Auth + 'login';
-    return this.http.post<TokenResponse>(url, { username, password });
+  // ── Health (sin auth) ──
+
+  health(): Observable<{ status: string; message: string }> {
+    return this.http.get<{ status: string; message: string }>(
+      `${this.baseUrl}health`,
+    );
+  }
+
+  // ── Auth (sin auth) ──
+
+  login(
+    username: string,
+    password: string,
+  ): Observable<TokenResponse> {
+    return this.http.post<TokenResponse>(`${this.baseUrl}auth/login`, {
+      username,
+      password,
+    });
+  }
+
+  // ── Roles ──
+
+  getRoles(): Observable<Rol[]> {
+    return this.http.get<Rol[]>(`${this.baseUrl}roles/`);
+  }
+
+  getRol(rolId: number): Observable<Rol> {
+    return this.http.get<Rol>(`${this.baseUrl}roles/${rolId}`);
+  }
+
+  // ── Users ──
+
+  getUsers(includeDeleted = false): Observable<User[]> {
+    return this.http.get<User[]>(`${this.baseUrl}users/`, {
+      params: { include_deleted: includeDeleted },
+    });
+  }
+
+  getUser(userId: number): Observable<User> {
+    return this.http.get<User>(`${this.baseUrl}users/${userId}`);
+  }
+
+  createUser(body: {
+    username: string;
+    password: string;
+    full_name?: string | null;
+    role_id: number;
+  }): Observable<User> {
+    return this.http.post<User>(`${this.baseUrl}users/`, body);
+  }
+
+  updateUser(
+    userId: number,
+    body: {
+      username?: string;
+      full_name?: string | null;
+      role_id?: number;
+      is_active?: boolean;
+      password?: string;
+    },
+  ): Observable<User> {
+    return this.http.put<User>(`${this.baseUrl}users/${userId}`, body);
+  }
+
+  deleteUser(userId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}users/${userId}`);
+  }
+
+  // ── Alumnos ──
+
+  getAlumnos(includeDeleted = false): Observable<Alumno[]> {
+    return this.http.get<Alumno[]>(`${this.baseUrl}alumnos/`, {
+      params: { include_deleted: includeDeleted },
+    });
+  }
+
+  getAlumno(alumnoId: number): Observable<Alumno> {
+    return this.http.get<Alumno>(`${this.baseUrl}alumnos/${alumnoId}`);
+  }
+
+  createAlumno(body: {
+    nombrecompleto: string;
+    apellido_paterno: string;
+    apellido_materno?: string | null;
+    rama: string;
+    fecha_nacimiento: string;
+    maestro_id: number;
+    fotografia?: string | null;
+    fecha_inscripcion: string;
+    tutor: {
+      nombre: string;
+      apellido_paterno: string;
+      apellido_materno?: string | null;
+      telefono: string;
+      email: string;
+    };
+    contacto_emergencia: {
+      nombre: string;
+      apellido_paterno: string;
+      apellido_materno?: string | null;
+      telefono: string;
+    };
+    ficha_medica: {
+      tipo_sangre?: string | null;
+      alergias?: string | null;
+      medicamentos?: string | null;
+      condiciones_medicas?: string | null;
+      nss?: string | null;
+    };
+  }): Observable<Alumno> {
+    return this.http.post<Alumno>(`${this.baseUrl}alumnos/`, body);
+  }
+
+  updateAlumno(
+    alumnoId: number,
+    body: {
+      nombrecompleto?: string;
+      apellido_paterno?: string;
+      apellido_materno?: string | null;
+      rama?: string;
+      fecha_nacimiento?: string;
+      maestro_id?: number;
+      fotografia?: string | null;
+      fecha_inscripcion?: string;
+      is_active?: boolean;
+      tutor?: {
+        nombre?: string;
+        apellido_paterno?: string;
+        apellido_materno?: string | null;
+        telefono?: string;
+        email?: string;
+      };
+      contacto_emergencia?: {
+        nombre?: string;
+        apellido_paterno?: string;
+        apellido_materno?: string | null;
+        telefono?: string;
+      };
+      ficha_medica?: {
+        tipo_sangre?: string | null;
+        alergias?: string | null;
+        medicamentos?: string | null;
+        condiciones_medicas?: string | null;
+        nss?: string | null;
+      };
+    },
+  ): Observable<Alumno> {
+    return this.http.put<Alumno>(
+      `${this.baseUrl}alumnos/${alumnoId}`,
+      body,
+    );
+  }
+
+  deleteAlumno(alumnoId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}alumnos/${alumnoId}`);
   }
 }

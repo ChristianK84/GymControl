@@ -1,0 +1,130 @@
+import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import {
+  IonHeader,
+  IonToolbar,
+  IonContent,
+  IonButtons,
+  IonButton,
+  IonIcon,
+} from '@ionic/angular/standalone';
+import { SessionService } from '../../Services/session.service';
+import { addIcons } from 'ionicons';
+import {
+  gridOutline,
+  peopleOutline,
+  bodyOutline,
+  checkmarkCircleOutline,
+  personOutline,
+  logOutOutline,
+  menuOutline,
+  chevronBackOutline,
+  chevronForwardOutline,
+} from 'ionicons/icons';
+
+const ROLE_MAP: Record<number, string> = {
+  1: 'Administrador',
+  2: 'Maestro',
+};
+
+@Component({
+  selector: 'app-dashboard',
+  imports: [
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet,
+    IonHeader,
+    IonToolbar,
+    IonContent,
+    IonButtons,
+    IonButton,
+    IonIcon,
+  ],
+  templateUrl: './dashboard.html',
+  styleUrl: './dashboard.css',
+})
+export class Dashboard implements OnInit, OnDestroy {
+  private session = inject(SessionService);
+  private router = inject(Router);
+
+  private clockInterval?: ReturnType<typeof setInterval>;
+
+  user = this.session.getUser();
+  userName = this.user?.full_name ?? 'Usuario';
+  userRole = ROLE_MAP[this.user?.role_id ?? 0] ?? 'Usuario';
+  collapsed = signal(false);
+  mobileOpen = signal(false);
+  clockDate = signal(this.formatDate());
+  clockTime = signal(this.formatTime());
+
+  readonly navItems = [
+    { icon: 'people-outline', label: 'Alumnos', route: null as string | null },
+    { icon: 'body-outline', label: 'Maestros', route: null as string | null },
+    { icon: 'checkmark-circle-outline', label: 'Asistencias', route: null as string | null },
+    { icon: 'person-outline', label: 'Usuarios', route: '/dashboard/usuarios' as string | null },
+  ];
+
+  constructor() {
+    addIcons({
+      gridOutline, peopleOutline, bodyOutline, checkmarkCircleOutline,
+      personOutline, logOutOutline, menuOutline,
+      chevronBackOutline, chevronForwardOutline,
+    });
+  }
+
+  ngOnInit(): void {
+    this.clockInterval = setInterval(() => {
+      this.clockDate.set(this.formatDate());
+      this.clockTime.set(this.formatTime());
+    }, 1000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.clockInterval) {
+      clearInterval(this.clockInterval);
+    }
+  }
+
+  private formatDate(): string {
+    return new Date().toLocaleDateString('es-MX', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  }
+
+  private formatTime(): string {
+    return new Date().toLocaleTimeString('es-MX', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+  }
+
+  toggleCollapse(): void {
+    this.collapsed.set(!this.collapsed());
+  }
+
+  toggleMobile(): void {
+    this.mobileOpen.set(!this.mobileOpen());
+  }
+
+  closeMobile(): void {
+    (document.activeElement as HTMLElement)?.blur();
+    this.mobileOpen.set(false);
+  }
+
+  goTo(route: string | null): void {
+    this.mobileOpen.set(false);
+    if (route) {
+      this.router.navigate([route]);
+    }
+  }
+
+  logout(): void {
+    (document.activeElement as HTMLElement)?.blur();
+    this.session.clearSession();
+    this.router.navigate(['/login']);
+  }
+}

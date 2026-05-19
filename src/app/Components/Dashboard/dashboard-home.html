@@ -1,0 +1,86 @@
+<div class="dashboard-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Resumen de Rendimiento</h1>
+      <p class="page-subtitle">Sigue las métricas vitales y el progreso atlético de tu instalación.</p>
+    </div>
+    <div class="page-actions">
+      <button class="btn-outline">Registrar Pago</button>
+      <button class="btn-primary">Agregar Alumno</button>
+    </div>
+  </div>
+
+  <!-- Metric Cards Grid -->
+  <div class="metrics-grid">
+    @for (card of metricCards; track card.label) {
+      <div class="metric-card" [class.alert-card]="card.alert">
+        @if (card.alert) {
+          <div class="alert-accent"></div>
+        }
+        <div class="metric-card-top">
+          <div class="metric-icon-box" [class.alert-icon]="card.alert">
+            <ion-icon [name]="card.icon"></ion-icon>
+          </div>
+          @if (card.trendUp !== null) {
+            <span class="trend-badge" [class.trend-flat]="card.trend === 0">
+              <ion-icon [name]="card.trendUp ? 'trending-up-outline' : 'trending-down-outline'"></ion-icon>
+              {{ card.trend }}%
+            </span>
+          }
+          @if (card.trendUp === null) {
+            <span class="trend-badge trend-flat">
+              <ion-icon name="remove-outline"></ion-icon>
+              0%
+            </span>
+          }
+        </div>
+        <div class="metric-card-bottom">
+          <p class="metric-label">{{ card.label }}</p>
+          <h3 class="metric-value">
+            {{ card.value }}
+            @if (card.suffix) {
+              <span class="metric-suffix">{{ card.suffix }}</span>
+            }
+          </h3>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Chart Section -->
+  <div class="chart-card">
+    <div class="chart-header">
+      <h3 class="chart-title">Tendencias de Asistencia</h3>
+      <select
+        class="chart-select"
+        [value]="chartPeriod()"
+        (change)="chartPeriod.set(($any($event.target).value))"
+      >
+        <option value="30dias">Últimos 30 Días</option>
+        <option value="trimestre">Este Trimestre</option>
+        <option value="anio">Año a la Fecha</option>
+      </select>
+    </div>
+
+    <div class="chart-area">
+      <div class="chart-y-axis">
+        <span>100%</span>
+        <span>75%</span>
+        <span>50%</span>
+        <span>25%</span>
+        <span>0%</span>
+      </div>
+      <div class="chart-bars">
+        @for (bar of barData; track bar.week; let last = $last) {
+          <div class="bar-wrapper">
+            <div class="bar" [class.bar-highlight]="last" [style.height.%]="bar.value">
+              <span class="bar-tooltip">{{ bar.value }}%</span>
+            </div>
+            <span class="bar-label">{{ bar.week }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

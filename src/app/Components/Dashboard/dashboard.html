@@ -1,0 +1,73 @@
+<div class="dashboard-shell" [class.collapsed]="collapsed()" [class.mobile-open]="mobileOpen()">
+  <!-- Backdrop (mobile only) -->
+  <div class="sidebar-backdrop" (click)="closeMobile()"></div>
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar">
+    <!-- Brand + Toggle -->
+    <div class="sidebar-top">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo">
+          <img alt="Logo" src="/assets/Logo.jpg" />
+        </div>
+        <div class="sidebar-brand-text">
+          <h2 class="sidebar-name">{{ userName }}</h2>
+          <p class="sidebar-role">{{ userRole }}</p>
+        </div>
+      </div>
+      <button class="collapse-btn" (click)="toggleCollapse()" [attr.aria-label]="collapsed() ? 'Expandir sidebar' : 'Colapsar sidebar'">
+        <ion-icon [name]="collapsed() ? 'chevron-forward-outline' : 'chevron-back-outline'"></ion-icon>
+      </button>
+    </div>
+
+    <!-- Nav -->
+    <nav class="sidebar-nav">
+      <a class="nav-item" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="mobileOpen.set(false)">
+        <ion-icon name="grid-outline"></ion-icon>
+        <span>Dashboard</span>
+      </a>
+      @for (item of navItems; track item.label) {
+        @if (item.route) {
+          <a class="nav-item" [routerLink]="item.route" routerLinkActive="active" (click)="mobileOpen.set(false)">
+            <ion-icon [name]="item.icon"></ion-icon>
+            <span>{{ item.label }}</span>
+          </a>
+        } @else {
+          <a class="nav-item" (click)="mobileOpen.set(false)">
+            <ion-icon [name]="item.icon"></ion-icon>
+            <span>{{ item.label }}</span>
+          </a>
+        }
+      }
+    </nav>
+
+    <!-- Logout -->
+    <div class="sidebar-footer">
+      <button class="nav-item logout-btn" (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+        <span>Cerrar Sesión</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <div class="main-wrapper">
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-button class="menu-btn" (click)="toggleMobile()">
+            <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+        <div slot="end" class="header-clock">
+          <span class="clock-time">{{ clockTime() }}</span>
+          <span class="clock-date">{{ clockDate() }}</span>
+        </div>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="main-content">
+      <router-outlet />
+    </ion-content>
+  </div>
+</div>

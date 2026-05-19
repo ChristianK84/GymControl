@@ -1,71 +1,65 @@
-/* ========== Page Layout ========== */
+/* ========== Mobile-First Responsive Login ========== */
+
+/* ---------- Page Layout ---------- */
 .login-page {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: whitesmoke;
-  position: relative;
-  overflow: hidden;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 .login-container {
-  position: relative;
-  z-index: 10;
   width: 100%;
   max-width: 28rem;
-  padding: 3rem 1.5rem;
+  padding: clamp(1rem, 4vh, 2rem) clamp(0.75rem, 3vw, 1.5rem);
 }
 
-/* ========== Card ========== */
+/* ---------- Card ---------- */
 .login-card {
   background-color: #ffffff;
-  border-radius: 0.75rem;
-  box-shadow: 0 25px 25px rgba(15, 15, 15, 0.05);
+  border-radius: clamp(0.5rem, 1.5vw, 0.75rem);
+  box-shadow: 0 20px 25px rgba(15, 15, 15, 0.06);
   border: 1px solid lightgray;
-  padding: 2rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-@media (min-width: 992px) {
-  .login-card {
-    padding: 2.5rem;
-  }
-}
-
-/* ========== Header ========== */
+/* ---------- Header ---------- */
 .login-header {
-  margin-bottom: 2rem;
+  margin-bottom: clamp(1.25rem, 3vh, 2rem);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .login-logo {
-  width: 10rem;
-  height: 10rem;
+  width: clamp(5rem, 20vw, 7rem);
+  height: clamp(5rem, 20vw, 7rem);
   border-radius: 50%;
   object-fit: contain;
-  margin-bottom: 1rem;
+  margin-bottom: clamp(0.5rem, 1.5vh, 1rem);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .login-title {
   font-family: 'Inter', sans-serif;
-  font-size: 32px;
+  font-size: clamp(1.35rem, 5vw, 2rem);
   line-height: 1.2;
   letter-spacing: -0.01em;
   font-weight: 700;
   color: #2a1714;
   text-align: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: clamp(0.25rem, 0.8vh, 0.5rem);
 }
 
 .login-subtitle {
   font-family: 'Inter', sans-serif;
-  font-size: 16px;
+  font-size: clamp(0.8rem, 2.5vw, 1rem);
   line-height: 1.5;
   font-weight: 400;
   color: #5e3f3b;
@@ -73,26 +67,26 @@
   margin: 0;
 }
 
-/* ========== Form ========== */
+/* ---------- Form ---------- */
 .login-form {
   width: 100%;
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: clamp(0.75rem, 2vh, 1rem);
 }
 
 .form-label {
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
   line-height: 1.2;
   font-weight: 600;
   color: #2a1714;
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 }
 
-/* ========== Input Wrapper ========== */
+/* ---------- Input Wrapper ---------- */
 .input-wrapper {
   position: relative;
 }
@@ -100,10 +94,10 @@
 .input-icon {
   position: absolute;
   top: 50%;
-  left: 0.75rem;
+  left: clamp(0.5rem, 2vw, 0.75rem);
   transform: translateY(-50%);
   color: #5e3f3b;
-  font-size: 20px;
+  font-size: clamp(1.1rem, 3.5vw, 1.25rem);
   pointer-events: none;
   z-index: 1;
 }
@@ -112,13 +106,14 @@
   appearance: none;
   display: block;
   width: 100%;
-  padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+  min-height: 48px;
+  padding: 0.65rem 0.75rem 0.65rem clamp(2.25rem, 7vw, 2.5rem);
   border: 1px solid #e2e2e2;
   border-radius: 0.5rem;
   background-color: #ffffff;
   color: #2a1714;
   font-family: 'Inter', sans-serif;
-  font-size: 16px;
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
   line-height: 1.5;
   font-weight: 400;
   transition: border-color 0.2s, border-width 0.2s;
@@ -133,34 +128,54 @@
 .form-input:focus {
   border-color: #2a1714;
   border-width: 2px;
-  padding: 0.75rem 0.75rem 0.75rem calc(2.5rem - 1px);
+  padding-top: calc(0.65rem - 1px);
+  padding-bottom: calc(0.65rem - 1px);
+  padding-left: calc(clamp(2.25rem, 7vw, 2.5rem) - 1px);
 }
 
-/* Password input has right padding for the toggle button */
+/* Password fields: extra right padding for toggle button */
 input[type="password"].form-input,
 input[type="text"].form-input {
-  padding-right: 2.75rem;
+  padding-right: 3rem;
 }
 
 input[type="password"].form-input:focus,
 input[type="text"].form-input:focus {
-  padding-right: calc(2.75rem - 1px);
+  padding-right: calc(3rem - 1px);
 }
 
-/* ========== Password Toggle ========== */
+/* ---------- Validation ---------- */
+.form-input.ng-invalid.ng-touched {
+  border-color: #e30613;
+  border-width: 1px;
+}
+
+.form-input.ng-invalid.ng-touched:focus {
+  border-color: #e30613;
+  border-width: 2px;
+  padding-top: calc(0.65rem - 1px);
+  padding-bottom: calc(0.65rem - 1px);
+  padding-left: calc(clamp(2.25rem, 7vw, 2.5rem) - 1px);
+}
+
+/* ---------- Password Toggle ---------- */
 .toggle-visibility {
   position: absolute;
   top: 50%;
   right: 0;
   transform: translateY(-50%);
+  min-width: 44px;
+  min-height: 44px;
   padding: 0 0.75rem;
   display: flex;
   align-items: center;
+  justify-content: center;
   background: none;
   border: none;
   cursor: pointer;
   color: #5e3f3b;
   transition: color 0.2s;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .toggle-visibility:hover {
@@ -168,38 +183,38 @@ input[type="text"].form-input:focus {
 }
 
 .toggle-visibility ion-icon {
-  font-size: 20px;
+  font-size: clamp(1.1rem, 3.5vw, 1.25rem);
 }
 
-/* ========== Submit Button ========== */
+/* ---------- Submit Button ---------- */
 .form-submit {
-  padding-top: 1rem;
+  padding-top: clamp(0.75rem, 2vh, 1rem);
 }
 
 .submit-btn {
   position: relative;
   width: 100%;
+  min-height: 48px;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0.75rem 1rem;
+  padding: clamp(0.7rem, 2vh, 0.85rem) 1rem;
   border: 1px solid transparent;
   border-radius: 0.5rem;
   background-color: #e30613;
   color: #fff5f3;
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  font-size: clamp(0.8rem, 2.2vw, 0.9rem);
   line-height: 1.2;
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .submit-btn:hover {
   background-color: #b5000b;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
 
 .submit-btn:active {
@@ -209,7 +224,6 @@ input[type="text"].form-input:focus {
 .submit-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  transform: none;
 }
 
 .submit-btn:disabled:hover {
@@ -221,7 +235,7 @@ input[type="text"].form-input:focus {
 .submit-icon {
   position: absolute;
   right: 0.75rem;
-  font-size: 20px;
+  font-size: clamp(1.1rem, 3.5vw, 1.25rem);
   opacity: 0.7;
   transition: opacity 0.2s;
 }
@@ -230,10 +244,10 @@ input[type="text"].form-input:focus {
   opacity: 1;
 }
 
-/* ========== Footer ========== */
+/* ---------- Footer ---------- */
 .login-footer {
-  margin-top: 2rem;
-  padding-top: 1.5rem;
+  margin-top: clamp(1.25rem, 3vh, 2rem);
+  padding-top: clamp(1rem, 2vh, 1.5rem);
   border-top: 1px solid #e2e2e2;
   width: 100%;
   text-align: center;
@@ -241,9 +255,163 @@ input[type="text"].form-input:focus {
 
 .footer-text {
   font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  line-height: 1.2;
+  font-size: clamp(0.65rem, 1.8vw, 0.75rem);
+  line-height: 1.3;
   font-weight: 500;
   color: #5e3f3b;
   margin: 0;
+}
+
+/* ================================================================= */
+/*  RESPONSIVE BREAKPOINTS                                           */
+/* ================================================================= */
+
+/* ---------- Very small phones (≤ 360px) ---------- */
+@media (max-width: 360px) {
+  .login-card {
+    padding: 1rem;
+  }
+
+  .login-container {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .login-logo {
+    width: clamp(4rem, 18vw, 5rem);
+    height: clamp(4rem, 18vw, 5rem);
+  }
+
+  .toggle-visibility {
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0 0.5rem;
+  }
+}
+
+/* ---------- Landscape phones (short height) ---------- */
+@media (max-height: 500px) and (orientation: landscape) {
+  .login-page {
+    align-items: flex-start;
+    padding-top: 0.5rem;
+  }
+
+  .login-container {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .login-card {
+    padding: 0.75rem 1.25rem;
+  }
+
+  .login-logo {
+    width: clamp(2.5rem, 8vw, 4rem);
+    height: clamp(2.5rem, 8vw, 4rem);
+    margin-bottom: 0.25rem;
+  }
+
+  .login-header {
+    margin-bottom: 0.5rem;
+  }
+
+  .login-title {
+    font-size: clamp(1rem, 3.5vw, 1.25rem);
+  }
+
+  .login-subtitle {
+    font-size: clamp(0.65rem, 2vw, 0.75rem);
+  }
+
+  .form-group {
+    margin-bottom: 0.5rem;
+  }
+
+  .login-footer {
+    margin-top: 0.75rem;
+    padding-top: 0.5rem;
+  }
+
+  .footer-text {
+    font-size: 0.6rem;
+  }
+}
+
+/* ---------- Tablet portrait (≥ 600px) ---------- */
+@media (min-width: 600px) {
+  .login-container {
+    max-width: 32rem;
+  }
+
+  .login-card {
+    padding: 2.25rem;
+  }
+
+  .login-logo {
+    width: 8rem;
+    height: 8rem;
+  }
+}
+
+/* ---------- Tablet portrait large / landscape small (≥ 768px) ---------- */
+@media (min-width: 768px) {
+  .login-container {
+    max-width: 34rem;
+  }
+
+  .login-card {
+    padding: 2.5rem;
+  }
+
+  .login-logo {
+    width: 9rem;
+    height: 9rem;
+  }
+
+  .login-title {
+    font-size: 2rem;
+  }
+
+  .login-subtitle {
+    font-size: 1.05rem;
+  }
+
+  .form-input {
+    min-height: 50px;
+  }
+
+  .submit-btn {
+    min-height: 50px;
+  }
+}
+
+/* ---------- Desktop (≥ 992px) ---------- */
+@media (min-width: 992px) {
+  .login-container {
+    max-width: 28rem;
+  }
+
+  .login-card {
+    padding: 2.5rem;
+  }
+
+  .login-logo {
+    width: 10rem;
+    height: 10rem;
+  }
+
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* ---------- Large desktop (≥ 1200px) ---------- */
+@media (min-width: 1200px) {
+  .login-container {
+    max-width: 30rem;
+  }
+
+  .login-card {
+    padding: 3rem;
+  }
 }

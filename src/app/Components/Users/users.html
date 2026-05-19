@@ -1,0 +1,130 @@
+<div class="users-container">
+  <!-- Header -->
+  <div class="users-header">
+    <div>
+      <h1 class="users-title">Gestión de Usuarios</h1>
+      <p class="users-subtitle">Administra cuentas, roles y permisos del sistema</p>
+    </div>
+    <button class="btn-add" (click)="addUser()">
+      <ion-icon name="person-add-outline"></ion-icon>
+      <span>Agregar Usuario</span>
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <div class="search-box">
+      <ion-icon name="search-outline" class="search-icon"></ion-icon>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Buscar por nombre o usuario..."
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event); onFilterChange()"
+      />
+    </div>
+    <div class="filter-box">
+      <ion-icon name="filter-outline" class="filter-icon"></ion-icon>
+      <select
+        class="filter-select"
+        [ngModel]="roleFilter()"
+        (ngModelChange)="roleFilter.set($event); onFilterChange()"
+      >
+        <option [ngValue]="undefined" disabled selected>Seleccione un Rol</option>
+        <option [ngValue]="null">Todos los roles</option>
+        @for (rol of roles(); track rol.id) {
+          <option [ngValue]="rol.id">{{ rol.nombre }}</option>
+        }
+      </select>
+    </div>
+    <button class="btn-clear" (click)="clearFilters()">
+      <ion-icon name="close-circle-outline"></ion-icon>
+      <span>Limpiar</span>
+    </button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrapper">
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Nombre Completo</th>
+          <th>Rol</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (user of pagedUsers(); track user.id) {
+          <tr>
+            <td class="td-username">{{ user.username }}</td>
+            <td>{{ user.full_name }}</td>
+            <td>
+              <span class="role-badge" [class.role-admin]="user.role_id === 1">
+                {{ roleName().get(user.role_id) ?? '—' }}
+              </span>
+            </td>
+            <td class="td-date">{{ user.created_at | date: 'dd/MM/yyyy' }}</td>
+            <td>
+              <span class="status-badge" [class.status-inactive]="!user.is_active">
+                {{ user.is_active ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+            <td class="td-actions">
+              <button class="action-btn action-edit" title="Editar" (click)="editUser(user)">
+                <ion-icon name="pencil-outline"></ion-icon>
+              </button>
+              <button class="action-btn action-delete" title="Eliminar" (click)="deleteUser(user)">
+                <ion-icon name="trash-outline"></ion-icon>
+              </button>
+            </td>
+          </tr>
+        }
+        @empty {
+          <tr>
+            <td colspan="6" class="td-empty">No se encontraron usuarios</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Footer: count + pagination -->
+  <div class="table-footer">
+    <span class="footer-count">
+      {{ filtered().length }} usuario{{ filtered().length !== 1 ? 's' : '' }}
+    </span>
+
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <button
+          class="page-btn"
+          [disabled]="page() === 1"
+          (click)="goToPage(page() - 1)"
+        >
+          <ion-icon name="chevron-back-outline"></ion-icon>
+        </button>
+
+        @for (p of [].constructor(totalPages()); track $index; let i = $index) {
+          <button
+            class="page-btn"
+            [class.page-active]="i + 1 === page()"
+            (click)="goToPage(i + 1)"
+          >
+            {{ i + 1 }}
+          </button>
+        }
+
+        <button
+          class="page-btn"
+          [disabled]="page() === totalPages()"
+          (click)="goToPage(page() + 1)"
+        >
+          <ion-icon name="chevron-forward-outline"></ion-icon>
+        </button>
+      </div>
+    }
+  </div>
+</div>
