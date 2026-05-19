@@ -58,7 +58,7 @@ export class Dashboard implements OnInit, OnDestroy {
   clockTime = signal(this.formatTime());
 
   readonly navItems = [
-    { icon: 'people-outline', label: 'Alumnos', route: null as string | null },
+    { icon: 'people-outline', label: 'Alumnos', route: '/dashboard/alumnos' as string | null },
     { icon: 'body-outline', label: 'Maestros', route: null as string | null },
     { icon: 'checkmark-circle-outline', label: 'Asistencias', route: null as string | null },
     { icon: 'person-outline', label: 'Usuarios', route: '/dashboard/usuarios' as string | null },

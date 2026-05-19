@@ -6,6 +6,7 @@ import { TokenResponse } from '../Models/token-response';
 import { Rol } from '../Models/catalogs';
 import { User } from '../Models/users';
 import { Alumno } from '../Models/alumnos';
+import { Maestro } from '../Models/maestros';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -79,6 +80,53 @@ export class ApiService {
 
   deleteUser(userId: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}users/${userId}`);
+  }
+
+  // ── Maestros ──
+
+  getMaestros(includeDeleted = false): Observable<Maestro[]> {
+    return this.http.get<Maestro[]>(`${this.baseUrl}maestros/`, {
+      params: { include_deleted: includeDeleted },
+    });
+  }
+
+  getMaestro(maestroId: number): Observable<Maestro> {
+    return this.http.get<Maestro>(`${this.baseUrl}maestros/${maestroId}`);
+  }
+
+  createMaestro(body: {
+    nombre: string;
+    apellido_paterno: string;
+    apellido_materno?: string | null;
+    telefono?: string | null;
+    foto?: string | null;
+    fecha_nacimiento?: string | null;
+    genero_id?: number | null;
+  }): Observable<Maestro> {
+    return this.http.post<Maestro>(`${this.baseUrl}maestros/`, body);
+  }
+
+  updateMaestro(
+    maestroId: number,
+    body: {
+      nombre?: string;
+      apellido_paterno?: string;
+      apellido_materno?: string | null;
+      telefono?: string | null;
+      foto?: string | null;
+      fecha_nacimiento?: string | null;
+      genero_id?: number | null;
+      is_active?: boolean;
+    },
+  ): Observable<Maestro> {
+    return this.http.put<Maestro>(
+      `${this.baseUrl}maestros/${maestroId}`,
+      body,
+    );
+  }
+
+  deleteMaestro(maestroId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}maestros/${maestroId}`);
   }
 
   // ── Alumnos ──

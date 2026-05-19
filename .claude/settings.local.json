@@ -15,7 +15,8 @@
       "Bash(New-Item -ItemType Directory -Path \"electron\" -Force)",
       "PowerShell(npx ng build --configuration production 2>&1)",
       "PowerShell(npx cap add android 2>&1)",
-      "PowerShell(npx ng build 2>&1)"
+      "PowerShell(npx ng build 2>&1)",
+      "PowerShell(Get-ChildItem -Recurse -File | Where-Object { $_.FullName -notmatch 'node_modules|\\\\.git|\\\\.angular|www|platforms|plugins|\\\\.exe|\\\\.dll|\\\\.pdb|\\\\.bin' } | ForEach-Object { $_.FullName.Replace\\('C:\\\\Users\\\\CRamos.SPA09NMW000102\\\\Documents\\\\GitHub\\\\GymControl\\\\', ''\\) } | Sort-Object)"
     ]
   }
 }

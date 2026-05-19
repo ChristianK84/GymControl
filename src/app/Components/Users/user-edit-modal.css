@@ -97,6 +97,8 @@
 }
 
 .field-input {
+  width: 100%;
+  box-sizing: border-box;
   padding: 0.65rem 0.85rem;
   border: 1px solid #e5e2e1;
   border-radius: 0.5rem;
@@ -119,6 +121,8 @@
 }
 
 .field-select {
+  width: 100%;
+  box-sizing: border-box;
   padding: 0.65rem 0.85rem;
   border: 1px solid #e5e2e1;
   border-radius: 0.5rem;
