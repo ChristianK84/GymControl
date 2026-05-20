@@ -1,140 +1,136 @@
-<div class="alumnos-page">
-  <!-- Header Section -->
-  <header class="page-header">
+<div class="alumnos-container">
+  <!-- Header -->
+  <div class="alumnos-header">
     <div>
-      <h1 class="page-title">Directorio de Alumnos</h1>
-      <p class="page-subtitle">Gestiona y filtra el listado completo de estudiantes inscritos en la academia.</p>
+      <h1 class="alumnos-title">Directorio de Alumnos</h1>
+      <p class="alumnos-subtitle">Gestiona y filtra el listado completo de estudiantes inscritos en la academia.</p>
     </div>
-    <button class="add-btn">
+    <button class="btn-add" (click)="addAlumno()">
       <ion-icon name="add-outline"></ion-icon>
-      Nuevo Alumno
+      <span>Nuevo Alumno</span>
     </button>
-  </header>
+  </div>
 
-  <!-- Filters & Search Bar -->
-  <section class="filter-bar">
-    <div class="filter-row">
-      <!-- Search -->
-      <div class="search-box">
-        <ion-icon name="search-outline" class="search-icon"></ion-icon>
-        <input
-          type="text"
-          class="search-input"
-          placeholder="Buscar por nombre..."
-          [(ngModel)]="searchTerm"
-          (input)="onFilterChange()"
-        />
-      </div>
-
-      <!-- Filters -->
-      <div class="filters-group">
-        <select class="filter-select" [(ngModel)]="grupoFilter" (change)="onFilterChange()">
-          <option value="">Grupo de Edad</option>
-          <option value="infantil">Infantil</option>
-          <option value="juvenil">Juvenil</option>
-          <option value="adulto">Adulto</option>
-        </select>
-
-        <select class="filter-select" [(ngModel)]="membresiaFilter" (change)="onFilterChange()">
-          <option value="">Estado Membresía</option>
-          <option value="activa">Activa</option>
-          <option value="pendiente">Pendiente</option>
-          <option value="inactiva">Inactiva</option>
-        </select>
-
-        <button class="filter-more-btn" title="Más filtros">
-          <ion-icon name="options-outline"></ion-icon>
-        </button>
-      </div>
+  <!-- Filters -->
+  <div class="filters-bar">
+    <div class="search-box">
+      <ion-icon name="search-outline" class="search-icon"></ion-icon>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Buscar por nombre o apellido..."
+        [ngModel]="searchTerm()"
+        (ngModelChange)="onSearchChange($event)"
+      />
     </div>
-  </section>
+    <div class="filter-box">
+      <select class="filter-select" [ngModel]="ramaFilter()" (ngModelChange)="onRamaChange($event)">
+        <option value="">Todas las ramas</option>
+        <option value="Varonil">Varonil</option>
+        <option value="Femenil">Femenil</option>
+      </select>
+    </div>
+    <button class="btn-clear" (click)="clearFilters()">
+      <ion-icon name="close-circle-outline"></ion-icon>
+      <span>Limpiar</span>
+    </button>
+  </div>
 
-  <!-- Data Table -->
+  <!-- Table -->
   <div class="table-wrapper">
-    <div class="table-scroll">
-      <table class="data-table">
-        <thead>
+    <table class="alumnos-table">
+      <thead>
+        <tr>
+          <th>Alumno</th>
+          <th>Edad</th>
+          <th>Rama</th>
+          <th>Entrenador</th>
+          <th>Última Asistencia</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (alumno of pagedAlumnos(); track alumno.id) {
           <tr>
-            <th>Alumna</th>
-            <th>Edad</th>
-            <th>Grupo</th>
-            <th>Entrenador</th>
-            <th>Membresía</th>
-            <th>Última Asistencia</th>
-            <th class="th-actions">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          @if (pagedAlumnos().length === 0) {
-            <tr>
-              <td colspan="7" class="empty-row">
-                <div class="empty-state">
-                  <ion-icon name="people-outline"></ion-icon>
-                  <p>No se encontraron alumnos</p>
+            <!-- Alumno -->
+            <td>
+              <div class="alumno-cell">
+                @if (alumno.fotografia) {
+                  <img class="alumno-avatar" [src]="alumno.fotografia" [alt]="alumno.nombrecompleto" />
+                } @else {
+                  <div class="alumno-avatar alumno-avatar-fallback">
+                    {{ iniciales(alumno.nombrecompleto) }}
+                  </div>
+                }
+                <div class="alumno-name-group">
+                  <span class="alumno-name">{{ alumno.nombrecompleto }}</span>
+                  <span class="alumno-apellido">{{ alumno.apellido_paterno }} {{ alumno.apellido_materno ?? '' }}</span>
                 </div>
-              </td>
-            </tr>
-          } @else {
-            @for (alumno of pagedAlumnos(); track alumno.id) {
-              <tr class="data-row">
-                <!-- Alumna -->
-                <td>
-                  <div class="alumno-cell">
-                    @if (alumno.fotografia) {
-                      <img class="alumno-avatar" [src]="alumno.fotografia" [alt]="alumno.nombrecompleto" />
-                    } @else {
-                      <div class="alumno-avatar alumno-avatar-fallback">{{ iniciales(alumno.nombrecompleto + ' ' + alumno.apellido_paterno) }}</div>
-                    }
-                    <span class="alumno-name">{{ alumno.nombrecompleto }}</span>
-                  </div>
-                </td>
-                <!-- Edad -->
-                <td class="cell-muted">{{ edad(alumno.fecha_nacimiento) }} años</td>
-                <!-- Grupo -->
-                <td>
-                  <div class="grupo-cell">
-                    <span class="grupo-dot" [style.background-color]="grupoColor(alumno.rama)"></span>
-                    <span>{{ alumno.rama }}</span>
-                  </div>
-                </td>
-                <!-- Entrenador -->
-                <td class="cell-muted">{{ maestroNombre(alumno.maestro_id) }}</td>
-                <!-- Membresía -->
-                <td>
-                  @if (alumno.is_active) {
-                    <span class="badge badge-active">Activa</span>
-                  } @else {
-                    <span class="badge badge-inactive">Inactiva</span>
-                  }
-                </td>
-                <!-- Última Asistencia -->
-                <td class="cell-muted">—</td>
-                <!-- Acciones -->
-                <td class="cell-actions">
-                  <button class="action-btn" title="Más opciones">
-                    <ion-icon name="ellipsis-vertical-outline"></ion-icon>
-                  </button>
-                </td>
-              </tr>
-            }
-          }
-        </tbody>
-      </table>
-    </div>
+              </div>
+            </td>
+            <!-- Edad -->
+            <td class="td-muted">{{ edad(alumno.fecha_nacimiento) }} años</td>
+            <!-- Rama -->
+            <td>
+              <span class="rama-badge" [style.background-color]="ramaColor(alumno.rama) + '18'" [style.color]="ramaColor(alumno.rama)">
+                {{ alumno.rama }}
+              </span>
+            </td>
+            <!-- Entrenador -->
+            <td class="td-muted">{{ maestroNombre(alumno.maestro_id) }}</td>
+            <!-- Última Asistencia -->
+            <td class="td-muted">{{ asistenciaStr(alumno.id) }}</td>
+            <!-- Estado -->
+            <td>
+              <span class="status-badge" [class.status-inactive]="!alumno.is_active">
+                {{ alumno.is_active ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+            <!-- Acciones -->
+            <td class="td-actions">
+              <button class="action-btn action-edit" title="Editar" (click)="editAlumno(alumno)">
+                <ion-icon name="pencil-outline"></ion-icon>
+              </button>
+              <button class="action-btn action-delete" title="Eliminar" (click)="deleteAlumno(alumno)">
+                <ion-icon name="trash-outline"></ion-icon>
+              </button>
+            </td>
+          </tr>
+        }
+        @empty {
+          <tr>
+            <td colspan="7" class="td-empty">
+              <div class="empty-state">
+                <ion-icon name="people-outline"></ion-icon>
+                <p>No se encontraron alumnos</p>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 
-    <!-- Pagination Footer -->
-    <div class="pagination-footer">
-      <div class="pagination-info">
-        Mostrando {{ (page() - 1) * pageSize + 1 }} a {{ page() * pageSize > filtered().length ? filtered().length : page() * pageSize }} de {{ filtered().length }} alumnos
-      </div>
-      <div class="pagination-btns">
+  <!-- Footer -->
+  <div class="table-footer">
+    <span class="footer-count">
+      {{ filtered().length }} alumno{{ filtered().length !== 1 ? 's' : '' }}
+    </span>
+    @if (totalPages() > 1) {
+      <div class="pagination">
         <button class="page-btn" [disabled]="page() === 1" (click)="goToPage(page() - 1)">
           <ion-icon name="chevron-back-outline"></ion-icon>
         </button>
+        @for (p of [].constructor(totalPages()); track $index; let i = $index) {
+          <button class="page-btn" [class.page-active]="i + 1 === page()" (click)="goToPage(i + 1)">
+            {{ i + 1 }}
+          </button>
+        }
         <button class="page-btn" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)">
           <ion-icon name="chevron-forward-outline"></ion-icon>
         </button>
       </div>
-    </div>
+    }
   </div>
 </div>

@@ -1,13 +1,15 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonIcon, AlertController, ToastController } from '@ionic/angular/standalone';
+import { IonIcon, AlertController, ToastController, ModalController } from '@ionic/angular/standalone';
 import { ApiService } from '../../Services/api-service';
 import { Alumno } from '../../Models/alumnos';
 import { Maestro } from '../../Models/maestros';
+import { AlumnoFormModal } from './alumno-form-modal';
 import { addIcons } from 'ionicons';
 import {
-  addOutline, searchOutline, optionsOutline, chevronBackOutline,
-  chevronForwardOutline, ellipsisVerticalOutline, peopleOutline,
+  addOutline, searchOutline, closeCircleOutline,
+  chevronBackOutline, chevronForwardOutline,
+  pencilOutline, trashOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -20,82 +22,92 @@ export class Alumnos implements OnInit {
   private api = inject(ApiService);
   private alertCtrl = inject(AlertController);
   private toastCtrl = inject(ToastController);
+  private modalCtrl = inject(ModalController);
 
-  allAlumnos: Alumno[] = [];
-  maestros: Maestro[] = [];
-
+  allAlumnos = signal<Alumno[]>([]);
+  maestros = signal<Maestro[]>([]);
+  ultimaAsistencia = signal<Map<number, string>>(new Map());
   searchTerm = signal('');
-  grupoFilter = signal('');
-  membresiaFilter = signal('');
+  ramaFilter = signal('');
   page = signal(1);
   readonly pageSize = 8;
 
   constructor() {
     addIcons({
-      addOutline, searchOutline, optionsOutline, chevronBackOutline,
-      chevronForwardOutline, ellipsisVerticalOutline, peopleOutline,
+      addOutline, searchOutline, closeCircleOutline,
+      chevronBackOutline, chevronForwardOutline,
+      pencilOutline, trashOutline,
     });
   }
 
   ngOnInit(): void {
-    this.api.getAlumnos(false).subscribe({
-      next: (data) => (this.allAlumnos = data),
+    this.api.getAlumnos().subscribe({
+      next: (data) => this.allAlumnos.set(data),
     });
-    this.api.getMaestros(false).subscribe({
-      next: (data) => (this.maestros = data),
+    this.api.getMaestros().subscribe({
+      next: (data) => this.maestros.set(data),
+    });
+    this.loadAsistencias();
+  }
+
+  private loadAsistencias(): void {
+    this.api.getAsistencias().subscribe({
+      next: (data) => {
+        const map = new Map<number, string>();
+        for (const a of data) {
+          const current = map.get(a.alumno_id);
+          if (!current || a.fecha > current) {
+            map.set(a.alumno_id, a.fecha);
+          }
+        }
+        this.ultimaAsistencia.set(map);
+      },
     });
   }
 
   maestroNombre(maestroId: number): string {
-    const m = this.maestros.find((x) => x.id === maestroId);
-    return m ? `${m.nombre} ${m.apellido_paterno.charAt(0)}.` : `ID #${maestroId}`;
+    const m = this.maestros().find((x) => x.id === maestroId);
+    if (!m) return `ID #${maestroId}`;
+    return m.user?.full_name ?? `${m.nombre} ${m.apellido_paterno.charAt(0)}.`;
   }
 
   edad(fechaNacimiento: string): number {
     const hoy = new Date();
     const nac = new Date(fechaNacimiento);
-    let edad = hoy.getFullYear() - nac.getFullYear();
-    const mes = hoy.getMonth() - nac.getMonth();
-    if (mes < 0 || (mes === 0 && hoy.getDate() < nac.getDate())) {
-      edad--;
-    }
-    return edad;
+    let e = hoy.getFullYear() - nac.getFullYear();
+    const m = hoy.getMonth() - nac.getMonth();
+    if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) e--;
+    return e;
   }
 
   iniciales(nombre: string): string {
-    const partes = nombre.trim().split(' ');
-    const iniciales = partes.map((p) => p.charAt(0).toUpperCase());
-    return iniciales.slice(0, 2).join('');
+    return nombre.trim().split(' ').map((p) => p.charAt(0).toUpperCase()).slice(0, 2).join('');
   }
 
-  grupoColor(rama: string): string {
-    switch (rama.toLowerCase()) {
-      case 'infantil':
-        return '#707171';
-      case 'juvenil':
-        return '#e30613';
-      case 'adulto':
-        return '#2a1714';
-      default:
-        return '#936e69';
-    }
+  ramaColor(rama: string): string {
+    return rama === 'Varonil' ? '#2563eb' : '#e30613';
+  }
+
+  asistenciaStr(alumnoId: number): string {
+    const fecha = this.ultimaAsistencia().get(alumnoId);
+    if (!fecha) return '—';
+    const d = new Date(fecha + 'T00:00:00');
+    return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
   filtered = computed(() => {
-    let list = this.allAlumnos;
-    const s = this.searchTerm().toLowerCase();
-    if (s) {
+    let list = this.allAlumnos();
+    const term = this.searchTerm().toLowerCase().trim();
+    if (term) {
       list = list.filter(
         (a) =>
-          a.nombrecompleto.toLowerCase().includes(s) ||
-          a.apellido_paterno.toLowerCase().includes(s) ||
-          (a.apellido_materno ?? '').toLowerCase().includes(s),
+          a.nombrecompleto.toLowerCase().includes(term) ||
+          a.apellido_paterno.toLowerCase().includes(term) ||
+          (a.apellido_materno ?? '').toLowerCase().includes(term),
       );
     }
-    if (this.grupoFilter()) {
-      list = list.filter(
-        (a) => a.rama.toLowerCase() === this.grupoFilter().toLowerCase(),
-      );
+    if (this.ramaFilter()) {
+      list = list.filter((a) => a.rama === this.ramaFilter());
     }
     return list;
   });
@@ -107,35 +119,73 @@ export class Alumnos implements OnInit {
     return this.filtered().slice(start, start + this.pageSize);
   });
 
-  onFilterChange(): void {
+  onSearchChange(value: string): void {
+    this.searchTerm.set(value);
     this.page.set(1);
   }
 
-  goToPage(p: number): void {
-    this.page.set(p);
+  onRamaChange(value: string): void {
+    this.ramaFilter.set(value);
+    this.page.set(1);
   }
 
   clearFilters(): void {
     this.searchTerm.set('');
-    this.grupoFilter.set('');
-    this.membresiaFilter.set('');
-    this.onFilterChange();
+    this.ramaFilter.set('');
+    this.page.set(1);
+  }
+
+  goToPage(p: number): void {
+    if (p >= 1 && p <= this.totalPages()) this.page.set(p);
+  }
+
+  async addAlumno(): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: AlumnoFormModal,
+      componentProps: { maestros: this.maestros() },
+    });
+    await modal.present();
+    const { role } = await modal.onDidDismiss();
+    if (role === 'saved') {
+      this.api.getAlumnos().subscribe({
+        next: (data) => this.allAlumnos.set(data),
+      });
+      this.showToast('Alumno creado con éxito', 'success');
+    }
+  }
+
+  async editAlumno(alumno: Alumno): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: AlumnoFormModal,
+      componentProps: { alumno, maestros: this.maestros() },
+    });
+    await modal.present();
+    const { role } = await modal.onDidDismiss();
+    if (role === 'saved') {
+      this.api.getAlumnos().subscribe({
+        next: (data) => this.allAlumnos.set(data),
+      });
+      this.showToast('Alumno actualizado con éxito', 'success');
+    }
   }
 
   async deleteAlumno(alumno: Alumno): Promise<void> {
     const alert = await this.alertCtrl.create({
       header: 'Eliminar Alumno',
-      message: `¿Estás seguro de eliminar a ${alumno.nombrecompleto}?`,
+      message: `¿Estás seguro de eliminar a "${alumno.nombrecompleto}"? Esta acción no se puede deshacer.`,
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Eliminar',
           role: 'destructive',
+          cssClass: 'alert-delete-btn',
           handler: () => {
             this.api.deleteAlumno(alumno.id).subscribe({
               next: () => {
-                this.allAlumnos = this.allAlumnos.filter((a) => a.id !== alumno.id);
-                this.showToast('Alumno eliminado');
+                this.api.getAlumnos().subscribe({
+                  next: (data) => this.allAlumnos.set(data),
+                });
+                this.showToast('Alumno eliminado', 'success');
               },
               error: () => this.showToast('Error al eliminar', 'danger'),
             });
@@ -146,13 +196,8 @@ export class Alumnos implements OnInit {
     await alert.present();
   }
 
-  async showToast(message: string, color: 'success' | 'warning' | 'danger' = 'success') {
-    const toast = await this.toastCtrl.create({
-      message,
-      duration: 2500,
-      color,
-      position: 'top',
-    });
+  private async showToast(message: string, color: 'success' | 'danger' = 'success'): Promise<void> {
+    const toast = await this.toastCtrl.create({ message, duration: 2500, color, position: 'top' });
     await toast.present();
   }
 }

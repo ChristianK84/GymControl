@@ -1,0 +1,177 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ isEdit ? 'Editar Alumno' : 'Nuevo Alumno' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="modal-content">
+  <div class="modal-body">
+    @if (isEdit) {
+      <div class="identity-card">
+        <div class="avatar-circle">{{ nombrecompleto.charAt(0).toUpperCase() }}</div>
+        <div class="identity-info">
+          <span class="identity-name">{{ nombrecompleto }} {{ apellidoPaterno }}</span>
+          <span class="identity-id">{{ rama }} &middot; ID #{{ alumno!.id }}</span>
+        </div>
+      </div>
+    }
+
+    <!-- Datos Personales -->
+    <div class="section">
+      <h3 class="section-title">Datos Personales</h3>
+      <div class="field-row">
+        <label class="field-label" for="nombre">Nombre Completo</label>
+        <input id="nombre" type="text" class="field-input" [class.field-error]="errors['nombrecompleto']" [(ngModel)]="nombrecompleto" placeholder="Nombre(s)" />
+        @if (errors['nombrecompleto']) { <span class="error-msg">{{ errors['nombrecompleto'] }}</span> }
+      </div>
+      <div class="inline-fields">
+        <div class="field-row flex-1">
+          <label class="field-label" for="ap">Apellido Paterno</label>
+          <input id="ap" type="text" class="field-input" [class.field-error]="errors['apellidoPaterno']" [(ngModel)]="apellidoPaterno" />
+          @if (errors['apellidoPaterno']) { <span class="error-msg">{{ errors['apellidoPaterno'] }}</span> }
+        </div>
+        <div class="field-row flex-1">
+          <label class="field-label" for="am">Apellido Materno</label>
+          <input id="am" type="text" class="field-input" [(ngModel)]="apellidoMaterno" placeholder="Opcional" />
+        </div>
+      </div>
+      <div class="inline-fields">
+        <div class="field-row flex-1">
+          <label class="field-label" for="fn">Fecha Nacimiento</label>
+          <input id="fn" type="date" class="field-input" [class.field-error]="errors['fechaNacimiento']" [(ngModel)]="fechaNacimiento" />
+          @if (errors['fechaNacimiento']) { <span class="error-msg">{{ errors['fechaNacimiento'] }}</span> }
+        </div>
+        <div class="field-row flex-1">
+          <label class="field-label" for="rama">Rama</label>
+          <select id="rama" class="field-select" [class.field-error]="errors['rama']" [(ngModel)]="rama">
+            <option value="" disabled>Seleccione</option>
+            <option value="Varonil">Varonil</option>
+            <option value="Femenil">Femenil</option>
+          </select>
+          @if (errors['rama']) { <span class="error-msg">{{ errors['rama'] }}</span> }
+        </div>
+      </div>
+      <div class="inline-fields">
+        <div class="field-row flex-1">
+          <label class="field-label" for="maestro">Entrenador</label>
+          <select id="maestro" class="field-select" [class.field-error]="errors['maestroId']" [(ngModel)]="maestroId">
+            <option [ngValue]="undefined" disabled>Seleccione</option>
+            @for (m of maestros; track m.id) {
+              <option [ngValue]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</option>
+            }
+          </select>
+          @if (errors['maestroId']) { <span class="error-msg">{{ errors['maestroId'] }}</span> }
+        </div>
+        <div class="field-row flex-1">
+          <label class="field-label" for="fi">Fecha Inscripción</label>
+          <input id="fi" type="date" class="field-input" [(ngModel)]="fechaInscripcion" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Tutor -->
+    <div class="section">
+      <h3 class="section-title">Tutor</h3>
+      <div class="field-row">
+        <label class="field-label" for="tn">Nombre</label>
+        <input id="tn" type="text" class="field-input" [class.field-error]="errors['tutorNombre']" [(ngModel)]="tutorNombre" />
+        @if (errors['tutorNombre']) { <span class="error-msg">{{ errors['tutorNombre'] }}</span> }
+      </div>
+      <div class="inline-fields">
+        <div class="field-row flex-1">
+          <label class="field-label">Apellido Paterno</label>
+          <input type="text" class="field-input" [class.field-error]="errors['tutorApellidoP']" [(ngModel)]="tutorApellidoP" />
+          @if (errors['tutorApellidoP']) { <span class="error-msg">{{ errors['tutorApellidoP'] }}</span> }
+        </div>
+        <div class="field-row flex-1">
+          <label class="field-label">Apellido Materno</label>
+          <input type="text" class="field-input" [(ngModel)]="tutorApellidoM" placeholder="Opcional" />
+        </div>
+      </div>
+      <div class="inline-fields">
+        <div class="field-row flex-1">
+          <label class="field-label">Teléfono</label>
+          <input type="tel" class="field-input" [class.field-error]="errors['tutorTelefono']" [(ngModel)]="tutorTelefono" />
+          @if (errors['tutorTelefono']) { <span class="error-msg">{{ errors['tutorTelefono'] }}</span> }
+        </div>
+        <div class="field-row flex-1">
+          <label class="field-label">Email</label>
+          <input type="email" class="field-input" [(ngModel)]="tutorEmail" placeholder="Opcional" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Contacto Emergencia -->
+    <div class="section">
+      <h3 class="section-title">Contacto de Emergencia</h3>
+      <div class="field-row">
+        <label class="field-label">Nombre</label>
+        <input type="text" class="field-input" [class.field-error]="errors['contactoNombre']" [(ngModel)]="contactoNombre" />
+        @if (errors['contactoNombre']) { <span class="error-msg">{{ errors['contactoNombre'] }}</span> }
+      </div>
+      <div class="inline-fields">
+        <div class="field-row flex-1">
+          <label class="field-label">Apellido Paterno</label>
+          <input type="text" class="field-input" [class.field-error]="errors['contactoApellidoP']" [(ngModel)]="contactoApellidoP" />
+          @if (errors['contactoApellidoP']) { <span class="error-msg">{{ errors['contactoApellidoP'] }}</span> }
+        </div>
+        <div class="field-row flex-1">
+          <label class="field-label">Apellido Materno</label>
+          <input type="text" class="field-input" [(ngModel)]="contactoApellidoM" placeholder="Opcional" />
+        </div>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Teléfono</label>
+        <input type="tel" class="field-input" [class.field-error]="errors['contactoTelefono']" [(ngModel)]="contactoTelefono" />
+        @if (errors['contactoTelefono']) { <span class="error-msg">{{ errors['contactoTelefono'] }}</span> }
+      </div>
+    </div>
+
+    <!-- Ficha Médica -->
+    <div class="section">
+      <h3 class="section-title">Ficha Médica</h3>
+      <div class="inline-fields">
+        <div class="field-row flex-1">
+          <label class="field-label">Tipo Sangre</label>
+          <input type="text" class="field-input" [(ngModel)]="tipoSangre" placeholder="Ej: O+" />
+        </div>
+        <div class="field-row flex-1">
+          <label class="field-label">NSS</label>
+          <input type="text" class="field-input" [(ngModel)]="nss" placeholder="Opcional" />
+        </div>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Alergias</label>
+        <input type="text" class="field-input" [(ngModel)]="alergias" placeholder="Opcional" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Medicamentos</label>
+        <input type="text" class="field-input" [(ngModel)]="medicamentos" placeholder="Opcional" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Condiciones Médicas</label>
+        <input type="text" class="field-input" [(ngModel)]="condicionesMedicas" placeholder="Opcional" />
+      </div>
+    </div>
+
+    @if (isEdit) {
+      <div class="meta-footer">
+        <span>Creado el {{ createdAt }}</span>
+      </div>
+    }
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button class="btn-cancel" (click)="dismiss()">Cancelar</ion-button>
+      <ion-button class="btn-save" (click)="save()">{{ isEdit ? 'Guardar Cambios' : 'Crear Alumno' }}</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

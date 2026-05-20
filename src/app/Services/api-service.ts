@@ -7,6 +7,7 @@ import { Rol } from '../Models/catalogs';
 import { User } from '../Models/users';
 import { Alumno } from '../Models/alumnos';
 import { Maestro } from '../Models/maestros';
+import { Asistencia } from '../Models/asistencias';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -95,13 +96,13 @@ export class ApiService {
   }
 
   createMaestro(body: {
+    user_id?: number | null;
     nombre: string;
     apellido_paterno: string;
     apellido_materno?: string | null;
     telefono?: string | null;
     foto?: string | null;
     fecha_nacimiento?: string | null;
-    genero_id?: number | null;
   }): Observable<Maestro> {
     return this.http.post<Maestro>(`${this.baseUrl}maestros/`, body);
   }
@@ -109,13 +110,13 @@ export class ApiService {
   updateMaestro(
     maestroId: number,
     body: {
+      user_id?: number | null;
       nombre?: string;
       apellido_paterno?: string;
       apellido_materno?: string | null;
       telefono?: string | null;
       foto?: string | null;
       fecha_nacimiento?: string | null;
-      genero_id?: number | null;
       is_active?: boolean;
     },
   ): Observable<Maestro> {
@@ -216,5 +217,55 @@ export class ApiService {
 
   deleteAlumno(alumnoId: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}alumnos/${alumnoId}`);
+  }
+
+  // ── Asistencias ──
+
+  getAsistencias(filters?: {
+    alumno_id?: number;
+    maestro_id?: number;
+    fecha_desde?: string;
+    fecha_hasta?: string;
+  }): Observable<Asistencia[]> {
+    return this.http.get<Asistencia[]>(`${this.baseUrl}asistencias/`, {
+      params: { ...filters },
+    });
+  }
+
+  getAsistencia(asistenciaId: number): Observable<Asistencia> {
+    return this.http.get<Asistencia>(
+      `${this.baseUrl}asistencias/${asistenciaId}`,
+    );
+  }
+
+  createAsistencia(body: {
+    alumno_id: number;
+    maestro_id: number;
+    fecha: string;
+    asistio: boolean;
+    notas?: string | null;
+    registrado_por?: number | null;
+  }): Observable<Asistencia> {
+    return this.http.post<Asistencia>(`${this.baseUrl}asistencias/`, body);
+  }
+
+  updateAsistencia(
+    asistenciaId: number,
+    body: {
+      asistio?: boolean;
+      notas?: string | null;
+      maestro_id?: number;
+    },
+  ): Observable<Asistencia> {
+    return this.http.put<Asistencia>(
+      `${this.baseUrl}asistencias/${asistenciaId}`,
+      body,
+    );
+  }
+
+  deleteAsistencia(asistenciaId: number): Observable<void> {
+    return this.http.delete<void>(
+      `${this.baseUrl}asistencias/${asistenciaId}`,
+    );
   }
 }

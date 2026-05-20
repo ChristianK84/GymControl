@@ -1,10 +1,26 @@
+export interface AsistenciaAlumno {
+  id: number;
+  nombrecompleto: string;
+  apellido_paterno: string;
+  apellido_materno: string | null;
+  rama: string;
+}
+
+export interface AsistenciaMaestro {
+  id: number;
+  nombre: string;
+  apellido_paterno: string;
+}
+
 export interface Asistencia {
   id: number;
   alumno_id: number;
   maestro_id: number;
   fecha: string;
   asistio: boolean;
-  notas?: string;
-  registrado_por?: number;
+  notas: string | null;
+  registrado_por: number | null;
   created_at: string;
+  alumno: AsistenciaAlumno | null;
+  maestro: AsistenciaMaestro | null;
 }
