@@ -32,6 +32,7 @@ export class Users implements OnInit {
 
   allUsers = signal<User[]>([]);
   roles = signal<Rol[]>([]);
+  loading = signal(true);
   searchTerm = signal('');
   roleFilter = signal<number | null | undefined>(undefined);
   page = signal(1);
@@ -94,14 +95,28 @@ export class Users implements OnInit {
 
   private loadRoles(): void {
     this.api.getRoles().subscribe({
-      next: (data) => this.roles.set(data),
+      next: (data) => {
+        this.roles.set(data);
+        this.tryFinishLoading();
+      },
     });
   }
 
   private loadUsers(): void {
     this.api.getUsers(true).subscribe({
-      next: (data) => this.allUsers.set(data),
+      next: (data) => {
+        this.allUsers.set(data);
+        this.tryFinishLoading();
+      },
     });
+  }
+
+  private pending = 2;
+  private tryFinishLoading(): void {
+    this.pending--;
+    if (this.pending <= 0) {
+      this.loading.set(false);
+    }
   }
 
   private async showToast(message: string, color: 'success' | 'danger'): Promise<void> {

@@ -27,6 +27,7 @@ export class Alumnos implements OnInit {
   allAlumnos = signal<Alumno[]>([]);
   maestros = signal<Maestro[]>([]);
   ultimaAsistencia = signal<Map<number, string>>(new Map());
+  loading = signal(true);
   searchTerm = signal('');
   ramaFilter = signal('');
   page = signal(1);
@@ -43,11 +44,21 @@ export class Alumnos implements OnInit {
   ngOnInit(): void {
     this.api.getAlumnos().subscribe({
       next: (data) => this.allAlumnos.set(data),
+      complete: () => this.tryFinishLoading(),
     });
     this.api.getMaestros().subscribe({
       next: (data) => this.maestros.set(data),
+      complete: () => this.tryFinishLoading(),
     });
     this.loadAsistencias();
+  }
+
+  private pendingLoads = 3;
+  private tryFinishLoading(): void {
+    this.pendingLoads--;
+    if (this.pendingLoads <= 0) {
+      this.loading.set(false);
+    }
   }
 
   private loadAsistencias(): void {
@@ -62,13 +73,19 @@ export class Alumnos implements OnInit {
         }
         this.ultimaAsistencia.set(map);
       },
+      complete: () => this.tryFinishLoading(),
     });
   }
 
   maestroNombre(maestroId: number): string {
     const m = this.maestros().find((x) => x.id === maestroId);
     if (!m) return `ID #${maestroId}`;
-    return m.user?.full_name ?? `${m.nombre} ${m.apellido_paterno.charAt(0)}.`;
+    return m.nombre;
+  }
+
+  maestroApellido(maestroId: number): string {
+    const m = this.maestros().find((x) => x.id === maestroId);
+    return m ? m.apellido_paterno : '';
   }
 
   edad(fechaNacimiento: string): number {
@@ -91,7 +108,7 @@ export class Alumnos implements OnInit {
   asistenciaStr(alumnoId: number): string {
     const fecha = this.ultimaAsistencia().get(alumnoId);
     if (!fecha) return '—';
-    const d = new Date(fecha + 'T00:00:00');
+    const d = new Date(fecha);
     return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 

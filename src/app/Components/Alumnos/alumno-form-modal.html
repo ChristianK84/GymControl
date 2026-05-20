@@ -49,7 +49,7 @@
         <div class="field-row flex-1">
           <label class="field-label" for="rama">Rama</label>
           <select id="rama" class="field-select" [class.field-error]="errors['rama']" [(ngModel)]="rama">
-            <option value="" disabled>Seleccione</option>
+            <option value="" disabled selected>Seleccione una opción</option>
             <option value="Varonil">Varonil</option>
             <option value="Femenil">Femenil</option>
           </select>
@@ -60,7 +60,7 @@
         <div class="field-row flex-1">
           <label class="field-label" for="maestro">Entrenador</label>
           <select id="maestro" class="field-select" [class.field-error]="errors['maestroId']" [(ngModel)]="maestroId">
-            <option [ngValue]="undefined" disabled>Seleccione</option>
+            <option [ngValue]="undefined" disabled selected>Seleccione una opción</option>
             @for (m of maestros; track m.id) {
               <option [ngValue]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</option>
             }
@@ -71,6 +71,42 @@
           <label class="field-label" for="fi">Fecha Inscripción</label>
           <input id="fi" type="date" class="field-input" [(ngModel)]="fechaInscripcion" />
         </div>
+      </div>
+    </div>
+
+    <!-- Fotografía -->
+    <div class="section">
+      <h3 class="section-title">Fotografía</h3>
+      <div class="photo-upload">
+        <input
+          type="file"
+          accept="image/*"
+          style="display:none"
+          #fileInput
+          (change)="onFileSelected($event)"
+        />
+        @if (photoPreview || currentPhotoUrl) {
+          <div class="photo-preview">
+            <img [src]="photoPreview || currentPhotoUrl" alt="Vista previa" />
+            <button type="button" class="photo-remove-btn" (click)="removePhoto()" title="Quitar foto">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </div>
+        } @else {
+          <button type="button" class="photo-placeholder" (click)="fileInput.click()">
+            <ion-icon name="camera-outline"></ion-icon>
+            <span>Agregar fotografía</span>
+          </button>
+        }
+        @if (photoPreview || currentPhotoUrl) {
+          <button type="button" class="photo-change-btn" (click)="fileInput.click()">
+            <ion-icon name="cloud-upload-outline"></ion-icon>
+            <span>Cambiar foto</span>
+          </button>
+        }
+        @if (errors['photo']) {
+          <span class="error-msg">{{ errors['photo'] }}</span>
+        }
       </div>
     </div>
 
@@ -138,7 +174,19 @@
       <div class="inline-fields">
         <div class="field-row flex-1">
           <label class="field-label">Tipo Sangre</label>
-          <input type="text" class="field-input" [(ngModel)]="tipoSangre" placeholder="Ej: O+" />
+          <select class="field-select" [class.field-error]="errors['tipoSangre']" [(ngModel)]="tipoSangre">
+            <option value="" disabled selected>Seleccione una opción</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+            <option value="">No lo sé</option>
+          </select>
+          @if (errors['tipoSangre']) { <span class="error-msg">{{ errors['tipoSangre'] }}</span> }
         </div>
         <div class="field-row flex-1">
           <label class="field-label">NSS</label>
@@ -171,7 +219,13 @@
   <ion-toolbar>
     <ion-buttons slot="end">
       <ion-button class="btn-cancel" (click)="dismiss()">Cancelar</ion-button>
-      <ion-button class="btn-save" (click)="save()">{{ isEdit ? 'Guardar Cambios' : 'Crear Alumno' }}</ion-button>
+      <ion-button class="btn-save" (click)="save()" [disabled]="uploading()">
+        @if (uploading()) {
+          <ion-spinner name="lines-small"></ion-spinner>
+        } @else {
+          {{ isEdit ? 'Guardar Cambios' : 'Crear Alumno' }}
+        }
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-footer>

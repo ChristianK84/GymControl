@@ -1,22 +1,26 @@
-import { Component, inject, Input, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, Input, OnInit, ChangeDetectorRef, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
-  IonButton, IonIcon, IonFooter, ModalController,
+  IonButton, IonIcon, IonFooter, IonSpinner, ModalController,
+  ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { closeOutline } from 'ionicons/icons';
+import { closeOutline, cloudUploadOutline, cameraOutline } from 'ionicons/icons';
 import { ApiService } from '../../Services/api-service';
 import { Alumno } from '../../Models/alumnos';
 import { Maestro } from '../../Models/maestros';
+
+const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dyvqspnz7/image/upload';
+const UPLOAD_PRESET = 'gymcontrol_upload';
 
 @Component({
   selector: 'app-alumno-form-modal',
   imports: [
     FormsModule,
     IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
-    IonButton, IonIcon, IonFooter,
+    IonButton, IonIcon, IonFooter, IonSpinner,
   ],
   templateUrl: './alumno-form-modal.html',
   styleUrl: './alumno-form-modal.css',
@@ -28,6 +32,7 @@ export class AlumnoFormModal implements OnInit {
   private modalCtrl = inject(ModalController);
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
+  private toastCtrl = inject(ToastController);
 
   get isEdit(): boolean {
     return !!this.alumno;
@@ -41,6 +46,12 @@ export class AlumnoFormModal implements OnInit {
   fechaNacimiento = '';
   maestroId: number | undefined = undefined;
   fechaInscripcion = '';
+
+  // Photo
+  selectedFile: File | null = null;
+  photoPreview: string | null = null;
+  currentPhotoUrl: string | null = null;
+  uploading = signal(false);
 
   // Tutor
   tutorNombre = '';
@@ -66,7 +77,7 @@ export class AlumnoFormModal implements OnInit {
   errors: Record<string, string> = {};
 
   constructor() {
-    addIcons({ closeOutline });
+    addIcons({ closeOutline, cloudUploadOutline, cameraOutline });
   }
 
   ngOnInit(): void {
@@ -80,6 +91,7 @@ export class AlumnoFormModal implements OnInit {
       this.fechaNacimiento = this.alumno.fecha_nacimiento;
       this.maestroId = this.alumno.maestro_id;
       this.fechaInscripcion = this.alumno.fecha_inscripcion;
+      this.currentPhotoUrl = this.alumno.fotografia ?? null;
 
       if (this.alumno.tutor) {
         this.tutorNombre = this.alumno.tutor.nombre;
@@ -108,6 +120,44 @@ export class AlumnoFormModal implements OnInit {
     this.cdr.detectChanges();
   }
 
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.photoPreview = reader.result as string;
+        this.cdr.detectChanges();
+      };
+      reader.readAsDataURL(this.selectedFile);
+    }
+  }
+
+  removePhoto(): void {
+    this.selectedFile = null;
+    this.photoPreview = null;
+    this.currentPhotoUrl = null;
+  }
+
+  private async uploadToCloudinary(file: File): Promise<string> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', UPLOAD_PRESET);
+
+    const res = await fetch(CLOUDINARY_URL, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!res.ok) {
+      throw new Error('Error al subir la imagen');
+    }
+
+    const data = await res.json();
+    return data.secure_url as string;
+  }
+
   dismiss(): void {
     this.modalCtrl.dismiss(null, 'cancel');
   }
@@ -119,6 +169,7 @@ export class AlumnoFormModal implements OnInit {
     if (!this.rama) this.errors['rama'] = 'Seleccione una rama';
     if (!this.fechaNacimiento) this.errors['fechaNacimiento'] = 'Requerida';
     if (this.maestroId == null) this.errors['maestroId'] = 'Seleccione un entrenador';
+    if (!this.tipoSangre) this.errors['tipoSangre'] = 'Seleccione un tipo de sangre';
     if (!this.isEdit) {
       if (!this.tutorNombre.trim()) this.errors['tutorNombre'] = 'Requerido';
       if (!this.tutorApellidoP.trim()) this.errors['tutorApellidoP'] = 'Requerido';
@@ -130,11 +181,28 @@ export class AlumnoFormModal implements OnInit {
     return Object.keys(this.errors).length === 0;
   }
 
-  save(): void {
+  async save(): Promise<void> {
     if (!this.validate()) return;
 
+    this.uploading.set(true);
+
+    let fotoUrl: string | null | undefined;
+
+    if (this.selectedFile) {
+      try {
+        fotoUrl = await this.uploadToCloudinary(this.selectedFile);
+      } catch {
+        this.errors['photo'] = 'Error al subir la foto';
+        this.showToast('Error al subir la imagen a Cloudinary', 'danger');
+        this.uploading.set(false);
+        return;
+      }
+    } else if (this.photoPreview === null && this.currentPhotoUrl === null) {
+      fotoUrl = null;
+    }
+
     if (this.isEdit) {
-      this.api.updateAlumno(this.alumno!.id, {
+      const body: Parameters<typeof this.api.updateAlumno>[1] = {
         nombrecompleto: this.nombrecompleto || undefined,
         apellido_paterno: this.apellidoPaterno || undefined,
         apellido_materno: this.apellidoMaterno || null,
@@ -142,7 +210,8 @@ export class AlumnoFormModal implements OnInit {
         fecha_nacimiento: this.fechaNacimiento || undefined,
         maestro_id: this.maestroId,
         fecha_inscripcion: this.fechaInscripcion || undefined,
-        ...this.tutorChanged() && {
+        ...(fotoUrl !== undefined ? { fotografia: fotoUrl } : {}),
+        ...(this.tutorChanged() && {
           tutor: {
             nombre: this.tutorNombre || undefined,
             apellido_paterno: this.tutorApellidoP || undefined,
@@ -150,16 +219,16 @@ export class AlumnoFormModal implements OnInit {
             telefono: this.tutorTelefono || undefined,
             email: this.tutorEmail || undefined,
           },
-        },
-        ...this.contactoChanged() && {
+        }),
+        ...(this.contactoChanged() && {
           contacto_emergencia: {
             nombre: this.contactoNombre || undefined,
             apellido_paterno: this.contactoApellidoP || undefined,
             apellido_materno: this.contactoApellidoM || null,
             telefono: this.contactoTelefono || undefined,
           },
-        },
-        ...this.fichaChanged() && {
+        }),
+        ...(this.fichaChanged() && {
           ficha_medica: {
             tipo_sangre: this.tipoSangre || null,
             alergias: this.alergias || null,
@@ -167,9 +236,18 @@ export class AlumnoFormModal implements OnInit {
             condiciones_medicas: this.condicionesMedicas || null,
             nss: this.nss || null,
           },
-        },
-      }).subscribe({
+        }),
+      };
+
+      this.api.updateAlumno(this.alumno!.id, body).subscribe({
         next: (updated) => this.modalCtrl.dismiss(updated, 'saved'),
+        error: (err) => {
+          this.uploading.set(false);
+          this.showToast(
+            err.status === 401 ? 'Sesión expirada, inicia de nuevo' : 'Error al guardar los cambios',
+            'danger',
+          );
+        },
       });
     } else {
       this.api.createAlumno({
@@ -180,6 +258,7 @@ export class AlumnoFormModal implements OnInit {
         fecha_nacimiento: this.fechaNacimiento,
         maestro_id: this.maestroId!,
         fecha_inscripcion: this.fechaInscripcion,
+        fotografia: fotoUrl ?? null,
         tutor: {
           nombre: this.tutorNombre,
           apellido_paterno: this.tutorApellidoP,
@@ -202,8 +281,20 @@ export class AlumnoFormModal implements OnInit {
         },
       }).subscribe({
         next: (created) => this.modalCtrl.dismiss(created, 'saved'),
+        error: (err) => {
+          this.uploading.set(false);
+          this.showToast(
+            err.status === 401 ? 'Sesión expirada, inicia de nuevo' : 'Error al crear el alumno',
+            'danger',
+          );
+        },
       });
     }
+  }
+
+  private async showToast(message: string, color: 'success' | 'danger'): Promise<void> {
+    const toast = await this.toastCtrl.create({ message, duration: 3000, color, position: 'top' });
+    await toast.present();
   }
 
   private tutorChanged(): boolean {

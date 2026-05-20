@@ -57,35 +57,48 @@
         </tr>
       </thead>
       <tbody>
-        @for (user of pagedUsers(); track user.id) {
-          <tr>
-            <td class="td-username">{{ user.username }}</td>
-            <td>{{ user.full_name }}</td>
-            <td>
-              <span class="role-badge" [class.role-admin]="user.role_id === 1">
-                {{ roleName().get(user.role_id) ?? '—' }}
-              </span>
-            </td>
-            <td class="td-date">{{ user.created_at | date: 'dd/MM/yyyy' }}</td>
-            <td>
-              <span class="status-badge" [class.status-inactive]="!user.is_active">
-                {{ user.is_active ? 'Activo' : 'Inactivo' }}
-              </span>
-            </td>
-            <td class="td-actions">
-              <button class="action-btn action-edit" title="Editar" (click)="editUser(user)">
-                <ion-icon name="pencil-outline"></ion-icon>
-              </button>
-              <button class="action-btn action-delete" title="Eliminar" (click)="deleteUser(user)">
-                <ion-icon name="trash-outline"></ion-icon>
-              </button>
-            </td>
-          </tr>
-        }
-        @empty {
-          <tr>
-            <td colspan="6" class="td-empty">No se encontraron usuarios</td>
-          </tr>
+        @if (loading()) {
+          @for (row of [1,2,3,4,5,6]; track row) {
+            <tr class="skeleton-row">
+              <td><span class="skeleton skeleton-text-lg"></span></td>
+              <td><span class="skeleton skeleton-text"></span></td>
+              <td><span class="skeleton skeleton-badge"></span></td>
+              <td><span class="skeleton skeleton-text-sm"></span></td>
+              <td><span class="skeleton skeleton-badge"></span></td>
+              <td><span class="skeleton skeleton-text-sm"></span></td>
+            </tr>
+          }
+        } @else {
+          @for (user of pagedUsers(); track user.id) {
+            <tr>
+              <td class="td-username">{{ user.username }}</td>
+              <td>{{ user.full_name }}</td>
+              <td>
+                <span class="role-badge" [class.role-admin]="user.role_id === 1">
+                  {{ roleName().get(user.role_id) ?? '—' }}
+                </span>
+              </td>
+              <td class="td-date">{{ user.created_at | date: 'dd/MM/yyyy' }}</td>
+              <td>
+                <span class="status-badge" [class.status-inactive]="!user.is_active">
+                  {{ user.is_active ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td class="td-actions">
+                <button class="action-btn action-edit" title="Editar" (click)="editUser(user)">
+                  <ion-icon name="pencil-outline"></ion-icon>
+                </button>
+                <button class="action-btn action-delete" title="Eliminar" (click)="deleteUser(user)">
+                  <ion-icon name="trash-outline"></ion-icon>
+                </button>
+              </td>
+            </tr>
+          }
+          @empty {
+            <tr>
+              <td colspan="6" class="td-empty">No se encontraron usuarios</td>
+            </tr>
+          }
         }
       </tbody>
     </table>
