@@ -6,3 +6,27 @@ html, body, ion-app {
 :root {
   --ion-font-family: 'Inter', sans-serif;
 }
+
+.custom-toast {
+  --color: #ffffff;
+  --border-radius: 0.75rem;
+  --box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  --width: auto;
+  --max-width: 360px;
+  --start: auto;
+  --end: 1rem;
+  top: 1rem;
+  right: 1rem;
+  left: auto;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: left;
+}
+.custom-toast::part(message) {
+  font-size: 0.95rem;
+  color: #ffffff;
+}
+.custom-toast::part(icon) {
+  font-size: 1.4rem;
+  color: #ffffff;
+}

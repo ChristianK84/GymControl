@@ -120,8 +120,13 @@ export class Users implements OnInit {
   }
 
   private async showToast(message: string, color: 'success' | 'danger'): Promise<void> {
-    const toast = await this.toastCtrl.create({ message, duration: 2500, color, position: 'top' });
-    toast.present();
+    const icons: Record<string, string> = { success: 'checkmark-circle', danger: 'close-circle' };
+    const toast = await this.toastCtrl.create({
+      message, duration: 2500, color, position: 'top',
+      icon: icons[color],
+      cssClass: 'custom-toast',
+    });
+    await toast.present();
   }
 
   clearFilters(): void {

@@ -42,12 +42,9 @@
       <thead>
         <tr>
           <th>Alumno</th>
-          <th>Edad</th>
-          <th>Rama</th>
           <th>Entrenador</th>
           <th>Última Asistencia</th>
           <th>Estado</th>
-          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -56,19 +53,15 @@
             <tr class="skeleton-row">
               <td><div class="skeleton-cell"><span class="skeleton skeleton-avatar"></span><span class="skeleton skeleton-text skeleton-text-lg"></span></div></td>
               <td><span class="skeleton skeleton-text"></span></td>
-              <td><span class="skeleton skeleton-badge"></span></td>
-              <td><span class="skeleton skeleton-text"></span></td>
               <td><span class="skeleton skeleton-text"></span></td>
               <td><span class="skeleton skeleton-badge"></span></td>
-              <td><span class="skeleton skeleton-text-sm"></span></td>
             </tr>
           }
         } @else {
           @for (alumno of pagedAlumnos(); track alumno.id) {
             <tr>
               <!-- Alumno -->
-              <td>
-                <div class="alumno-cell">
+              <td class="td-clickable" (click)="viewProfile(alumno)"><div class="alumno-cell">
                   @if (alumno.fotografia) {
                     <img class="alumno-avatar" [src]="alumno.fotografia" [alt]="alumno.nombrecompleto" />
                   } @else {
@@ -79,16 +72,9 @@
                   <div class="alumno-name-group">
                     <span class="alumno-name">{{ alumno.nombrecompleto }}</span>
                     <span class="alumno-apellido">{{ alumno.apellido_paterno }} {{ alumno.apellido_materno ?? '' }}</span>
+                    <span class="alumno-edad">{{ edad(alumno.fecha_nacimiento) }} años</span>
                   </div>
                 </div>
-              </td>
-              <!-- Edad -->
-              <td class="td-muted">{{ edad(alumno.fecha_nacimiento) }} años</td>
-              <!-- Rama -->
-              <td>
-                <span class="rama-badge" [style.background-color]="ramaColor(alumno.rama) + '18'" [style.color]="ramaColor(alumno.rama)">
-                  {{ alumno.rama }}
-                </span>
               </td>
               <!-- Entrenador -->
               <td>
@@ -105,20 +91,11 @@
                   {{ alumno.is_active ? 'Activo' : 'Inactivo' }}
                 </span>
               </td>
-              <!-- Acciones -->
-              <td class="td-actions">
-                <button class="action-btn action-edit" title="Editar" (click)="editAlumno(alumno)">
-                  <ion-icon name="pencil-outline"></ion-icon>
-                </button>
-                <button class="action-btn action-delete" title="Eliminar" (click)="deleteAlumno(alumno)">
-                  <ion-icon name="trash-outline"></ion-icon>
-                </button>
-              </td>
             </tr>
           }
           @empty {
             <tr>
-              <td colspan="7" class="td-empty">
+              <td colspan="4" class="td-empty">
                 <div class="empty-state">
                   <ion-icon name="people-outline"></ion-icon>
                   <p>No se encontraron alumnos</p>

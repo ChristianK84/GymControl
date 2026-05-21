@@ -1,0 +1,343 @@
+<div class="profile-page">
+  @if (loading()) {
+    <div class="loading-container">
+      <ion-spinner name="lines-small"></ion-spinner>
+    </div>
+  } @else if (alumno(); as a) {
+    <!-- Profile Header -->
+    <header class="profile-header">
+      <div class="profile-photo" [class.editing]="editing()">
+        <input type="file" accept="image/*" style="display:none" #fileInput (change)="onFileSelected($event)" />
+        @if (photoPreview) {
+          <img [src]="photoPreview" [alt]="a.nombrecompleto" />
+        } @else if (a.fotografia && !removePhotoFlag) {
+          <img [src]="a.fotografia" [alt]="a.nombrecompleto" />
+        } @else {
+          <div class="profile-photo-fallback">
+            <ion-icon name="person-outline"></ion-icon>
+          </div>
+        }
+        @if (editing()) {
+          <div class="photo-edit-overlay">
+            <button type="button" class="photo-edit-btn" (click)="fileInput.click()" title="Cambiar foto">
+              <ion-icon name="cloud-upload-outline"></ion-icon>
+            </button>
+          </div>
+        }
+      </div>
+      <div class="profile-info">
+        <div class="profile-name-row">
+          <h1 class="profile-name">{{ a.nombrecompleto }} {{ a.apellido_paterno }}</h1>
+          <span class="status-pill" [class.status-inactive]="!a.is_active">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+            {{ a.is_active ? 'Activa' : 'Inactiva' }}
+          </span>
+        </div>
+        <p class="profile-group">
+          <span class="rama-badge" [class.rama-varonil]="a.rama === 'Varonil'" [class.rama-femenil]="a.rama === 'Femenil'">{{ a.rama }}</span>
+          @if (maestro()) {
+            <span class="coach-badge">
+              {{ a.rama === 'Varonil' ? 'Entrenado' : 'Entrenada' }} por: <strong>{{ maestro()!.nombre }} {{ maestro()!.apellido_paterno }}</strong>
+            </span>
+          }
+        </p>
+        @if (editing()) {
+          <div class="edit-btns">
+            <button class="btn-cancel-edit" (click)="cancelEditing()">
+              <ion-icon name="close-outline"></ion-icon>
+              Cancelar
+            </button>
+            <button class="btn-save-edit" (click)="saveChanges()" [disabled]="saving()">
+              @if (saving()) {
+                <ion-spinner name="lines-small"></ion-spinner>
+              } @else {
+                <ion-icon name="checkmark-outline"></ion-icon>
+              }
+              Guardar Cambios
+            </button>
+          </div>
+        } @else {
+          <button class="edit-btn" (click)="startEditing()">
+            <ion-icon name="create-outline"></ion-icon>
+            Editar Perfil
+          </button>
+        }
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="tabs-bar">
+      <button class="tab active">
+        <ion-icon name="person-outline"></ion-icon>
+        Información General
+      </button>
+      <button class="tab">
+        <ion-icon name="receipt-outline"></ion-icon>
+        Membresía y Pagos
+      </button>
+      <button class="tab">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+        Historial de Asistencias
+      </button>
+      <button class="tab">
+        <ion-icon name="document-text-outline"></ion-icon>
+        Notas
+      </button>
+    </nav>
+
+    <!-- Bento Grid -->
+    <div class="bento-grid">
+
+      <!-- Datos Personales -->
+      <div class="card card-wide">
+        <h3 class="card-title">
+          <ion-icon name="id-card-outline"></ion-icon>
+          Datos Personales
+        </h3>
+        <div class="data-grid">
+          <div class="data-item">
+            <span class="data-label">Nombre Completo</span>
+            @if (editing()) {
+              <input class="field-input" [(ngModel)]="editNombre" />
+            } @else {
+              <span class="data-value">{{ a.nombrecompleto }}</span>
+            }
+          </div>
+          <div class="data-item">
+            <span class="data-label">Apellido Paterno</span>
+            @if (editing()) {
+              <input class="field-input" [(ngModel)]="editApellidoP" />
+            } @else {
+              <span class="data-value">{{ a.apellido_paterno }}</span>
+            }
+          </div>
+          <div class="data-item">
+            <span class="data-label">Apellido Materno</span>
+            @if (editing()) {
+              <input class="field-input" [(ngModel)]="editApellidoM" placeholder="Opcional" />
+            } @else {
+              <span class="data-value">{{ a.apellido_materno || '—' }}</span>
+            }
+          </div>
+          <div class="data-item">
+            <span class="data-label">Fecha de Nacimiento</span>
+            @if (editing()) {
+              <input type="date" class="field-input" [(ngModel)]="editFechaNac" />
+            } @else {
+              <span class="data-value">{{ fechaFormato(a.fecha_nacimiento) }}</span>
+            }
+          </div>
+          <div class="data-item">
+            <span class="data-label">Edad</span>
+            <span class="data-value">{{ edad(a.fecha_nacimiento) }} años</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">Rama</span>
+            @if (editing()) {
+              <select class="field-select" [(ngModel)]="editRama">
+                <option value="Varonil">Varonil</option>
+                <option value="Femenil">Femenil</option>
+              </select>
+            } @else {
+              <span class="data-value">{{ a.rama }}</span>
+            }
+          </div>
+          <div class="data-item">
+            <span class="data-label">Entrenador</span>
+            @if (editing()) {
+              <select class="field-select" [(ngModel)]="editMaestroId">
+                <option [ngValue]="null" disabled>Seleccione</option>
+                @for (m of allMaestros(); track m.id) {
+                  <option [ngValue]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</option>
+                }
+              </select>
+            } @else {
+              <span class="data-value">{{ maestro()?.nombre ?? '—' }} {{ maestro()?.apellido_paterno ?? '' }}</span>
+            }
+          </div>
+          <div class="data-item">
+            <span class="data-label">Tipo de Sangre</span>
+            @if (editing()) {
+              <select class="field-select" [(ngModel)]="editTipoSangre">
+                <option value="" disabled>Seleccione una opción</option>
+                <option value="A+">A+</option><option value="A-">A-</option>
+                <option value="B+">B+</option><option value="B-">B-</option>
+                <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                <option value="O+">O+</option><option value="O-">O-</option>
+                <option value="">No lo sé</option>
+              </select>
+            } @else {
+              <span class="data-value">{{ a.ficha_medica?.tipo_sangre || 'No especificado' }}</span>
+            }
+          </div>
+          <div class="data-item">
+            <span class="data-label">NSS</span>
+            @if (editing()) {
+              <input class="field-input" [(ngModel)]="editNss" placeholder="Número de seguro social" />
+            } @else {
+              <span class="data-value">{{ a.ficha_medica?.nss || 'No registrado' }}</span>
+            }
+          </div>
+          <div class="data-item">
+            <span class="data-label">Fecha de Ingreso</span>
+            @if (editing()) {
+              <input type="date" class="field-input" [(ngModel)]="editFechaIns" />
+            } @else {
+              <span class="data-value">{{ fechaFormato(a.fecha_inscripcion) }}</span>
+            }
+          </div>
+          <div class="data-item">
+            <span class="data-label">Estado</span>
+            @if (editing()) {
+              <select class="field-select" [(ngModel)]="editIsActive">
+                <option [ngValue]="true">Activo</option>
+                <option [ngValue]="false">Inactivo</option>
+              </select>
+            } @else {
+              <span class="data-value">{{ a.is_active ? 'Activo' : 'Inactivo' }}</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Información Médica -->
+      <div class="card card-medical">
+        <h3 class="card-title">
+          <ion-icon name="medical-outline"></ion-icon>
+          Información Médica
+        </h3>
+        @if (editing()) {
+          <div class="edit-medical">
+            <div class="field-row">
+              <label class="field-label">Alergias</label>
+              <input class="field-input" [(ngModel)]="editAlergias" placeholder="Describa alergias" />
+            </div>
+            <div class="field-row">
+              <label class="field-label">Medicamentos</label>
+              <input class="field-input" [(ngModel)]="editMedicamentos" placeholder="Medicamentos actuales" />
+            </div>
+            <div class="field-row">
+              <label class="field-label">Condiciones Médicas</label>
+              <input class="field-input" [(ngModel)]="editCondiciones" placeholder="Condiciones especiales" />
+            </div>
+          </div>
+        } @else {
+          <div class="medical-alerts">
+            @if (a.ficha_medica?.alergias) {
+              <div class="alert-card alert-danger">
+                <ion-icon name="warning-outline"></ion-icon>
+                <div>
+                  <p class="alert-title">Alergias</p>
+                  <p class="alert-text">{{ a.ficha_medica!.alergias }}</p>
+                </div>
+              </div>
+            }
+            @if (a.ficha_medica?.condiciones_medicas) {
+              <div class="alert-card alert-info">
+                <ion-icon name="star-outline"></ion-icon>
+                <div>
+                  <p class="alert-title">Condiciones Médicas</p>
+                  <p class="alert-text">{{ a.ficha_medica!.condiciones_medicas }}</p>
+                </div>
+              </div>
+            }
+            @if (a.ficha_medica?.medicamentos) {
+              <div class="alert-card alert-info">
+                <ion-icon name="medical-outline"></ion-icon>
+                <div>
+                  <p class="alert-title">Medicamentos</p>
+                  <p class="alert-text">{{ a.ficha_medica!.medicamentos }}</p>
+                </div>
+              </div>
+            }
+            @if (!a.ficha_medica?.alergias && !a.ficha_medica?.condiciones_medicas && !a.ficha_medica?.medicamentos) {
+              <div class="alert-card alert-info">
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+                <div>
+                  <p class="alert-title">Sin registro médico</p>
+                  <p class="alert-text">No se han registrado alergias ni condiciones médicas.</p>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Tutor -->
+      <div class="card">
+        <h3 class="card-title">
+          <ion-icon name="people-outline"></ion-icon>
+          Tutor Principal
+        </h3>
+        @if (editing()) {
+          <div class="edit-form-grid">
+            <div class="field-row"><label class="field-label">Nombre</label><input class="field-input" [(ngModel)]="editTutorNombre" /></div>
+            <div class="field-row"><label class="field-label">Apellido Paterno</label><input class="field-input" [(ngModel)]="editTutorApellidoP" /></div>
+            <div class="field-row"><label class="field-label">Apellido Materno</label><input class="field-input" [(ngModel)]="editTutorApellidoM" placeholder="Opcional" /></div>
+            <div class="field-row"><label class="field-label">Teléfono</label><input type="tel" class="field-input" [(ngModel)]="editTutorTelefono" /></div>
+            <div class="field-row"><label class="field-label">Email</label><input type="email" class="field-input" [(ngModel)]="editTutorEmail" placeholder="Opcional" /></div>
+          </div>
+        } @else if (a.tutor) {
+          <div class="tutor-info">
+            <div class="tutor-header">
+              <div class="tutor-avatar"><ion-icon name="person-outline"></ion-icon></div>
+              <div>
+                <p class="tutor-name">{{ a.tutor.nombre }} {{ a.tutor.apellido_paterno }}</p>
+                <p class="tutor-relation">Tutor</p>
+              </div>
+            </div>
+            <div class="tutor-details">
+              <div class="tutor-field">
+                <span class="data-label"><ion-icon name="call-outline"></ion-icon> Teléfono</span>
+                <span class="data-value">{{ a.tutor.telefono }}</span>
+              </div>
+              @if (a.tutor.email) {
+                <div class="tutor-field">
+                  <span class="data-label"><ion-icon name="mail-outline"></ion-icon> Email</span>
+                  <span class="data-value">{{ a.tutor.email }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        } @else {
+          <p class="empty-text">No se ha registrado un tutor.</p>
+        }
+      </div>
+
+      <!-- Contacto de Emergencia -->
+      <div class="card">
+        <h3 class="card-title">
+          <ion-icon name="call-outline"></ion-icon>
+          Contacto de Emergencia
+        </h3>
+        @if (editing()) {
+          <div class="edit-form-grid">
+            <div class="field-row"><label class="field-label">Nombre</label><input class="field-input" [(ngModel)]="editContactoNombre" /></div>
+            <div class="field-row"><label class="field-label">Apellido Paterno</label><input class="field-input" [(ngModel)]="editContactoApellidoP" /></div>
+            <div class="field-row"><label class="field-label">Apellido Materno</label><input class="field-input" [(ngModel)]="editContactoApellidoM" placeholder="Opcional" /></div>
+            <div class="field-row"><label class="field-label">Teléfono</label><input type="tel" class="field-input" [(ngModel)]="editContactoTelefono" /></div>
+          </div>
+        } @else if (a.contacto_emergencia) {
+          <div class="tutor-info">
+            <div class="tutor-header">
+              <div class="tutor-avatar emergency"><ion-icon name="shield-checkmark-outline"></ion-icon></div>
+              <div>
+                <p class="tutor-name">{{ a.contacto_emergencia.nombre }} {{ a.contacto_emergencia.apellido_paterno }}</p>
+                <p class="tutor-relation">Contacto de emergencia</p>
+              </div>
+            </div>
+            <div class="tutor-details">
+              <div class="tutor-field">
+                <span class="data-label"><ion-icon name="call-outline"></ion-icon> Teléfono</span>
+                <span class="data-value">{{ a.contacto_emergencia.telefono }}</span>
+              </div>
+            </div>
+          </div>
+        } @else {
+          <p class="empty-text">No se ha registrado contacto de emergencia.</p>
+        }
+      </div>
+
+    </div>
+  }
+</div>

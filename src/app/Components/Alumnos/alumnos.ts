@@ -1,6 +1,7 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { IonIcon, AlertController, ToastController, ModalController } from '@ionic/angular/standalone';
+import { IonIcon, ToastController, ModalController } from '@ionic/angular/standalone';
 import { ApiService } from '../../Services/api-service';
 import { Alumno } from '../../Models/alumnos';
 import { Maestro } from '../../Models/maestros';
@@ -9,7 +10,6 @@ import { addIcons } from 'ionicons';
 import {
   addOutline, searchOutline, closeCircleOutline,
   chevronBackOutline, chevronForwardOutline,
-  pencilOutline, trashOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -20,9 +20,9 @@ import {
 })
 export class Alumnos implements OnInit {
   private api = inject(ApiService);
-  private alertCtrl = inject(AlertController);
   private toastCtrl = inject(ToastController);
   private modalCtrl = inject(ModalController);
+  private router = inject(Router);
 
   allAlumnos = signal<Alumno[]>([]);
   maestros = signal<Maestro[]>([]);
@@ -34,11 +34,7 @@ export class Alumnos implements OnInit {
   readonly pageSize = 8;
 
   constructor() {
-    addIcons({
-      addOutline, searchOutline, closeCircleOutline,
-      chevronBackOutline, chevronForwardOutline,
-      pencilOutline, trashOutline,
-    });
+    addIcons({ addOutline, searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline });
   }
 
   ngOnInit(): void {
@@ -101,10 +97,6 @@ export class Alumnos implements OnInit {
     return nombre.trim().split(' ').map((p) => p.charAt(0).toUpperCase()).slice(0, 2).join('');
   }
 
-  ramaColor(rama: string): string {
-    return rama === 'Varonil' ? '#2563eb' : '#e30613';
-  }
-
   asistenciaStr(alumnoId: number): string {
     const fecha = this.ultimaAsistencia().get(alumnoId);
     if (!fecha) return '—';
@@ -156,6 +148,10 @@ export class Alumnos implements OnInit {
     if (p >= 1 && p <= this.totalPages()) this.page.set(p);
   }
 
+  viewProfile(alumno: Alumno): void {
+    this.router.navigate(['/dashboard/alumnos', alumno.id]);
+  }
+
   async addAlumno(): Promise<void> {
     const modal = await this.modalCtrl.create({
       component: AlumnoFormModal,
@@ -171,50 +167,13 @@ export class Alumnos implements OnInit {
     }
   }
 
-  async editAlumno(alumno: Alumno): Promise<void> {
-    const modal = await this.modalCtrl.create({
-      component: AlumnoFormModal,
-      componentProps: { alumno, maestros: this.maestros() },
-    });
-    await modal.present();
-    const { role } = await modal.onDidDismiss();
-    if (role === 'saved') {
-      this.api.getAlumnos().subscribe({
-        next: (data) => this.allAlumnos.set(data),
-      });
-      this.showToast('Alumno actualizado con éxito', 'success');
-    }
-  }
-
-  async deleteAlumno(alumno: Alumno): Promise<void> {
-    const alert = await this.alertCtrl.create({
-      header: 'Eliminar Alumno',
-      message: `¿Estás seguro de eliminar a "${alumno.nombrecompleto}"? Esta acción no se puede deshacer.`,
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Eliminar',
-          role: 'destructive',
-          cssClass: 'alert-delete-btn',
-          handler: () => {
-            this.api.deleteAlumno(alumno.id).subscribe({
-              next: () => {
-                this.api.getAlumnos().subscribe({
-                  next: (data) => this.allAlumnos.set(data),
-                });
-                this.showToast('Alumno eliminado', 'success');
-              },
-              error: () => this.showToast('Error al eliminar', 'danger'),
-            });
-          },
-        },
-      ],
-    });
-    await alert.present();
-  }
-
   private async showToast(message: string, color: 'success' | 'danger' = 'success'): Promise<void> {
-    const toast = await this.toastCtrl.create({ message, duration: 2500, color, position: 'top' });
+    const icons: Record<string, string> = { success: 'checkmark-circle', danger: 'close-circle' };
+    const toast = await this.toastCtrl.create({
+      message, duration: 2500, color, position: 'top',
+      icon: icons[color],
+      cssClass: 'custom-toast',
+    });
     await toast.present();
   }
 }

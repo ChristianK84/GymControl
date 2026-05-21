@@ -293,10 +293,14 @@ export class AlumnoFormModal implements OnInit {
   }
 
   private async showToast(message: string, color: 'success' | 'danger'): Promise<void> {
-    const toast = await this.toastCtrl.create({ message, duration: 3000, color, position: 'top' });
+    const icons: Record<string, string> = { success: 'checkmark-circle', danger: 'close-circle' };
+    const toast = await this.toastCtrl.create({
+      message, duration: 3000, color, position: 'top',
+      icon: icons[color],
+      cssClass: 'custom-toast',
+    });
     await toast.present();
   }
-
   private tutorChanged(): boolean {
     return this.tutorNombre !== '' || this.tutorApellidoP !== '' || this.tutorTelefono !== '' || this.tutorEmail !== '';
   }

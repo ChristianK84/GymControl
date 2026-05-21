@@ -25,6 +25,11 @@ export const routes: Routes = [
           import('./Components/Alumnos/alumnos').then((m) => m.Alumnos),
       },
       {
+        path: 'alumnos/:id',
+        loadComponent: () =>
+          import('./Components/PerfilAlumno/perfil-alumno').then((m) => m.PerfilAlumno),
+      },
+      {
         path: 'usuarios',
         loadComponent: () =>
           import('./Components/Users/users').then((m) => m.Users),

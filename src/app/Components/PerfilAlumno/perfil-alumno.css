@@ -1,0 +1,646 @@
+.profile-page {
+  padding: clamp(1.5rem, 3vw, 3rem);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+/* ========== Profile Header ========== */
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .profile-header {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.profile-photo {
+  width: 8rem;
+  height: 8rem;
+  min-width: 8rem;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  position: relative;
+}
+
+.profile-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-photo-fallback {
+  width: 100%;
+  height: 100%;
+  background: #fedad5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2a1714;
+  font-size: 3rem;
+}
+
+.photo-edit-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.profile-photo:hover .photo-edit-overlay,
+.profile-photo:focus-within .photo-edit-overlay,
+.profile-photo.editing .photo-edit-overlay {
+  opacity: 1;
+}
+
+.photo-edit-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: transform 0.15s;
+  background: #16a34a;
+  color: #fff;
+}
+
+.photo-edit-btn:hover {
+  transform: scale(1.1);
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-name-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.profile-name {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #2a1714;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: rgba(34,197,94,0.1);
+  color: #16a34a;
+}
+
+.status-pill ion-icon {
+  font-size: 1rem;
+}
+
+.status-pill.status-inactive {
+  background: rgba(148,163,184,0.15);
+  color: #64748b;
+}
+
+.profile-group {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: #5e3f3b;
+  margin: 0 0 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rama-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.8rem;
+  border-radius: 999px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.rama-varonil {
+  background: #1a2744;
+  color: #c5d5f7;
+}
+
+.rama-femenil {
+  background: #e61d6e;
+  color: #ffe0ed;
+}
+
+.coach-badge {
+  font-size: 0.8rem;
+  color: #fff5f3;
+  background: #e30613;
+  border: 1px solid #b5000b;
+  border-radius: 999px;
+  padding: 0.25rem 0.85rem;
+}
+
+.coach-badge strong {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: #0f0f0f;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.15s;
+}
+
+.edit-btn:hover {
+  background: #2a2a2a;
+}
+
+.edit-btn:active {
+  transform: scale(0.98);
+}
+
+.edit-btn ion-icon {
+  font-size: 1.1rem;
+}
+
+/* ========== Edit Mode ========== */
+.edit-btns {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0;
+}
+
+.btn-cancel-edit, .btn-save-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.15s;
+}
+
+.btn-cancel-edit {
+  background: #dc2626;
+  color: #fff;
+}
+
+.btn-cancel-edit:hover {
+  background: #b91c1c;
+}
+
+.btn-save-edit {
+  background: #16a34a;
+  color: #fff;
+}
+
+.btn-save-edit:hover {
+  background: #15803d;
+}
+
+.btn-save-edit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-cancel-edit ion-icon, .btn-save-edit ion-icon {
+  font-size: 1.1rem;
+}
+
+.edit-name-input {
+  padding: 0.35rem 0.6rem;
+  border: 1px solid #e5e2e1;
+  border-radius: 0.5rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2a1714;
+  outline: none;
+  background: #faf8f7;
+  min-width: 120px;
+  max-width: 200px;
+}
+
+.edit-name-input:focus {
+  border-color: #2a1714;
+  background: #fff;
+}
+
+.edit-select {
+  max-width: 220px;
+}
+
+.edit-form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.edit-medical {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Form fields (reused from modal pattern) */
+.field-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.field-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #2a1714;
+}
+
+.field-input {
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #e5e2e1;
+  border-radius: 0.5rem;
+  background: #faf8f7;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #2a1714;
+  outline: none;
+  min-height: 40px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.field-input:focus {
+  border-color: #2a1714;
+  background: #fff;
+}
+
+.field-select {
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #e5e2e1;
+  border-radius: 0.5rem;
+  background: #faf8f7;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #2a1714;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  min-height: 40px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.field-select:focus {
+  border-color: #2a1714;
+  background: #fff;
+}
+
+/* ========== Navigation Tabs ========== */
+.tabs-bar {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #e9bcb6;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tab {
+  padding: 0.6rem 1rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #5e3f3b;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tab:hover {
+  color: #2a1714;
+}
+
+.tab ion-icon {
+  font-size: 1.1rem;
+}
+
+.tab.active {
+  color: #e30613;
+  border-bottom-color: #e30613;
+}
+
+.tab.active ion-icon {
+  --ionicon-stroke-width: 40px;
+}
+
+/* ========== Bento Grid ========== */
+.bento-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 992px) {
+  .bento-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+/* ========== Cards ========== */
+.card {
+  background: #fff;
+  border: 1px solid #e9bcb6;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 4px 20px rgba(15,15,15,0.05);
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.card-wide {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 992px) {
+  .card-wide {
+    grid-column: span 2;
+  }
+}
+
+.card-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2a1714;
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e9bcb6;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-title ion-icon {
+  color: #e30613;
+  font-size: 1.3rem;
+}
+
+/* ========== Data Grid (2 columns) ========== */
+.data-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 2rem;
+}
+
+.data-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.data-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #5e3f3b;
+}
+
+.data-value {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #2a1714;
+}
+
+/* ========== Medical Alerts ========== */
+.medical-alerts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.alert-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+}
+
+.alert-card ion-icon {
+  font-size: 1.25rem;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.alert-danger {
+  background: #ffdad6;
+  color: #93000a;
+}
+
+.alert-danger ion-icon {
+  color: #ba1a1a;
+}
+
+.alert-info {
+  background: #fff8f7;
+  border: 1px solid #e9bcb6;
+  color: #2a1714;
+}
+
+.alert-info ion-icon {
+  color: #e30613;
+}
+
+.alert-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin: 0 0 0.15rem;
+}
+
+.alert-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ========== Tutor ========== */
+.tutor-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.tutor-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.tutor-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: #e5e2e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5e3f3b;
+  font-size: 1.2rem;
+}
+
+.tutor-avatar.emergency {
+  background: #fedad5;
+  color: #e30613;
+}
+
+.tutor-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2a1714;
+  margin: 0;
+}
+
+.tutor-relation {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  color: #5e3f3b;
+  margin: 0;
+}
+
+.tutor-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.tutor-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.tutor-field .data-label {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.tutor-field .data-label ion-icon {
+  font-size: 0.85rem;
+}
+
+.empty-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #936e69;
+  margin: 0;
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 600px) {
+  .data-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-photo {
+    width: 5rem;
+    height: 5rem;
+    min-width: 5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .profile-header {
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .profile-name-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .profile-group {
+    flex-direction: column;
+    gap: 0.4rem;
+    justify-content: center;
+  }
+
+  .edit-btn {
+    align-self: center;
+  }
+}

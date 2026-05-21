@@ -32,11 +32,11 @@ export class Login {
   }
 
   async showToast(message: string, color: 'success' | 'warning' | 'danger') {
+    const icons: Record<string, string> = { success: 'checkmark-circle', warning: 'warning', danger: 'close-circle' };
     const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      color,
-      position: 'top',
+      message, duration: 3000, color, position: 'top',
+      icon: icons[color],
+      cssClass: 'custom-toast',
     });
     toast.present();
   }
