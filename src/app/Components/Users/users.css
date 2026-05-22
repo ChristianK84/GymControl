@@ -33,32 +33,27 @@
   margin: 0;
 }
 
-.btn-add {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+ion-button.btn-add {
+  --background: #e30613;
+  --background-hover: #b5000b;
+  --color: #ffffff;
+  --border-radius: 0.5rem;
+  --box-shadow: none;
+  --padding-start: 1.25rem;
+  --padding-end: 1.25rem;
   font-family: 'Inter', sans-serif;
   font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  padding: 0.65rem 1.25rem;
-  border: none;
-  border-radius: 0.5rem;
-  background-color: #e30613;
-  color: #ffffff;
-  cursor: pointer;
-  transition: transform 0.15s, background-color 0.2s;
   min-height: 44px;
+  height: auto;
   align-self: flex-start;
+  transition: transform 0.15s;
 }
 
-.btn-add:active {
+ion-button.btn-add:active {
   transform: scale(0.98);
-}
-
-.btn-add ion-icon {
-  font-size: 1.1rem;
 }
 
 /* ---------- Filters ---------- */
@@ -85,27 +80,23 @@
   z-index: 1;
 }
 
-.search-input {
-  width: 100%;
-  padding: 0.65rem 0.75rem 0.65rem 2.5rem;
-  border: 1px solid #e5e2e1;
-  border-radius: 0.5rem;
-  background: #ffffff;
+ion-input.search-input {
+  --border-color: #e5e2e1;
+  --border-radius: 0.5rem;
+  --border-style: solid;
+  --border-width: 1px;
+  --background: #ffffff;
+  --color: #2a1714;
+  --padding-start: 2.5rem;
+  --padding-end: 0.75rem;
+  --padding-top: 0.65rem;
+  --padding-bottom: 0.65rem;
+  --placeholder-color: #936e69;
+  --highlight-color-focused: #2a1714;
   font-family: 'Inter', sans-serif;
   font-size: 0.85rem;
-  color: #2a1714;
-  outline: none;
-  transition: border-color 0.2s;
-  box-sizing: border-box;
   min-height: 42px;
-}
-
-.search-input::placeholder {
-  color: #936e69;
-}
-
-.search-input:focus {
-  border-color: #2a1714;
+  width: 100%;
 }
 
 .filter-box {
@@ -124,24 +115,20 @@
   z-index: 1;
 }
 
-.filter-select {
+ion-select.filter-select {
+  --border-color: #e5e2e1;
+  --border-radius: 0.5rem;
+  --placeholder-color: #936e69;
+  --color: #2a1714;
   width: 100%;
-  padding: 0.65rem 0.75rem 0.65rem 2.5rem;
-  border: 1px solid #e5e2e1;
-  border-radius: 0.5rem;
-  background: #ffffff;
+  min-height: 42px;
   font-family: 'Inter', sans-serif;
   font-size: 0.85rem;
-  color: #2a1714;
-  outline: none;
-  appearance: none;
-  cursor: pointer;
-  transition: border-color 0.2s;
-  min-height: 42px;
-}
-
-.filter-select:focus {
-  border-color: #2a1714;
+  background: #ffffff;
+  border: 1px solid #e5e2e1;
+  border-radius: 0.5rem;
+  --padding-start: 2.5rem;
+  --padding-end: 0.75rem;
 }
 
 /* ---------- Table ---------- */
@@ -221,52 +208,49 @@
   white-space: nowrap;
 }
 
-.td-actions .action-btn {
+.td-actions ion-button.action-btn {
   vertical-align: middle;
 }
 
-.action-btn {
+ion-button.action-btn {
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --border-radius: 0.4rem;
+  --box-shadow: none;
+  --min-height: auto;
   width: 32px;
   height: 32px;
-  border: 1px solid #e5e2e1;
-  border-radius: 0.4rem;
-  background: #ffffff;
-  cursor: pointer;
+  --border-style: solid;
+  --border-width: 1px;
+  --background: #ffffff;
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.15s, color 0.15s;
-  padding: 0;
+  vertical-align: middle;
 }
 
-.action-btn + .action-btn {
+ion-button.action-btn + ion-button.action-btn {
   margin-left: 4px;
 }
 
-.action-btn ion-icon {
+ion-button.action-btn ion-icon {
   font-size: 0.95rem;
 }
 
-.action-edit {
-  color: #2563eb;
-  border-color: #bfdbfe;
+ion-button.action-edit {
+  --color: #2563eb;
+  --color-hover: #ffffff;
+  --border-color: #bfdbfe;
+  --background-hover: #2563eb;
+  --border-color-hover: #2563eb;
 }
 
-.action-edit:hover {
-  background: #2563eb;
-  color: #ffffff;
-  border-color: #2563eb;
-}
-
-.action-delete {
-  color: #dc2626;
-  border-color: #fecaca;
-}
-
-.action-delete:hover {
-  background: #dc2626;
-  color: #ffffff;
-  border-color: #dc2626;
+ion-button.action-delete {
+  --color: #dc2626;
+  --color-hover: #ffffff;
+  --border-color: #fecaca;
+  --background-hover: #dc2626;
+  --border-color-hover: #dc2626;
 }
 
 .td-empty {
@@ -277,64 +261,57 @@
 }
 
 /* ---------- Badges ---------- */
-.role-badge {
-  display: inline-block;
+ion-badge.role-badge {
+  --background: #f0edec;
+  --color: #5e3f3b;
   font-size: 0.72rem;
   font-weight: 600;
+  border-radius: 999px;
   padding: 0.2rem 0.6rem;
-  border-radius: 999px;
-  background: #f0edec;
-  color: #5e3f3b;
-}
-
-.role-badge.role-admin {
-  background: rgba(227, 6, 19, 0.08);
-  color: #e30613;
-}
-
-.status-badge {
   display: inline-block;
+}
+
+ion-badge.role-badge.role-admin {
+  --background: rgba(227, 6, 19, 0.08);
+  --color: #e30613;
+}
+
+ion-badge.status-badge {
+  --background: rgba(34, 197, 94, 0.1);
+  --color: #16a34a;
   font-size: 0.72rem;
   font-weight: 600;
-  padding: 0.2rem 0.7rem;
   border-radius: 999px;
-  background: rgba(34, 197, 94, 0.1);
-  color: #16a34a;
+  padding: 0.2rem 0.7rem;
+  display: inline-block;
 }
 
-.status-badge.status-inactive {
-  background: rgba(148, 163, 184, 0.15);
-  color: #64748b;
+ion-badge.status-badge.status-inactive {
+  --background: rgba(148, 163, 184, 0.15);
+  --color: #64748b;
 }
 
 /* ---------- Clear Button ---------- */
-.btn-clear {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
+ion-button.btn-clear {
+  --background: #ffffff;
+  --background-hover: #f0edec;
+  --color: #5e3f3b;
+  --color-hover: #2a1714;
+  --border-color: #e5e2e1;
+  --border-style: solid;
+  --border-width: 1px;
+  --border-radius: 0.5rem;
+  --box-shadow: none;
+  --padding-start: 1rem;
+  --padding-end: 1rem;
   font-family: 'Inter', sans-serif;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  padding: 0 1rem;
-  border: 1px solid #e5e2e1;
-  border-radius: 0.5rem;
-  background: #ffffff;
-  color: #5e3f3b;
-  cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
   min-height: 42px;
+  height: auto;
   white-space: nowrap;
-}
-
-.btn-clear:hover {
-  background: #f0edec;
-  color: #2a1714;
-}
-
-.btn-clear ion-icon {
-  font-size: 1rem;
 }
 
 /* ---------- Footer ---------- */
@@ -361,41 +338,42 @@
   gap: 4px;
 }
 
-.page-btn {
+ion-button.page-btn {
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --border-radius: 0.4rem;
+  --box-shadow: none;
+  --min-height: auto;
+  --color: #5e3f3b;
+  --color-hover: #2a1714;
+  --background: #ffffff;
+  --background-hover: #f0edec;
+  --border-color: #e5e2e1;
+  --border-style: solid;
+  --border-width: 1px;
   min-width: 34px;
-  min-height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #e5e2e1;
-  border-radius: 0.4rem;
-  background: #ffffff;
-  color: #5e3f3b;
+  height: 34px;
   font-family: 'Inter', sans-serif;
   font-size: 0.75rem;
   font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.15s, color 0.15s;
-  padding: 0 0.4rem;
+  text-transform: none;
 }
 
-.page-btn:hover:not(:disabled) {
-  background: #f0edec;
-  color: #2a1714;
-}
-
-.page-btn:disabled {
+ion-button.page-btn[disabled] {
   opacity: 0.4;
-  cursor: not-allowed;
 }
 
-.page-btn.page-active {
-  background: #2a1714;
-  color: #ffffff;
-  border-color: #2a1714;
+ion-button.page-btn.page-active {
+  --background: #2a1714;
+  --color: #ffffff;
+  --border-color: #2a1714;
+  --background-hover: #2a1714;
+  --color-hover: #ffffff;
 }
 
-.page-btn ion-icon {
+ion-button.page-btn ion-icon {
   font-size: 1rem;
 }
 
@@ -431,40 +409,16 @@
 }
 
 /* ========== Skeleton Loading ========== */
-@keyframes skeleton-pulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 1; }
-}
-
 .skeleton-row td {
   padding: 0.7rem 1rem;
 }
 
-.skeleton {
-  display: inline-block;
-  background: #e5e2e1;
-  border-radius: 0.375rem;
-  animation: skeleton-pulse 1.4s ease-in-out infinite;
-  vertical-align: middle;
+ion-skeleton-text {
+  --background: #e5e2e1;
+  --border-radius: 0.375rem;
 }
 
-.skeleton-text {
-  width: 120px;
-  height: 0.85rem;
-}
-
-.skeleton-text-lg {
-  width: 160px;
-  height: 0.95rem;
-}
-
-.skeleton-text-sm {
-  width: 60px;
-  height: 0.8rem;
-}
-
-.skeleton-badge {
-  width: 70px;
-  height: 1.25rem;
-  border-radius: 999px;
-}
+.skeleton-text { width: 120px; height: 0.85rem; }
+.skeleton-text-lg { width: 160px; height: 0.95rem; }
+.skeleton-text-sm { width: 60px; height: 0.8rem; }
+.skeleton-badge { width: 70px; height: 1.25rem; --border-radius: 999px; }

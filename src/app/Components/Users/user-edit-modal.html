@@ -13,7 +13,7 @@
   <div class="modal-body">
     @if (isEdit) {
       <div class="identity-card">
-        <div class="avatar-circle">{{ user!.username.charAt(0).toUpperCase() }}</div>
+        <ion-avatar class="avatar-circle">{{ user!.username.charAt(0).toUpperCase() }}</ion-avatar>
         <div class="identity-info">
           <span class="identity-name">{{ user!.full_name || user!.username }}</span>
           <span class="identity-id">&#64;{{ user!.username }} &middot; ID #{{ user!.id }}</span>
@@ -24,71 +24,68 @@
     <!-- Section: Profile -->
     <div class="section">
       <h3 class="section-title">Perfil</h3>
-      <div class="field-row">
-        <label class="field-label" for="fullName">Nombre Completo</label>
-        <input id="fullName" type="text" class="field-input" [class.field-error]="errors['fullName']" [(ngModel)]="fullName" placeholder="Nombre completo" />
-        @if (errors['fullName']) {
-          <span class="error-msg">{{ errors['fullName'] }}</span>
-        }
-      </div>
-      <div class="field-row">
-        <label class="field-label" for="username">Usuario</label>
-        <input id="username" type="text" class="field-input" [class.field-error]="errors['username']" [(ngModel)]="username" placeholder="Nombre de usuario" />
-        @if (errors['username']) {
-          <span class="error-msg">{{ errors['username'] }}</span>
-        }
-      </div>
+      <ion-item class="field-row">
+        <ion-label position="stacked">Nombre Completo</ion-label>
+        <ion-input class="field-input" [class.field-error]="errors['fullName']" [(ngModel)]="fullName" placeholder="Nombre completo" fill="outline"></ion-input>
+      </ion-item>
+      @if (errors['fullName']) {
+        <span class="error-msg">{{ errors['fullName'] }}</span>
+      }
+      <ion-item class="field-row">
+        <ion-label position="stacked">Usuario</ion-label>
+        <ion-input class="field-input" [class.field-error]="errors['username']" [(ngModel)]="username" placeholder="Nombre de usuario" fill="outline"></ion-input>
+      </ion-item>
+      @if (errors['username']) {
+        <span class="error-msg">{{ errors['username'] }}</span>
+      }
     </div>
 
     <!-- Section: Role & Status -->
     <div class="section">
       <h3 class="section-title">Permisos</h3>
-      <div class="field-row">
-        <label class="field-label" for="roleSelect">Rol asignado</label>
-        <select id="roleSelect" class="field-select" [class.field-error]="errors['roleId']" [(ngModel)]="roleId">
-          <option [ngValue]="undefined" disabled>Seleccione un Rol</option>
+      <ion-item class="field-row">
+        <ion-label position="stacked">Rol asignado</ion-label>
+        <ion-select class="field-select" [class.field-error]="errors['roleId']" [(ngModel)]="roleId" interface="popover">
+          <ion-select-option [value]="undefined" disabled>Seleccione un Rol</ion-select-option>
           @for (rol of roles; track rol.id) {
-            <option [ngValue]="rol.id">{{ rol.nombre }}</option>
+            <ion-select-option [value]="rol.id">{{ rol.nombre }}</ion-select-option>
           }
-        </select>
-        @if (errors['roleId']) {
-          <span class="error-msg">{{ errors['roleId'] }}</span>
-        }
-      </div>
-      <div class="field-row toggle-row">
+        </ion-select>
+      </ion-item>
+      @if (errors['roleId']) {
+        <span class="error-msg">{{ errors['roleId'] }}</span>
+      }
+      <div class="toggle-row">
         <div class="toggle-text">
           <span class="field-label">Estado de la cuenta</span>
           <span class="toggle-hint" [class.active-hint]="isActive">{{ isActive ? 'El usuario puede acceder al sistema' : 'El usuario tiene el acceso bloqueado' }}</span>
         </div>
-        <label class="switch">
-          <input type="checkbox" [(ngModel)]="isActive" />
-          <span class="slider"></span>
-        </label>
+        <ion-toggle [(ngModel)]="isActive"></ion-toggle>
       </div>
     </div>
 
     <!-- Section: Security -->
     <div class="section">
       <h3 class="section-title">Seguridad</h3>
-      <div class="field-row">
-        <label class="field-label" for="passField">Contraseña</label>
+      <ion-item class="field-row">
+        <ion-label position="stacked">Contraseña</ion-label>
         <div class="pass-wrapper">
-          <input
-            id="passField"
-            [type]="showPassword() ? 'text' : 'password'"
+          <ion-input
             class="field-input"
+            [type]="showPassword() ? 'text' : 'password'"
             [class.field-error]="errors['password']"
             [(ngModel)]="password"
             [placeholder]="isEdit ? 'Dejar vacío para conservar la actual' : 'Contraseña del usuario'"
-          />
-          <button type="button" class="pass-toggle" (click)="togglePassword()" [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'">
-            <ion-icon [name]="showPassword() ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
-          </button>
+            fill="outline"
+          ></ion-input>
+          <ion-button class="pass-toggle" (click)="togglePassword()" fill="clear" [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+            <ion-icon [name]="showPassword() ? 'eye-off-outline' : 'eye-outline'" slot="icon-only"></ion-icon>
+          </ion-button>
         </div>
-        @if (errors['password']) {
-          <span class="error-msg">{{ errors['password'] }}</span>
-        }
-      </div>
+      </ion-item>
+      @if (errors['password']) {
+        <span class="error-msg">{{ errors['password'] }}</span>
+      }
     </div>
 
     @if (isEdit) {

@@ -1,7 +1,7 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { IonIcon, ToastController, ModalController } from '@ionic/angular/standalone';
+import { IonIcon, IonButton, IonInput, IonSelect, IonSelectOption, IonSkeletonText, IonBadge, ToastController, ModalController } from '@ionic/angular/standalone';
 import { ApiService } from '../../Services/api-service';
 import { Alumno } from '../../Models/alumnos';
 import { Maestro } from '../../Models/maestros';
@@ -14,7 +14,7 @@ import {
 
 @Component({
   selector: 'app-alumnos',
-  imports: [FormsModule, IonIcon],
+  imports: [FormsModule, IonIcon, IonButton, IonInput, IonSelect, IonSelectOption, IonSkeletonText, IonBadge],
   templateUrl: './alumnos.html',
   styleUrl: './alumnos.css',
 })

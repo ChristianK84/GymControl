@@ -73,6 +73,7 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.collapsed.set(window.innerWidth <= 768);
     this.clockInterval = setInterval(() => {
       this.clockDate.set(this.formatDate());
       this.clockTime.set(this.formatTime());

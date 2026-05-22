@@ -1,7 +1,7 @@
 import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonIcon, AlertController, ModalController, ToastController } from '@ionic/angular/standalone';
+import { IonIcon, IonButton, IonInput, IonSelect, IonSelectOption, IonSkeletonText, IonBadge, AlertController, ModalController, ToastController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   personAddOutline,
@@ -20,7 +20,7 @@ import { UserFormModal } from './user-edit-modal';
 
 @Component({
   selector: 'app-users',
-  imports: [DatePipe, FormsModule, IonIcon],
+  imports: [DatePipe, FormsModule, IonIcon, IonButton, IonInput, IonSelect, IonSelectOption, IonSkeletonText, IonBadge],
   templateUrl: './users.html',
   styleUrl: './users.css',
 })

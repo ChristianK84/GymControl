@@ -5,35 +5,35 @@
       <h1 class="alumnos-title">Directorio de Alumnos</h1>
       <p class="alumnos-subtitle">Gestiona y filtra el listado completo de estudiantes inscritos en la academia.</p>
     </div>
-    <button class="btn-add" (click)="addAlumno()">
-      <ion-icon name="add-outline"></ion-icon>
-      <span>Nuevo Alumno</span>
-    </button>
+    <ion-button class="btn-add" (click)="addAlumno()" fill="solid">
+      <ion-icon name="add-outline" slot="start"></ion-icon>
+      Nuevo Alumno
+    </ion-button>
   </div>
 
   <!-- Filters -->
   <div class="filters-bar">
     <div class="search-box">
       <ion-icon name="search-outline" class="search-icon"></ion-icon>
-      <input
-        type="text"
+      <ion-input
         class="search-input"
         placeholder="Buscar por nombre o apellido..."
+        fill="outline"
         [ngModel]="searchTerm()"
         (ngModelChange)="onSearchChange($event)"
-      />
+      ></ion-input>
     </div>
     <div class="filter-box">
-      <select class="filter-select" [ngModel]="ramaFilter()" (ngModelChange)="onRamaChange($event)">
-        <option value="">Todas las ramas</option>
-        <option value="Varonil">Varonil</option>
-        <option value="Femenil">Femenil</option>
-      </select>
+      <ion-select class="filter-select" interface="popover" [ngModel]="ramaFilter()" (ngModelChange)="onRamaChange($event)">
+        <ion-select-option value="">Todas las ramas</ion-select-option>
+        <ion-select-option value="Varonil">Varonil</ion-select-option>
+        <ion-select-option value="Femenil">Femenil</ion-select-option>
+      </ion-select>
     </div>
-    <button class="btn-clear" (click)="clearFilters()">
-      <ion-icon name="close-circle-outline"></ion-icon>
-      <span>Limpiar</span>
-    </button>
+    <ion-button class="btn-clear" (click)="clearFilters()" fill="outline">
+      <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+      Limpiar
+    </ion-button>
   </div>
 
   <!-- Table -->
@@ -51,10 +51,10 @@
         @if (loading()) {
           @for (row of [1,2,3,4,5,6,7,8]; track row) {
             <tr class="skeleton-row">
-              <td><div class="skeleton-cell"><span class="skeleton skeleton-avatar"></span><span class="skeleton skeleton-text skeleton-text-lg"></span></div></td>
-              <td><span class="skeleton skeleton-text"></span></td>
-              <td><span class="skeleton skeleton-text"></span></td>
-              <td><span class="skeleton skeleton-badge"></span></td>
+              <td><div class="skeleton-cell"><ion-skeleton-text class="skeleton-avatar" [animated]="true"></ion-skeleton-text><ion-skeleton-text class="skeleton-text-lg" [animated]="true"></ion-skeleton-text></div></td>
+              <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="skeleton-badge" [animated]="true"></ion-skeleton-text></td>
             </tr>
           }
         } @else {
@@ -87,9 +87,9 @@
               <td class="td-muted">{{ asistenciaStr(alumno.id) }}</td>
               <!-- Estado -->
               <td>
-                <span class="status-badge" [class.status-inactive]="!alumno.is_active">
+                <ion-badge class="status-badge" [class.status-inactive]="!alumno.is_active">
                   {{ alumno.is_active ? 'Activo' : 'Inactivo' }}
-                </span>
+                </ion-badge>
               </td>
             </tr>
           }
@@ -115,17 +115,17 @@
     </span>
     @if (totalPages() > 1) {
       <div class="pagination">
-        <button class="page-btn" [disabled]="page() === 1" (click)="goToPage(page() - 1)">
-          <ion-icon name="chevron-back-outline"></ion-icon>
-        </button>
+        <ion-button class="page-btn" [disabled]="page() === 1" (click)="goToPage(page() - 1)" fill="outline">
+          <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+        </ion-button>
         @for (p of [].constructor(totalPages()); track $index; let i = $index) {
-          <button class="page-btn" [class.page-active]="i + 1 === page()" (click)="goToPage(i + 1)">
+          <ion-button class="page-btn" [class.page-active]="i + 1 === page()" (click)="goToPage(i + 1)" fill="outline">
             {{ i + 1 }}
-          </button>
+          </ion-button>
         }
-        <button class="page-btn" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)">
-          <ion-icon name="chevron-forward-outline"></ion-icon>
-        </button>
+        <ion-button class="page-btn" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)" fill="outline">
+          <ion-icon name="chevron-forward-outline" slot="icon-only"></ion-icon>
+        </ion-button>
       </div>
     }
   </div>

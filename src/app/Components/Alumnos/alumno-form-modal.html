@@ -13,7 +13,7 @@
   <div class="modal-body">
     @if (isEdit) {
       <div class="identity-card">
-        <div class="avatar-circle">{{ nombrecompleto.charAt(0).toUpperCase() }}</div>
+        <ion-avatar class="avatar-circle">{{ nombrecompleto.charAt(0).toUpperCase() }}</ion-avatar>
         <div class="identity-info">
           <span class="identity-name">{{ nombrecompleto }} {{ apellidoPaterno }}</span>
           <span class="identity-id">{{ rama }} &middot; ID #{{ alumno!.id }}</span>
@@ -24,52 +24,66 @@
     <!-- Datos Personales -->
     <div class="section">
       <h3 class="section-title">Datos Personales</h3>
-      <div class="field-row">
-        <label class="field-label" for="nombre">Nombre Completo</label>
-        <input id="nombre" type="text" class="field-input" [class.field-error]="errors['nombrecompleto']" [(ngModel)]="nombrecompleto" placeholder="Nombre(s)" />
+      <div>
+        <ion-item class="field-row">
+          <ion-label position="stacked">Nombre Completo</ion-label>
+          <ion-input class="field-input" [class.field-error]="errors['nombrecompleto']" [(ngModel)]="nombrecompleto" placeholder="Nombre(s)" fill="outline"></ion-input>
+        </ion-item>
         @if (errors['nombrecompleto']) { <span class="error-msg">{{ errors['nombrecompleto'] }}</span> }
       </div>
       <div class="inline-fields">
-        <div class="field-row flex-1">
-          <label class="field-label" for="ap">Apellido Paterno</label>
-          <input id="ap" type="text" class="field-input" [class.field-error]="errors['apellidoPaterno']" [(ngModel)]="apellidoPaterno" />
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Apellido Paterno</ion-label>
+            <ion-input class="field-input" [class.field-error]="errors['apellidoPaterno']" [(ngModel)]="apellidoPaterno" fill="outline"></ion-input>
+          </ion-item>
           @if (errors['apellidoPaterno']) { <span class="error-msg">{{ errors['apellidoPaterno'] }}</span> }
         </div>
-        <div class="field-row flex-1">
-          <label class="field-label" for="am">Apellido Materno</label>
-          <input id="am" type="text" class="field-input" [(ngModel)]="apellidoMaterno" placeholder="Opcional" />
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Apellido Materno</ion-label>
+            <ion-input class="field-input" [(ngModel)]="apellidoMaterno" placeholder="Opcional" fill="outline"></ion-input>
+          </ion-item>
         </div>
       </div>
       <div class="inline-fields">
-        <div class="field-row flex-1">
-          <label class="field-label" for="fn">Fecha Nacimiento</label>
-          <input id="fn" type="date" class="field-input" [class.field-error]="errors['fechaNacimiento']" [(ngModel)]="fechaNacimiento" />
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Fecha Nacimiento</ion-label>
+            <input type="date" class="field-input field-input-native" [class.field-error]="errors['fechaNacimiento']" [(ngModel)]="fechaNacimiento" />
+          </ion-item>
           @if (errors['fechaNacimiento']) { <span class="error-msg">{{ errors['fechaNacimiento'] }}</span> }
         </div>
-        <div class="field-row flex-1">
-          <label class="field-label" for="rama">Rama</label>
-          <select id="rama" class="field-select" [class.field-error]="errors['rama']" [(ngModel)]="rama">
-            <option value="" disabled selected>Seleccione una opción</option>
-            <option value="Varonil">Varonil</option>
-            <option value="Femenil">Femenil</option>
-          </select>
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Rama</ion-label>
+            <ion-select class="field-select" [class.field-error]="errors['rama']" [(ngModel)]="rama" interface="popover" placeholder="Seleccione una opción">
+              <ion-select-option value="" disabled>Seleccione una opción</ion-select-option>
+              <ion-select-option value="Varonil">Varonil</ion-select-option>
+              <ion-select-option value="Femenil">Femenil</ion-select-option>
+            </ion-select>
+          </ion-item>
           @if (errors['rama']) { <span class="error-msg">{{ errors['rama'] }}</span> }
         </div>
       </div>
       <div class="inline-fields">
-        <div class="field-row flex-1">
-          <label class="field-label" for="maestro">Entrenador</label>
-          <select id="maestro" class="field-select" [class.field-error]="errors['maestroId']" [(ngModel)]="maestroId">
-            <option [ngValue]="undefined" disabled selected>Seleccione una opción</option>
-            @for (m of maestros; track m.id) {
-              <option [ngValue]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</option>
-            }
-          </select>
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Entrenador</ion-label>
+            <ion-select class="field-select" [class.field-error]="errors['maestroId']" [(ngModel)]="maestroId" interface="popover" placeholder="Seleccione una opción">
+              <ion-select-option [value]="null" disabled>Seleccione una opción</ion-select-option>
+              @for (m of maestros; track m.id) {
+                <ion-select-option [value]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
           @if (errors['maestroId']) { <span class="error-msg">{{ errors['maestroId'] }}</span> }
         </div>
-        <div class="field-row flex-1">
-          <label class="field-label" for="fi">Fecha Inscripción</label>
-          <input id="fi" type="date" class="field-input" [(ngModel)]="fechaInscripcion" />
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Fecha Inscripción</ion-label>
+            <input type="date" class="field-input field-input-native" [(ngModel)]="fechaInscripcion" />
+          </ion-item>
         </div>
       </div>
     </div>
@@ -88,21 +102,21 @@
         @if (photoPreview || currentPhotoUrl) {
           <div class="photo-preview">
             <img [src]="photoPreview || currentPhotoUrl" alt="Vista previa" />
-            <button type="button" class="photo-remove-btn" (click)="removePhoto()" title="Quitar foto">
-              <ion-icon name="close-outline"></ion-icon>
-            </button>
+            <ion-button class="photo-remove-btn" (click)="removePhoto()" title="Quitar foto" fill="solid">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
           </div>
         } @else {
-          <button type="button" class="photo-placeholder" (click)="fileInput.click()">
+          <ion-button class="photo-placeholder" (click)="fileInput.click()" fill="clear">
             <ion-icon name="camera-outline"></ion-icon>
             <span>Agregar fotografía</span>
-          </button>
+          </ion-button>
         }
         @if (photoPreview || currentPhotoUrl) {
-          <button type="button" class="photo-change-btn" (click)="fileInput.click()">
-            <ion-icon name="cloud-upload-outline"></ion-icon>
-            <span>Cambiar foto</span>
-          </button>
+          <ion-button class="photo-change-btn" (click)="fileInput.click()" fill="outline">
+            <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
+            Cambiar foto
+          </ion-button>
         }
         @if (errors['photo']) {
           <span class="error-msg">{{ errors['photo'] }}</span>
@@ -113,31 +127,41 @@
     <!-- Tutor -->
     <div class="section">
       <h3 class="section-title">Tutor</h3>
-      <div class="field-row">
-        <label class="field-label" for="tn">Nombre</label>
-        <input id="tn" type="text" class="field-input" [class.field-error]="errors['tutorNombre']" [(ngModel)]="tutorNombre" />
+      <div>
+        <ion-item class="field-row">
+          <ion-label position="stacked">Nombre</ion-label>
+          <ion-input class="field-input" [class.field-error]="errors['tutorNombre']" [(ngModel)]="tutorNombre" fill="outline"></ion-input>
+        </ion-item>
         @if (errors['tutorNombre']) { <span class="error-msg">{{ errors['tutorNombre'] }}</span> }
       </div>
       <div class="inline-fields">
-        <div class="field-row flex-1">
-          <label class="field-label">Apellido Paterno</label>
-          <input type="text" class="field-input" [class.field-error]="errors['tutorApellidoP']" [(ngModel)]="tutorApellidoP" />
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Apellido Paterno</ion-label>
+            <ion-input class="field-input" [class.field-error]="errors['tutorApellidoP']" [(ngModel)]="tutorApellidoP" fill="outline"></ion-input>
+          </ion-item>
           @if (errors['tutorApellidoP']) { <span class="error-msg">{{ errors['tutorApellidoP'] }}</span> }
         </div>
-        <div class="field-row flex-1">
-          <label class="field-label">Apellido Materno</label>
-          <input type="text" class="field-input" [(ngModel)]="tutorApellidoM" placeholder="Opcional" />
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Apellido Materno</ion-label>
+            <ion-input class="field-input" [(ngModel)]="tutorApellidoM" placeholder="Opcional" fill="outline"></ion-input>
+          </ion-item>
         </div>
       </div>
       <div class="inline-fields">
-        <div class="field-row flex-1">
-          <label class="field-label">Teléfono</label>
-          <input type="tel" class="field-input" [class.field-error]="errors['tutorTelefono']" [(ngModel)]="tutorTelefono" />
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Teléfono</ion-label>
+            <ion-input class="field-input" type="tel" [class.field-error]="errors['tutorTelefono']" [(ngModel)]="tutorTelefono" fill="outline"></ion-input>
+          </ion-item>
           @if (errors['tutorTelefono']) { <span class="error-msg">{{ errors['tutorTelefono'] }}</span> }
         </div>
-        <div class="field-row flex-1">
-          <label class="field-label">Email</label>
-          <input type="email" class="field-input" [(ngModel)]="tutorEmail" placeholder="Opcional" />
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Email</ion-label>
+            <ion-input class="field-input" type="email" [(ngModel)]="tutorEmail" placeholder="Opcional" fill="outline"></ion-input>
+          </ion-item>
         </div>
       </div>
     </div>
@@ -145,25 +169,33 @@
     <!-- Contacto Emergencia -->
     <div class="section">
       <h3 class="section-title">Contacto de Emergencia</h3>
-      <div class="field-row">
-        <label class="field-label">Nombre</label>
-        <input type="text" class="field-input" [class.field-error]="errors['contactoNombre']" [(ngModel)]="contactoNombre" />
+      <div>
+        <ion-item class="field-row">
+          <ion-label position="stacked">Nombre</ion-label>
+          <ion-input class="field-input" [class.field-error]="errors['contactoNombre']" [(ngModel)]="contactoNombre" fill="outline"></ion-input>
+        </ion-item>
         @if (errors['contactoNombre']) { <span class="error-msg">{{ errors['contactoNombre'] }}</span> }
       </div>
       <div class="inline-fields">
-        <div class="field-row flex-1">
-          <label class="field-label">Apellido Paterno</label>
-          <input type="text" class="field-input" [class.field-error]="errors['contactoApellidoP']" [(ngModel)]="contactoApellidoP" />
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Apellido Paterno</ion-label>
+            <ion-input class="field-input" [class.field-error]="errors['contactoApellidoP']" [(ngModel)]="contactoApellidoP" fill="outline"></ion-input>
+          </ion-item>
           @if (errors['contactoApellidoP']) { <span class="error-msg">{{ errors['contactoApellidoP'] }}</span> }
         </div>
-        <div class="field-row flex-1">
-          <label class="field-label">Apellido Materno</label>
-          <input type="text" class="field-input" [(ngModel)]="contactoApellidoM" placeholder="Opcional" />
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Apellido Materno</ion-label>
+            <ion-input class="field-input" [(ngModel)]="contactoApellidoM" placeholder="Opcional" fill="outline"></ion-input>
+          </ion-item>
         </div>
       </div>
-      <div class="field-row">
-        <label class="field-label">Teléfono</label>
-        <input type="tel" class="field-input" [class.field-error]="errors['contactoTelefono']" [(ngModel)]="contactoTelefono" />
+      <div>
+        <ion-item class="field-row">
+          <ion-label position="stacked">Teléfono</ion-label>
+          <ion-input class="field-input" type="tel" [class.field-error]="errors['contactoTelefono']" [(ngModel)]="contactoTelefono" fill="outline"></ion-input>
+        </ion-item>
         @if (errors['contactoTelefono']) { <span class="error-msg">{{ errors['contactoTelefono'] }}</span> }
       </div>
     </div>
@@ -172,38 +204,48 @@
     <div class="section">
       <h3 class="section-title">Ficha Médica</h3>
       <div class="inline-fields">
-        <div class="field-row flex-1">
-          <label class="field-label">Tipo Sangre</label>
-          <select class="field-select" [class.field-error]="errors['tipoSangre']" [(ngModel)]="tipoSangre">
-            <option value="" disabled selected>Seleccione una opción</option>
-            <option value="A+">A+</option>
-            <option value="A-">A-</option>
-            <option value="B+">B+</option>
-            <option value="B-">B-</option>
-            <option value="AB+">AB+</option>
-            <option value="AB-">AB-</option>
-            <option value="O+">O+</option>
-            <option value="O-">O-</option>
-            <option value="">No lo sé</option>
-          </select>
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Tipo Sangre</ion-label>
+            <ion-select class="field-select" [class.field-error]="errors['tipoSangre']" [(ngModel)]="tipoSangre" interface="popover" placeholder="Seleccione una opción">
+              <ion-select-option value="" disabled>Seleccione una opción</ion-select-option>
+              <ion-select-option value="A+">A+</ion-select-option>
+              <ion-select-option value="A-">A-</ion-select-option>
+              <ion-select-option value="B+">B+</ion-select-option>
+              <ion-select-option value="B-">B-</ion-select-option>
+              <ion-select-option value="AB+">AB+</ion-select-option>
+              <ion-select-option value="AB-">AB-</ion-select-option>
+              <ion-select-option value="O+">O+</ion-select-option>
+              <ion-select-option value="O-">O-</ion-select-option>
+              <ion-select-option value="">No lo sé</ion-select-option>
+            </ion-select>
+          </ion-item>
           @if (errors['tipoSangre']) { <span class="error-msg">{{ errors['tipoSangre'] }}</span> }
         </div>
-        <div class="field-row flex-1">
-          <label class="field-label">NSS</label>
-          <input type="text" class="field-input" [(ngModel)]="nss" placeholder="Opcional" />
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">NSS</ion-label>
+            <ion-input class="field-input" [(ngModel)]="nss" placeholder="Opcional" fill="outline"></ion-input>
+          </ion-item>
         </div>
       </div>
-      <div class="field-row">
-        <label class="field-label">Alergias</label>
-        <input type="text" class="field-input" [(ngModel)]="alergias" placeholder="Opcional" />
+      <div>
+        <ion-item class="field-row">
+          <ion-label position="stacked">Alergias</ion-label>
+          <ion-input class="field-input" [(ngModel)]="alergias" placeholder="Opcional" fill="outline"></ion-input>
+        </ion-item>
       </div>
-      <div class="field-row">
-        <label class="field-label">Medicamentos</label>
-        <input type="text" class="field-input" [(ngModel)]="medicamentos" placeholder="Opcional" />
+      <div>
+        <ion-item class="field-row">
+          <ion-label position="stacked">Medicamentos</ion-label>
+          <ion-input class="field-input" [(ngModel)]="medicamentos" placeholder="Opcional" fill="outline"></ion-input>
+        </ion-item>
       </div>
-      <div class="field-row">
-        <label class="field-label">Condiciones Médicas</label>
-        <input type="text" class="field-input" [(ngModel)]="condicionesMedicas" placeholder="Opcional" />
+      <div>
+        <ion-item class="field-row">
+          <ion-label position="stacked">Condiciones Médicas</ion-label>
+          <ion-input class="field-input" [(ngModel)]="condicionesMedicas" placeholder="Opcional" fill="outline"></ion-input>
+        </ion-item>
       </div>
     </div>
 

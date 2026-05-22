@@ -1,10 +1,16 @@
-import { Component, inject, signal, OnInit, ChangeDetectorRef } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, inject, signal, OnInit, computed, ChangeDetectorRef } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { IonIcon, IonSpinner, ToastController } from '@ionic/angular/standalone';
+import {
+  IonIcon, IonSpinner, IonSegment, IonSegmentButton, IonLabel,
+  IonSelect, IonSelectOption, ToastController,
+  IonButton, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonBadge,
+  IonSkeletonText, IonAvatar, IonItem,
+} from '@ionic/angular/standalone';
 import { ApiService } from '../../Services/api-service';
 import { Alumno } from '../../Models/alumnos';
 import { Maestro } from '../../Models/maestros';
+import { Asistencia } from '../../Models/asistencias';
 import { addIcons } from 'ionicons';
 import {
   checkmarkCircleOutline, personOutline, medicalOutline,
@@ -12,16 +18,20 @@ import {
   createOutline, checkmarkOutline, closeOutline, cameraOutline,
   cloudUploadOutline, receiptOutline, documentTextOutline,
   idCardOutline, peopleOutline, shieldCheckmarkOutline,
+  pencilOutline, trashOutline, calendarOutline, timeOutline,
+  searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline,
+  arrowBackOutline, cardOutline,
 } from 'ionicons/icons';
 
 @Component({
   selector: 'app-perfil-alumno',
-  imports: [FormsModule, IonIcon, IonSpinner],
+  imports: [FormsModule, IonIcon, IonSpinner, IonSegment, IonSegmentButton, IonLabel, IonSelect, IonSelectOption, IonButton, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonBadge, IonSkeletonText, IonAvatar, IonItem],
   templateUrl: './perfil-alumno.html',
   styleUrl: './perfil-alumno.css',
 })
 export class PerfilAlumno implements OnInit {
   private route = inject(ActivatedRoute);
+  router = inject(Router);
   private api = inject(ApiService);
   private toastCtrl = inject(ToastController);
   private cdr = inject(ChangeDetectorRef);
@@ -32,6 +42,18 @@ export class PerfilAlumno implements OnInit {
   loading = signal(true);
   editing = signal(false);
   saving = signal(false);
+  activeTab = signal('info');
+
+  // Asistencias
+  asistencias = signal<Asistencia[]>([]);
+  loadingAsistencias = signal(false);
+  asisPage = signal(1);
+  readonly asisPageSize = 6;
+  filterFechaDesde = '';
+  filterFechaHasta = '';
+  filterTipo = signal<'todas' | 'asistencia' | 'falta'>('todas');
+  editingAsistenciaId = signal<number | null>(null);
+  editAsistio = false; editAsisNotas = ''; editAsisMaestroId: number | null = null;
 
   // Photo
   selectedFile: File | null = null;
@@ -55,6 +77,9 @@ export class PerfilAlumno implements OnInit {
       createOutline, checkmarkOutline, closeOutline, cameraOutline,
       cloudUploadOutline, receiptOutline, documentTextOutline,
       idCardOutline, peopleOutline, shieldCheckmarkOutline,
+      pencilOutline, trashOutline, calendarOutline, timeOutline,
+      searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline,
+      arrowBackOutline, cardOutline,
     });
   }
 
@@ -239,6 +264,98 @@ export class PerfilAlumno implements OnInit {
     if (!res.ok) throw new Error('Error al subir la imagen');
     const data = await res.json();
     return data.secure_url as string;
+  }
+
+  // ── Asistencias ──
+
+  loadAsistencias(): void {
+    const a = this.alumno();
+    if (!a) return;
+    this.loadingAsistencias.set(true);
+    const filters: { alumno_id: number; fecha_desde?: string; fecha_hasta?: string } = { alumno_id: a.id };
+    if (this.filterFechaDesde) filters.fecha_desde = this.filterFechaDesde;
+    if (this.filterFechaHasta) filters.fecha_hasta = this.filterFechaHasta;
+    this.api.getAsistencias(filters).subscribe({
+      next: (data) => {
+        this.asistencias.set(data);
+        this.loadingAsistencias.set(false);
+      },
+      error: () => this.loadingAsistencias.set(false),
+    });
+  }
+
+  filteredAsistencias = computed(() => {
+    let list = this.asistencias();
+    if (this.filterTipo() === 'asistencia') list = list.filter(x => x.asistio);
+    if (this.filterTipo() === 'falta') list = list.filter(x => !x.asistio);
+    return list;
+  });
+
+  asisTotalPages = computed(() => Math.max(1, Math.ceil(this.filteredAsistencias().length / this.asisPageSize)));
+
+  pagedAsistencias = computed(() => {
+    const start = (this.asisPage() - 1) * this.asisPageSize;
+    return this.filteredAsistencias().slice(start, start + this.asisPageSize);
+  });
+
+  fechaHora(fecha: string): { fecha: string; hora: string } {
+    const d = new Date(fecha);
+    return {
+      fecha: d.toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+      hora: d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }),
+    };
+  }
+
+  registradoPorStr(asis: Asistencia): string {
+    return asis.maestro?.nombre ?? (asis.registrado_por ? `ID #${asis.registrado_por}` : '—');
+  }
+
+  startEditAsistencia(asis: Asistencia): void {
+    this.editingAsistenciaId.set(asis.id);
+    this.editAsistio = asis.asistio;
+    this.editAsisNotas = asis.notas ?? '';
+    this.editAsisMaestroId = asis.maestro_id;
+  }
+
+  cancelEditAsistencia(): void {
+    this.editingAsistenciaId.set(null);
+  }
+
+  saveAsistencia(asis: Asistencia): void {
+    this.api.updateAsistencia(asis.id, {
+      asistio: this.editAsistio,
+      notas: this.editAsisNotas || null,
+      maestro_id: this.editAsisMaestroId ?? undefined,
+    }).subscribe({
+      next: () => {
+        this.editingAsistenciaId.set(null);
+        this.loadAsistencias();
+        this.showToast('Asistencia actualizada', 'success');
+      },
+      error: () => this.showToast('Error al actualizar', 'danger'),
+    });
+  }
+
+  applyAsisFilters(): void {
+    this.asisPage.set(1);
+    this.loadAsistencias();
+  }
+
+  clearAsisFilters(): void {
+    this.filterFechaDesde = '';
+    this.filterFechaHasta = '';
+    this.filterTipo.set('todas');
+    this.applyAsisFilters();
+  }
+
+  goToAsisPage(p: number): void {
+    if (p >= 1 && p <= this.asisTotalPages()) this.asisPage.set(p);
+  }
+
+  onTabChange(value: unknown): void {
+    const tab = String(value ?? 'info');
+    this.activeTab.set(tab);
+    if (tab === 'asistencias') this.loadAsistencias();
   }
 
   private async showToast(message: string, color: 'success' | 'danger'): Promise<void> {

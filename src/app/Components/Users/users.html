@@ -5,42 +5,43 @@
       <h1 class="users-title">Gestión de Usuarios</h1>
       <p class="users-subtitle">Administra cuentas, roles y permisos del sistema</p>
     </div>
-    <button class="btn-add" (click)="addUser()">
-      <ion-icon name="person-add-outline"></ion-icon>
-      <span>Agregar Usuario</span>
-    </button>
+    <ion-button class="btn-add" (click)="addUser()" fill="solid">
+      <ion-icon name="person-add-outline" slot="start"></ion-icon>
+      Agregar Usuario
+    </ion-button>
   </div>
 
   <!-- Filters -->
   <div class="filters-bar">
     <div class="search-box">
       <ion-icon name="search-outline" class="search-icon"></ion-icon>
-      <input
-        type="text"
+      <ion-input
         class="search-input"
         placeholder="Buscar por nombre o usuario..."
+        fill="outline"
         [ngModel]="searchTerm()"
         (ngModelChange)="searchTerm.set($event); onFilterChange()"
-      />
+      ></ion-input>
     </div>
     <div class="filter-box">
       <ion-icon name="filter-outline" class="filter-icon"></ion-icon>
-      <select
+      <ion-select
         class="filter-select"
+        interface="popover"
         [ngModel]="roleFilter()"
         (ngModelChange)="roleFilter.set($event); onFilterChange()"
       >
-        <option [ngValue]="undefined" disabled selected>Seleccione un Rol</option>
-        <option [ngValue]="null">Todos los roles</option>
+        <ion-select-option [value]="undefined" disabled>Seleccione un Rol</ion-select-option>
+        <ion-select-option [value]="null">Todos los roles</ion-select-option>
         @for (rol of roles(); track rol.id) {
-          <option [ngValue]="rol.id">{{ rol.nombre }}</option>
+          <ion-select-option [value]="rol.id">{{ rol.nombre }}</ion-select-option>
         }
-      </select>
+      </ion-select>
     </div>
-    <button class="btn-clear" (click)="clearFilters()">
-      <ion-icon name="close-circle-outline"></ion-icon>
-      <span>Limpiar</span>
-    </button>
+    <ion-button class="btn-clear" (click)="clearFilters()" fill="outline">
+      <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+      Limpiar
+    </ion-button>
   </div>
 
   <!-- Table -->
@@ -60,12 +61,12 @@
         @if (loading()) {
           @for (row of [1,2,3,4,5,6]; track row) {
             <tr class="skeleton-row">
-              <td><span class="skeleton skeleton-text-lg"></span></td>
-              <td><span class="skeleton skeleton-text"></span></td>
-              <td><span class="skeleton skeleton-badge"></span></td>
-              <td><span class="skeleton skeleton-text-sm"></span></td>
-              <td><span class="skeleton skeleton-badge"></span></td>
-              <td><span class="skeleton skeleton-text-sm"></span></td>
+              <td><ion-skeleton-text class="skeleton-text-lg" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="skeleton-badge" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="skeleton-text-sm" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="skeleton-badge" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="skeleton-text-sm" [animated]="true"></ion-skeleton-text></td>
             </tr>
           }
         } @else {
@@ -74,23 +75,23 @@
               <td class="td-username">{{ user.username }}</td>
               <td>{{ user.full_name }}</td>
               <td>
-                <span class="role-badge" [class.role-admin]="user.role_id === 1">
+                <ion-badge class="role-badge" [class.role-admin]="user.role_id === 1">
                   {{ roleName().get(user.role_id) ?? '—' }}
-                </span>
+                </ion-badge>
               </td>
               <td class="td-date">{{ user.created_at | date: 'dd/MM/yyyy' }}</td>
               <td>
-                <span class="status-badge" [class.status-inactive]="!user.is_active">
+                <ion-badge class="status-badge" [class.status-inactive]="!user.is_active">
                   {{ user.is_active ? 'Activo' : 'Inactivo' }}
-                </span>
+                </ion-badge>
               </td>
               <td class="td-actions">
-                <button class="action-btn action-edit" title="Editar" (click)="editUser(user)">
-                  <ion-icon name="pencil-outline"></ion-icon>
-                </button>
-                <button class="action-btn action-delete" title="Eliminar" (click)="deleteUser(user)">
-                  <ion-icon name="trash-outline"></ion-icon>
-                </button>
+                <ion-button class="action-btn action-edit" title="Editar" (click)="editUser(user)" fill="outline">
+                  <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+                <ion-button class="action-btn action-delete" title="Eliminar" (click)="deleteUser(user)" fill="outline">
+                  <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                </ion-button>
               </td>
             </tr>
           }
@@ -112,31 +113,34 @@
 
     @if (totalPages() > 1) {
       <div class="pagination">
-        <button
+        <ion-button
           class="page-btn"
           [disabled]="page() === 1"
           (click)="goToPage(page() - 1)"
+          fill="outline"
         >
-          <ion-icon name="chevron-back-outline"></ion-icon>
-        </button>
+          <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+        </ion-button>
 
         @for (p of [].constructor(totalPages()); track $index; let i = $index) {
-          <button
+          <ion-button
             class="page-btn"
             [class.page-active]="i + 1 === page()"
             (click)="goToPage(i + 1)"
+            fill="outline"
           >
             {{ i + 1 }}
-          </button>
+          </ion-button>
         }
 
-        <button
+        <ion-button
           class="page-btn"
           [disabled]="page() === totalPages()"
           (click)="goToPage(page() + 1)"
+          fill="outline"
         >
-          <ion-icon name="chevron-forward-outline"></ion-icon>
-        </button>
+          <ion-icon name="chevron-forward-outline" slot="icon-only"></ion-icon>
+        </ion-button>
       </div>
     }
   </div>

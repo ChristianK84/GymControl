@@ -3,8 +3,9 @@ import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
-  IonButton, IonIcon, IonFooter, IonSpinner, ModalController,
-  ToastController,
+  IonButton, IonIcon, IonFooter, IonSpinner,
+  IonInput, IonSelect, IonSelectOption, IonItem, IonLabel, IonAvatar,
+  ModalController, ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { closeOutline, cloudUploadOutline, cameraOutline } from 'ionicons/icons';
@@ -21,6 +22,7 @@ const UPLOAD_PRESET = 'gymcontrol_upload';
     FormsModule,
     IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
     IonButton, IonIcon, IonFooter, IonSpinner,
+    IonInput, IonSelect, IonSelectOption, IonItem, IonLabel, IonAvatar,
   ],
   templateUrl: './alumno-form-modal.html',
   styleUrl: './alumno-form-modal.css',
