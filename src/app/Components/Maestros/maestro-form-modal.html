@@ -1,0 +1,122 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ isEdit ? 'Editar Maestro' : 'Nuevo Maestro' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="modal-content">
+  <div class="modal-body">
+    @if (isEdit) {
+      <div class="identity-card">
+        <ion-avatar class="avatar-circle">{{ nombre.charAt(0).toUpperCase() }}</ion-avatar>
+        <div class="identity-info">
+          <span class="identity-name">{{ nombre }} {{ apellidoPaterno }}</span>
+          <span class="identity-id">ID #{{ maestro!.id }}</span>
+        </div>
+      </div>
+    }
+
+    <!-- Datos Personales -->
+    <div class="section">
+      <h3 class="section-title">Datos Personales</h3>
+      <div>
+        <ion-item class="field-row">
+          <ion-label position="stacked">Nombre</ion-label>
+          <ion-input class="field-input" [class.field-error]="errors['nombre']" [(ngModel)]="nombre" placeholder="Nombre(s)" fill="outline"></ion-input>
+        </ion-item>
+        @if (errors['nombre']) { <span class="error-msg">{{ errors['nombre'] }}</span> }
+      </div>
+      <div class="inline-fields">
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Apellido Paterno</ion-label>
+            <ion-input class="field-input" [class.field-error]="errors['apellidoPaterno']" [(ngModel)]="apellidoPaterno" fill="outline"></ion-input>
+          </ion-item>
+          @if (errors['apellidoPaterno']) { <span class="error-msg">{{ errors['apellidoPaterno'] }}</span> }
+        </div>
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Apellido Materno</ion-label>
+            <ion-input class="field-input" [(ngModel)]="apellidoMaterno" placeholder="Opcional" fill="outline"></ion-input>
+          </ion-item>
+        </div>
+      </div>
+      <div class="inline-fields">
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Teléfono</ion-label>
+            <ion-input class="field-input" type="tel" [(ngModel)]="telefono" placeholder="Opcional" fill="outline"></ion-input>
+          </ion-item>
+        </div>
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Fecha Nacimiento</ion-label>
+            <input type="date" class="field-input field-input-native" [(ngModel)]="fechaNacimiento" />
+          </ion-item>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fotografía -->
+    <div class="section">
+      <h3 class="section-title">Fotografía</h3>
+      <div class="photo-upload">
+        <input
+          type="file"
+          accept="image/*"
+          style="display:none"
+          #fileInput
+          (change)="onFileSelected($event)"
+        />
+        @if (photoPreview || currentPhotoUrl) {
+          <div class="photo-preview">
+            <img [src]="photoPreview || currentPhotoUrl" alt="Vista previa" />
+            <ion-button class="photo-remove-btn" (click)="removePhoto()" title="Quitar foto" fill="solid">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+        } @else {
+          <ion-button class="photo-placeholder" (click)="fileInput.click()" fill="clear">
+            <ion-icon name="camera-outline"></ion-icon>
+            <span>Agregar fotografía</span>
+          </ion-button>
+        }
+        @if (photoPreview || currentPhotoUrl) {
+          <ion-button class="photo-change-btn" (click)="fileInput.click()" fill="outline">
+            <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
+            Cambiar foto
+          </ion-button>
+        }
+        @if (errors['photo']) {
+          <span class="error-msg">{{ errors['photo'] }}</span>
+        }
+      </div>
+    </div>
+
+    @if (isEdit) {
+      <div class="meta-footer">
+        <span>Creado el {{ createdAt }}</span>
+      </div>
+    }
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button class="btn-cancel" (click)="dismiss()">Cancelar</ion-button>
+      <ion-button class="btn-save" (click)="save()" [disabled]="uploading()">
+        @if (uploading()) {
+          <ion-spinner name="lines-small"></ion-spinner>
+        } @else {
+          {{ isEdit ? 'Guardar Cambios' : 'Crear Maestro' }}
+        }
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

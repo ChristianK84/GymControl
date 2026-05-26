@@ -30,6 +30,11 @@ export const routes: Routes = [
           import('./Components/PerfilAlumno/perfil-alumno').then((m) => m.PerfilAlumno),
       },
       {
+        path: 'maestros',
+        loadComponent: () =>
+          import('./Components/Maestros/maestros').then((m) => m.Maestros),
+      },
+      {
         path: 'usuarios',
         loadComponent: () =>
           import('./Components/Users/users').then((m) => m.Users),

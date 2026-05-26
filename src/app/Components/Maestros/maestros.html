@@ -1,0 +1,120 @@
+<div class="maestros-container">
+  <!-- Header -->
+  <div class="maestros-header">
+    <div>
+      <h1 class="maestros-title">Directorio de Maestros</h1>
+      <p class="maestros-subtitle">Gestiona el listado completo de entrenadores registrados en la academia.</p>
+    </div>
+    <ion-button class="btn-add" (click)="addMaestro()" fill="solid">
+      <ion-icon name="add-outline" slot="start"></ion-icon>
+      Nuevo Maestro
+    </ion-button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <div class="search-box">
+      <ion-icon name="search-outline" class="search-icon"></ion-icon>
+      <ion-input
+        class="search-input"
+        placeholder="Buscar por nombre o apellido..."
+        fill="outline"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="onSearchChange($event)"
+      ></ion-input>
+    </div>
+    <ion-button class="btn-clear" (click)="clearFilters()" fill="outline">
+      <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+      Limpiar
+    </ion-button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrapper">
+    <table class="maestros-table">
+      <thead>
+        <tr>
+          <th>Maestro</th>
+          <th>Teléfono</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading()) {
+          @for (row of [1,2,3,4,5,6,7,8]; track row) {
+            <tr class="skeleton-row">
+              <td><div class="skeleton-cell"><ion-skeleton-text class="skeleton-avatar" [animated]="true"></ion-skeleton-text><ion-skeleton-text class="skeleton-text-lg" [animated]="true"></ion-skeleton-text></div></td>
+              <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="skeleton-badge" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="skeleton-text-sm" [animated]="true"></ion-skeleton-text></td>
+            </tr>
+          }
+        } @else {
+          @for (maestro of pagedMaestros(); track maestro.id) {
+            <tr>
+              <td>
+                <div class="maestro-cell">
+                  @if (maestro.foto) {
+                    <img class="maestro-avatar" [src]="maestro.foto" [alt]="maestro.nombre" />
+                  } @else {
+                    <div class="maestro-avatar maestro-avatar-fallback">
+                      {{ iniciales(maestro.nombre) }}
+                    </div>
+                  }
+                  <div class="maestro-name-group">
+                    <span class="maestro-name">{{ maestro.nombre }}</span>
+                    <span class="maestro-apellido">{{ maestro.apellido_paterno }} {{ maestro.apellido_materno ?? '' }}</span>
+                  </div>
+                </div>
+              </td>
+              <td class="td-muted">{{ maestro.telefono || '—' }}</td>
+              <td>
+                <ion-badge class="status-badge" [class.status-inactive]="!maestro.is_active">
+                  {{ maestro.is_active ? 'Activo' : 'Inactivo' }}
+                </ion-badge>
+              </td>
+              <td class="td-actions">
+                <ion-button class="action-btn action-edit" title="Editar" (click)="editMaestro(maestro)" fill="outline">
+                  <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+              </td>
+            </tr>
+          }
+          @empty {
+            <tr>
+              <td colspan="4" class="td-empty">
+                <div class="empty-state">
+                  <ion-icon name="body-outline"></ion-icon>
+                  <p>No se encontraron maestros</p>
+                </div>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Footer -->
+  <div class="table-footer">
+    <span class="footer-count">
+      {{ filtered().length }} maestro{{ filtered().length !== 1 ? 's' : '' }}
+    </span>
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <ion-button class="page-btn" [disabled]="page() === 1" (click)="goToPage(page() - 1)" fill="outline">
+          <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        @for (p of [].constructor(totalPages()); track $index; let i = $index) {
+          <ion-button class="page-btn" [class.page-active]="i + 1 === page()" (click)="goToPage(i + 1)" fill="outline">
+            {{ i + 1 }}
+          </ion-button>
+        }
+        <ion-button class="page-btn" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)" fill="outline">
+          <ion-icon name="chevron-forward-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+    }
+  </div>
+</div>

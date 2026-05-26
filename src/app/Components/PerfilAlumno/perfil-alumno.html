@@ -404,20 +404,16 @@
           <thead>
             <tr>
               <th>Fecha</th>
-              <th>Hora</th>
-              <th>Tipo</th>
               <th>Registrado por</th>
               <th>Notas</th>
-              <th>Acciones</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             @if (loadingAsistencias()) {
               @for (row of [1,2,3,4,5]; track row) {
                 <tr class="skeleton-row">
-                  <td><ion-skeleton-text class="skeleton-text-sm" [animated]="true"></ion-skeleton-text></td>
-                  <td><ion-skeleton-text class="skeleton-text-sm" [animated]="true"></ion-skeleton-text></td>
-                  <td><ion-skeleton-text class="skeleton-badge" [animated]="true"></ion-skeleton-text></td>
+                  <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
                   <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
                   <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
                   <td><ion-skeleton-text class="skeleton-text-sm" [animated]="true"></ion-skeleton-text></td>
@@ -427,10 +423,10 @@
               @for (asis of pagedAsistencias(); track asis.id) {
                 <tr>
                   @if (editingAsistenciaId() === asis.id) {
-                    <td>{{ fechaHora(asis.fecha).fecha }}</td>
-                    <td>{{ fechaHora(asis.fecha).hora }}</td>
-                    <td>
-                      <ion-select [(ngModel)]="editAsistio" interface="popover" class="asis-inline-ion-select">
+                    <td class="td-fecha-indicator" [class.falta-indicator]="!editAsistio">
+                      <span class="fecha-linea">{{ fechaHora(asis.fecha).fecha }}</span>
+                      <span class="hora-linea">{{ fechaHora(asis.fecha).hora }}</span>
+                      <ion-select [(ngModel)]="editAsistio" interface="popover" class="asis-inline-ion-select asis-edit-select">
                         <ion-select-option [value]="true">Asistencia</ion-select-option>
                         <ion-select-option [value]="false">Falta</ion-select-option>
                       </ion-select>
@@ -453,12 +449,9 @@
                       </ion-button>
                     </td>
                   } @else {
-                    <td>{{ fechaHora(asis.fecha).fecha }}</td>
-                    <td class="td-muted">{{ fechaHora(asis.fecha).hora }}</td>
-                    <td>
-                      <ion-badge class="asis-pill" [class.asis-falta]="!asis.asistio">
-                        {{ asis.asistio ? 'Asistencia' : 'Falta' }}
-                      </ion-badge>
+                    <td class="td-fecha-indicator" [class.falta-indicator]="!asis.asistio">
+                      <span class="fecha-linea">{{ fechaHora(asis.fecha).fecha }}</span>
+                      <span class="hora-linea">{{ fechaHora(asis.fecha).hora }}</span>
                     </td>
                     <td class="td-muted">{{ registradoPorStr(asis) }}</td>
                     <td class="td-muted">{{ asis.notas || '—' }}</td>
@@ -471,7 +464,7 @@
                 </tr>
               }
               @empty {
-                <tr><td colspan="6" class="td-empty">Sin asistencias registradas</td></tr>
+                <tr><td colspan="4" class="td-empty">Sin asistencias registradas</td></tr>
               }
             }
           </tbody>

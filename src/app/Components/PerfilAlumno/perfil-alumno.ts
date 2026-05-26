@@ -306,6 +306,13 @@ export class PerfilAlumno implements OnInit {
     };
   }
 
+  fechaHoraCompleta(fecha: string): string {
+    const d = new Date(fecha);
+    const f = d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: '2-digit' });
+    const h = d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+    return `${f}, ${h}`;
+  }
+
   registradoPorStr(asis: Asistencia): string {
     return asis.maestro?.nombre ?? (asis.registrado_por ? `ID #${asis.registrado_por}` : '—');
   }
