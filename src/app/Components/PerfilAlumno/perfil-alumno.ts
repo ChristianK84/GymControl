@@ -313,8 +313,12 @@ export class PerfilAlumno implements OnInit {
     return `${f}, ${h}`;
   }
 
-  registradoPorStr(asis: Asistencia): string {
+  registradoPorNombre(asis: Asistencia): string {
     return asis.maestro?.nombre ?? (asis.registrado_por ? `ID #${asis.registrado_por}` : '—');
+  }
+
+  registradoPorApellido(asis: Asistencia): string {
+    return asis.maestro?.apellido_paterno ?? '';
   }
 
   startEditAsistencia(asis: Asistencia): void {

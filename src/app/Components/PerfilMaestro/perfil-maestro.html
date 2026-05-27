@@ -1,0 +1,454 @@
+<div class="profile-page">
+  @if (loading()) {
+    <div class="loading-container">
+      <ion-spinner name="lines-small"></ion-spinner>
+    </div>
+  } @else if (maestro(); as m) {
+    <!-- Back -->
+    <ion-button class="back-btn" (click)="router.navigate(['/dashboard/maestros'])" fill="outline">
+      <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+      Regresar
+    </ion-button>
+
+    <!-- Profile Header -->
+    <header class="profile-header">
+      <div class="profile-photo" [class.editing]="editing()">
+        <input type="file" accept="image/*" style="display:none" #fileInput (change)="onFileSelected($event)" />
+        @if (photoPreview) {
+          <img [src]="photoPreview" [alt]="m.nombre" />
+        } @else if (m.foto && !removePhotoFlag) {
+          <img [src]="m.foto" [alt]="m.nombre" />
+        } @else {
+          <div class="profile-photo-fallback">
+            <ion-icon name="person-outline"></ion-icon>
+          </div>
+        }
+        @if (editing()) {
+          <div class="photo-edit-overlay">
+            <ion-button class="photo-edit-btn" (click)="fileInput.click()" title="Cambiar foto" fill="solid">
+              <ion-icon name="cloud-upload-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+        }
+      </div>
+
+      <div class="profile-info">
+        <div class="profile-name-row">
+          <h1 class="profile-name">{{ m.nombre }} {{ m.apellido_paterno }}</h1>
+          <ion-badge class="status-pill" [class.status-inactive]="!m.is_active">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+            {{ m.is_active ? 'Activo' : 'Inactivo' }}
+          </ion-badge>
+        </div>
+        <p class="profile-subtitle">
+          {{ m.apellido_materno ? m.apellido_materno + ' · ' : '' }}Entrenador
+        </p>
+
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+          <div class="quick-stat">
+            <span class="stat-number">{{ alumnosActivos() }}</span>
+            <span class="stat-label">Alumnos activos</span>
+          </div>
+          <div class="quick-stat-divider"></div>
+          <div class="quick-stat">
+            <span class="stat-number">{{ asistenciasMes() }}</span>
+            <span class="stat-label">Asistencias este mes</span>
+          </div>
+        </div>
+
+        @if (editing()) {
+          <div class="edit-btns">
+            <ion-button class="btn-cancel-edit" (click)="cancelEditing()" fill="solid">
+              <ion-icon name="close-outline" slot="start"></ion-icon>
+              Cancelar
+            </ion-button>
+            <ion-button class="btn-save-edit" (click)="saveChanges()" [disabled]="saving()" fill="solid">
+              @if (saving()) {
+                <ion-spinner name="lines-small"></ion-spinner>
+              } @else {
+                <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+              }
+              Guardar Cambios
+            </ion-button>
+          </div>
+        } @else {
+          <ion-button class="edit-btn" (click)="startEditing()" fill="solid">
+            <ion-icon name="create-outline" slot="start"></ion-icon>
+            Editar Perfil
+          </ion-button>
+        }
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <ion-segment [(ngModel)]="activeTab" (ionChange)="onTabChange($event.detail.value)" class="profile-segment">
+      <ion-segment-button value="info">
+        <ion-icon name="person-outline"></ion-icon>
+        <ion-label>Información</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="alumnos">
+        <ion-icon name="people-outline"></ion-icon>
+        <ion-label>Alumnos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="asistencias">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+        <ion-label>Asistencias</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <!-- ═══ TAB: INFORMACIÓN ═══ -->
+    @if (activeTab() === 'info') {
+    <div class="bento-grid">
+      <!-- Personal Data -->
+      <ion-card class="card card-wide">
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="person-outline"></ion-icon>
+            Datos Personales
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="data-grid">
+            <div class="data-item">
+              <span class="data-label">Nombre</span>
+              @if (editing()) {
+                <ion-input class="field-input" [(ngModel)]="editNombre" fill="outline"></ion-input>
+              } @else {
+                <span class="data-value">{{ m.nombre }}</span>
+              }
+            </div>
+            <div class="data-item">
+              <span class="data-label">Apellido Paterno</span>
+              @if (editing()) {
+                <ion-input class="field-input" [(ngModel)]="editApellidoP" fill="outline"></ion-input>
+              } @else {
+                <span class="data-value">{{ m.apellido_paterno }}</span>
+              }
+            </div>
+            <div class="data-item">
+              <span class="data-label">Apellido Materno</span>
+              @if (editing()) {
+                <ion-input class="field-input" [(ngModel)]="editApellidoM" placeholder="Opcional" fill="outline"></ion-input>
+              } @else {
+                <span class="data-value">{{ m.apellido_materno || '—' }}</span>
+              }
+            </div>
+            <div class="data-item">
+              <span class="data-label">Fecha de Nacimiento</span>
+              @if (editing()) {
+                <input type="date" class="field-input field-input-native" [(ngModel)]="editFechaNac" />
+              } @else {
+                <span class="data-value">{{ m.fecha_nacimiento ? fechaFormato(m.fecha_nacimiento) : '—' }}</span>
+              }
+            </div>
+            <div class="data-item">
+              <span class="data-label">Edad</span>
+              <span class="data-value">{{ edad(m.fecha_nacimiento) }}</span>
+            </div>
+            <div class="data-item">
+              <span class="data-label">Estado</span>
+              @if (editing()) {
+                <ion-select [(ngModel)]="editIsActive" interface="popover" class="field-ion-select">
+                  <ion-select-option [value]="true">Activo</ion-select-option>
+                  <ion-select-option [value]="false">Inactivo</ion-select-option>
+                </ion-select>
+              } @else {
+                <span class="data-value">{{ m.is_active ? 'Activo' : 'Inactivo' }}</span>
+              }
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Contact -->
+      <ion-card class="card">
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="call-outline"></ion-icon>
+            Contacto
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="data-grid">
+            <div class="data-item">
+              <span class="data-label">Teléfono</span>
+              @if (editing()) {
+                <ion-input class="field-input" type="tel" [(ngModel)]="editTelefono" placeholder="Sin teléfono" fill="outline"></ion-input>
+              } @else {
+                <span class="data-value">{{ m.telefono || '—' }}</span>
+              }
+            </div>
+            @if (m.user) {
+              <div class="data-item">
+                <span class="data-label">Usuario vinculado</span>
+                <span class="data-value">{{ m.user.full_name || m.user.username }}</span>
+              </div>
+            }
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Meta -->
+      @if (editing()) {
+        <ion-card class="card">
+          <ion-card-header>
+            <ion-card-title>
+              <ion-icon name="calendar-outline"></ion-icon>
+              Información del Sistema
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="data-grid">
+              <div class="data-item">
+                <span class="data-label">Creado</span>
+                <span class="data-value">{{ editCreatedAt }}</span>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      }
+    </div>
+    }
+
+    <!-- ═══ TAB: ALUMNOS ═══ -->
+    @if (activeTab() === 'alumnos') {
+    <div class="tab-section">
+      @if (alumnos().length === 0) {
+        <div class="empty-state-card">
+          <ion-icon name="people-outline"></ion-icon>
+          <p class="empty-title">Sin alumnos asignados</p>
+          <p class="empty-subtitle">Este maestro aún no tiene alumnos a su cargo</p>
+        </div>
+      } @else {
+        <!-- Filter -->
+        <div class="filters-bar">
+          <div class="search-box">
+            <ion-icon name="search-outline" class="search-icon"></ion-icon>
+            <ion-input
+              class="search-input"
+              placeholder="Buscar alumno..."
+              fill="outline"
+              [ngModel]="alumnoSearch()"
+              (ngModelChange)="alumnoSearch.set($event); alumnoPage.set(1)"
+            ></ion-input>
+          </div>
+          @if (filteredAlumnos().length > 0) {
+            <span class="filter-count">{{ filteredAlumnos().length }} alumno{{ filteredAlumnos().length !== 1 ? 's' : '' }}</span>
+          }
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Alumno</th>
+                <th>Edad</th>
+                <th>Rama</th>
+                <th>Ingreso</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (alumno of pagedAlumnos(); track alumno.id) {
+                <tr class="clickable-row" (click)="router.navigate(['/dashboard/alumnos', alumno.id])">
+                  <td>
+                    <div class="alumno-cell">
+                      @if (alumno.fotografia) {
+                        <img class="alumno-avatar" [src]="alumno.fotografia" [alt]="alumno.nombrecompleto" />
+                      } @else {
+                        <div class="alumno-avatar alumno-avatar-fallback">{{ iniciales(alumno.nombrecompleto) }}</div>
+                      }
+                      <div class="alumno-name-group">
+                        <span class="alumno-name-text">{{ alumno.nombrecompleto }}</span>
+                        <span class="alumno-apellido-text">{{ alumno.apellido_paterno }} {{ alumno.apellido_materno ?? '' }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="td-muted">{{ edad(alumno.fecha_nacimiento) }}</td>
+                  <td>
+                    <span class="rama-badge" [style.background-color]="ramaColor(alumno.rama) + '18'" [style.color]="ramaColor(alumno.rama)">
+                      {{ alumno.rama }}
+                    </span>
+                  </td>
+                  <td class="td-muted">{{ fechaFormato(alumno.fecha_inscripcion) }}</td>
+                  <td>
+                    <span class="status-badge" [class.status-inactive]="!alumno.is_active">
+                      {{ alumno.is_active ? 'Activo' : 'Inactivo' }}
+                    </span>
+                  </td>
+                </tr>
+              }
+              @empty {
+                <tr><td colspan="5" class="td-empty">Sin resultados</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="table-footer">
+          <span class="footer-count">{{ filteredAlumnos().length }} alumno{{ filteredAlumnos().length !== 1 ? 's' : '' }}</span>
+          @if (alumnoTotalPages() > 1) {
+            <div class="pagination">
+              <ion-button class="page-btn" [disabled]="alumnoPage() === 1" (click)="goToAlumnoPage(alumnoPage() - 1)" fill="outline">
+                <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              @for (p of [].constructor(alumnoTotalPages()); track $index; let i = $index) {
+                <ion-button class="page-btn" [class.page-active]="i + 1 === alumnoPage()" (click)="goToAlumnoPage(i + 1)" fill="outline">
+                  {{ i + 1 }}
+                </ion-button>
+              }
+              <ion-button class="page-btn" [disabled]="alumnoPage() === alumnoTotalPages()" (click)="goToAlumnoPage(alumnoPage() + 1)" fill="outline">
+                <ion-icon name="chevron-forward-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+    }
+
+    <!-- ═══ TAB: ASISTENCIAS ═══ -->
+    @if (activeTab() === 'asistencias') {
+    <div class="tab-section">
+      @if (asistencias().length === 0) {
+        <div class="empty-state-card">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          <p class="empty-title">Sin asistencias registradas</p>
+          <p class="empty-subtitle">Aún no hay registros de asistencia para este entrenador</p>
+        </div>
+      } @else {
+        <!-- Filters -->
+        <div class="asis-filter-card">
+          <div class="asis-filter-grid">
+            <div class="search-box">
+              <ion-icon name="search-outline" class="search-icon"></ion-icon>
+              <ion-input
+                class="search-input"
+                placeholder="Buscar alumno o nota..."
+                fill="outline"
+                [ngModel]="asisSearch()"
+                (ngModelChange)="asisSearch.set($event); asisPage.set(1)"
+              ></ion-input>
+            </div>
+            <div class="filter-group">
+              <label class="filter-label">Desde</label>
+              <input type="date" class="filter-date" [(ngModel)]="filterFechaDesde" />
+            </div>
+            <div class="filter-group">
+              <label class="filter-label">Hasta</label>
+              <input type="date" class="filter-date" [(ngModel)]="filterFechaHasta" />
+            </div>
+            <div class="asis-filter-actions">
+              <ion-button class="btn-filtrar" (click)="applyAsisFilters()" fill="solid" title="Filtrar">
+                <ion-icon name="search-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              <ion-button class="btn-limpiar" (click)="clearAsisFilters()" fill="solid" title="Limpiar">
+                <ion-icon name="close-circle-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrapper">
+          <table class="data-table asis-table">
+            <thead>
+              <tr>
+                <th>Alumno</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Notas</th>
+                <th class="th-action"></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (asis of pagedAsistencias(); track asis.id) {
+                <tr>
+                  @if (editingAsistenciaId() === asis.id) {
+                    <td>
+                      <span class="alumno-link">{{ asis.alumno?.nombrecompleto ?? 'Alumno #' + asis.alumno_id }}</span>
+                    </td>
+                    <td>
+                      <div class="fecha-cell">
+                        <span class="fecha-linea">{{ fechaHora(asis.fecha).fecha }}</span>
+                        <span class="hora-linea">{{ fechaHora(asis.fecha).hora }}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <select class="filter-select-native asis-edit-select" [(ngModel)]="editAsistio">
+                        <option [ngValue]="true">Asistió</option>
+                        <option [ngValue]="false">Falta</option>
+                      </select>
+                    </td>
+                    <td><ion-input class="asis-inline-input" [(ngModel)]="editAsisNotas" placeholder="Notas" fill="outline"></ion-input></td>
+                    <td class="td-actions">
+                      <button class="action-btn action-save" (click)="saveAsistencia(asis)" title="Guardar">
+                        <ion-icon name="checkmark-outline"></ion-icon>
+                      </button>
+                      <button class="action-btn action-cancel" (click)="cancelEditAsistencia()" title="Cancelar">
+                        <ion-icon name="close-outline"></ion-icon>
+                      </button>
+                    </td>
+                  } @else {
+                    <td>
+                      <span class="alumno-link" (click)="router.navigate(['/dashboard/alumnos', asis.alumno_id])">
+                        {{ asis.alumno?.nombrecompleto ?? 'Alumno #' + asis.alumno_id }}
+                        @if (asis.alumno) {
+                          <span class="alumno-rama-suffix">{{ asis.alumno.apellido_paterno }}</span>
+                        }
+                      </span>
+                    </td>
+                    <td>
+                      <div class="fecha-cell">
+                        <span class="fecha-linea">{{ fechaHora(asis.fecha).fecha }}</span>
+                        <span class="hora-linea">{{ fechaHora(asis.fecha).hora }}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="status-badge" [class.status-inactive]="!asis.asistio">
+                        {{ asis.asistio ? 'Asistió' : 'Falta' }}
+                      </span>
+                    </td>
+                    <td class="td-muted">{{ asis.notas || '—' }}</td>
+                    <td class="td-actions">
+                      <button class="action-btn action-edit" (click)="startEditAsistencia(asis)" title="Editar">
+                        <ion-icon name="pencil-outline"></ion-icon>
+                      </button>
+                    </td>
+                  }
+                </tr>
+              }
+              @empty {
+                <tr><td colspan="5" class="td-empty">Sin resultados</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="table-footer">
+          <span class="footer-count">{{ filteredAsistencias().length }} registro{{ filteredAsistencias().length !== 1 ? 's' : '' }}</span>
+          @if (asisTotalPages() > 1) {
+            <div class="pagination">
+              <ion-button class="page-btn" [disabled]="asisPage() === 1" (click)="goToAsisPage(asisPage() - 1)" fill="outline">
+                <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              @for (p of [].constructor(asisTotalPages()); track $index; let i = $index) {
+                <ion-button class="page-btn" [class.page-active]="i + 1 === asisPage()" (click)="goToAsisPage(i + 1)" fill="outline">
+                  {{ i + 1 }}
+                </ion-button>
+              }
+              <ion-button class="page-btn" [disabled]="asisPage() === asisTotalPages()" (click)="goToAsisPage(asisPage() + 1)" fill="outline">
+                <ion-icon name="chevron-forward-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+    }
+  }
+</div>

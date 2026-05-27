@@ -35,6 +35,11 @@ export const routes: Routes = [
           import('./Components/Maestros/maestros').then((m) => m.Maestros),
       },
       {
+        path: 'maestros/:id',
+        loadComponent: () =>
+          import('./Components/PerfilMaestro/perfil-maestro').then((m) => m.PerfilMaestro),
+      },
+      {
         path: 'usuarios',
         loadComponent: () =>
           import('./Components/Users/users').then((m) => m.Users),

@@ -1,4 +1,5 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonIcon, IonButton, IonInput, IonSelect, IonSelectOption, IonSkeletonText, IonBadge, ToastController, ModalController } from '@ionic/angular/standalone';
 import { ApiService } from '../../Services/api-service';
@@ -20,6 +21,7 @@ export class Maestros implements OnInit {
   private api = inject(ApiService);
   private toastCtrl = inject(ToastController);
   private modalCtrl = inject(ModalController);
+  private router = inject(Router);
 
   allMaestros = signal<Maestro[]>([]);
   loading = signal(true);
@@ -83,6 +85,10 @@ export class Maestros implements OnInit {
   onSearchChange(value: string): void {
     this.searchTerm.set(value);
     this.page.set(1);
+  }
+
+  viewProfile(maestro: Maestro): void {
+    this.router.navigate(['/dashboard/maestros', maestro.id]);
   }
 
   clearFilters(): void {

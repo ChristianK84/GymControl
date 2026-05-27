@@ -888,10 +888,32 @@ ion-button.btn-limpiar ion-icon {
 .alumnos-table {
   width: 100%;
   min-width: 480px;
-  max-width: 656px;
   border-collapse: collapse;
   font-family: 'Inter', sans-serif;
   font-size: 0.83rem;
+}
+
+@media (min-width: 768px) {
+  .alumnos-table {
+    min-width: 0;
+    max-width: none;
+  }
+}
+
+.registrado-name-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.registrado-name-group .alumno-name {
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.registrado-name-group .alumno-apellido {
+  font-size: 0.72rem;
+  color: #5e3f3b;
+  line-height: 1.3;
 }
 
 .alumnos-table thead { background: #fff8f7; border-bottom: 2px solid #e5e2e1; }

@@ -453,7 +453,14 @@
                       <span class="fecha-linea">{{ fechaHora(asis.fecha).fecha }}</span>
                       <span class="hora-linea">{{ fechaHora(asis.fecha).hora }}</span>
                     </td>
-                    <td class="td-muted">{{ registradoPorStr(asis) }}</td>
+                    <td>
+                      <div class="registrado-name-group">
+                        <span class="alumno-name">{{ registradoPorNombre(asis) }}</span>
+                        @if (registradoPorApellido(asis)) {
+                          <span class="alumno-apellido">{{ registradoPorApellido(asis) }}</span>
+                        }
+                      </div>
+                    </td>
                     <td class="td-muted">{{ asis.notas || '—' }}</td>
                     <td class="td-actions">
                       <ion-button class="action-btn action-edit" title="Editar" (click)="startEditAsistencia(asis)" fill="outline">

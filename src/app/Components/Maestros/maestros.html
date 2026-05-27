@@ -52,7 +52,7 @@
           }
         } @else {
           @for (maestro of pagedMaestros(); track maestro.id) {
-            <tr>
+            <tr class="clickable-row" (click)="viewProfile(maestro)">
               <td>
                 <div class="maestro-cell">
                   @if (maestro.foto) {
