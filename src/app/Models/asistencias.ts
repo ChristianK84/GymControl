@@ -21,6 +21,7 @@ export interface Asistencia {
   notas: string | null;
   registrado_por: number | null;
   created_at: string;
+  alerta_impago: string | null;
   alumno: AsistenciaAlumno | null;
   maestro: AsistenciaMaestro | null;
 }
