@@ -1,0 +1,199 @@
+<div class="asis-container">
+  <!-- Header -->
+  <div class="asis-header">
+    <div>
+      <h1 class="asis-title">Control de Asistencias</h1>
+      <p class="asis-subtitle">Registra y monitorea la asistencia diaria de todos los alumnos.</p>
+    </div>
+    <ion-button class="btn-add" fill="solid">
+      <ion-icon name="add-outline" slot="start"></ion-icon>
+      Registrar Asistencia
+    </ion-button>
+  </div>
+
+  <!-- Filters Card -->
+  <div class="filter-card">
+    <div class="filter-grid">
+      <div class="search-box">
+        <ion-icon name="search-outline" class="search-icon"></ion-icon>
+        <ion-input
+          class="search-input"
+          placeholder="Buscar alumno o nota..."
+          fill="outline"
+          [ngModel]="searchTerm()"
+          (ngModelChange)="onSearchChange($event)"
+        ></ion-input>
+      </div>
+      <select class="filter-select" [ngModel]="maestroFilter() === null ? '' : maestroFilter()" (ngModelChange)="onMaestroChange($event)">
+        <option value="">Todos los maestros</option>
+        @for (m of maestros(); track m.id) {
+          <option [value]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</option>
+        }
+      </select>
+      <select class="filter-select" [ngModel]="tipoFilter()" (ngModelChange)="onTipoChange($event)">
+        <option value="todas">Todas</option>
+        <option value="asistio">Asistencia</option>
+        <option value="falta">Falta</option>
+      </select>
+      <div class="date-group">
+        <input type="date" class="filter-date" [(ngModel)]="filterFechaDesde" placeholder="Desde" />
+        <input type="date" class="filter-date" [(ngModel)]="filterFechaHasta" placeholder="Hasta" />
+      </div>
+      <div class="filter-actions">
+        <ion-button class="btn-filter" (click)="applyFilters()" fill="solid" title="Filtrar">
+          <ion-icon name="search-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        <ion-button class="btn-clear-filters" (click)="clearFilters()" fill="outline" title="Limpiar">
+          <ion-icon name="close-circle-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrapper">
+    <table class="asis-table">
+      <thead>
+        <tr>
+          <th>Alumno</th>
+          <th>Fecha y Hora</th>
+          <th>Maestro</th>
+          <th>Estado</th>
+          <th>Notas</th>
+          <th class="th-actions">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading()) {
+          @for (row of [1,2,3,4,5,6,7,8]; track row) {
+            <tr class="skeleton-row">
+              <td><div class="skeleton-cell"><ion-skeleton-text class="sk-avatar" [animated]="true"></ion-skeleton-text><ion-skeleton-text class="sk-text-lg" [animated]="true"></ion-skeleton-text></div></td>
+              <td><ion-skeleton-text class="sk-text" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="sk-text" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="sk-badge" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="sk-text" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="sk-text-sm" [animated]="true"></ion-skeleton-text></td>
+            </tr>
+          }
+        } @else {
+          @for (asis of paged(); track asis.id) {
+            <tr>
+              @if (editingId() === asis.id) {
+                <!-- Edit mode -->
+                <td>
+                  <div class="alumno-cell">
+                    <div class="alumno-avatar-fallback">{{ asis.alumno ? iniciales(asis.alumno.nombrecompleto) : '?' }}</div>
+                    <span class="alumno-name">{{ asis.alumno?.nombrecompleto ?? 'ID #' + asis.alumno_id }}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="fecha-cell">
+                    <span class="fecha-line">{{ fechaHora(asis.fecha).fecha }}</span>
+                    <span class="hora-line">{{ fechaHora(asis.fecha).hora }}</span>
+                  </div>
+                </td>
+                <td>
+                  <select class="filter-select asis-edit-select" [(ngModel)]="editMaestroId">
+                    @for (m of maestros(); track m.id) {
+                      <option [value]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</option>
+                    }
+                  </select>
+                </td>
+                <td>
+                  <select class="filter-select asis-edit-select" [(ngModel)]="editAsistio">
+                    <option [ngValue]="true">Asistió</option>
+                    <option [ngValue]="false">Falta</option>
+                  </select>
+                </td>
+                <td>
+                  <ion-input class="asis-inline-input" [(ngModel)]="editNotas" placeholder="Notas" fill="outline"></ion-input>
+                </td>
+                <td class="td-actions">
+                  <button class="action-btn action-save" (click)="saveEdit(asis)" title="Guardar">
+                    <ion-icon name="checkmark-outline"></ion-icon>
+                  </button>
+                  <button class="action-btn action-cancel" (click)="cancelEdit()" title="Cancelar">
+                    <ion-icon name="close-outline"></ion-icon>
+                  </button>
+                </td>
+              } @else {
+                <!-- View mode -->
+                <td>
+                  <div class="alumno-cell">
+                    <div class="alumno-avatar-fallback">{{ asis.alumno ? iniciales(asis.alumno.nombrecompleto) : '?' }}</div>
+                    <div class="alumno-name-group">
+                      <span class="alumno-name">{{ asis.alumno?.nombrecompleto ?? 'ID #' + asis.alumno_id }}</span>
+                      @if (asis.alumno) {
+                        <span class="alumno-apellido">{{ asis.alumno.apellido_paterno }} {{ asis.alumno.apellido_materno ?? '' }}</span>
+                      }
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="fecha-cell">
+                    <span class="fecha-line">{{ fechaHora(asis.fecha).fecha }}</span>
+                    <span class="hora-line">{{ fechaHora(asis.fecha).hora }}</span>
+                  </div>
+                </td>
+                <td class="td-muted">{{ maestroNombre(asis.maestro_id) }}</td>
+                <td>
+                  <span class="status-badge" [class.status-falta]="!asis.asistio">
+                    {{ asis.asistio ? 'Asistió' : 'Falta' }}
+                  </span>
+                </td>
+                <td class="td-muted td-notas">
+                  <div class="notas-cell">
+                    <span>{{ asis.notas || '—' }}</span>
+                    @if (asis.alerta_impago) {
+                      <ion-badge class="impago-alert" title="{{ asis.alerta_impago }}">
+                        <ion-icon name="warning-outline"></ion-icon> Impago
+                      </ion-badge>
+                    }
+                  </div>
+                </td>
+                <td class="td-actions">
+                  <button class="action-btn action-edit" (click)="startEdit(asis)" title="Editar">
+                    <ion-icon name="pencil-outline"></ion-icon>
+                  </button>
+                  <button class="action-btn action-delete" (click)="deleteAsistencia(asis)" title="Eliminar">
+                    <ion-icon name="trash-outline"></ion-icon>
+                  </button>
+                </td>
+              }
+            </tr>
+          }
+          @empty {
+            <tr>
+              <td colspan="6" class="td-empty">
+                <div class="empty-state">
+                  <ion-icon name="checkmark-circle-outline"></ion-icon>
+                  <p>No se encontraron registros de asistencia</p>
+                </div>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Footer -->
+  <div class="table-footer">
+    <span class="footer-count">{{ filtered().length }} registro{{ filtered().length !== 1 ? 's' : '' }}</span>
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <ion-button class="page-btn" [disabled]="page() === 1" (click)="goToPage(page() - 1)" fill="outline">
+          <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        @for (p of [].constructor(totalPages()); track $index; let i = $index) {
+          <ion-button class="page-btn" [class.page-active]="i + 1 === page()" (click)="goToPage(i + 1)" fill="outline">
+            {{ i + 1 }}
+          </ion-button>
+        }
+        <ion-button class="page-btn" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)" fill="outline">
+          <ion-icon name="chevron-forward-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+    }
+  </div>
+</div>
