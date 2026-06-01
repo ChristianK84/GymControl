@@ -60,7 +60,6 @@
           <th>Maestro</th>
           <th>Estado</th>
           <th>Notas</th>
-          <th class="th-actions">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -72,99 +71,49 @@
               <td><ion-skeleton-text class="sk-text" [animated]="true"></ion-skeleton-text></td>
               <td><ion-skeleton-text class="sk-badge" [animated]="true"></ion-skeleton-text></td>
               <td><ion-skeleton-text class="sk-text" [animated]="true"></ion-skeleton-text></td>
-              <td><ion-skeleton-text class="sk-text-sm" [animated]="true"></ion-skeleton-text></td>
             </tr>
           }
         } @else {
           @for (asis of paged(); track asis.id) {
-            <tr>
-              @if (editingId() === asis.id) {
-                <!-- Edit mode -->
-                <td>
-                  <div class="alumno-cell">
-                    <div class="alumno-avatar-fallback">{{ asis.alumno ? iniciales(asis.alumno.nombrecompleto) : '?' }}</div>
+            <tr class="clickable-row" (click)="openEditModal(asis)">
+              <td>
+                <div class="alumno-cell">
+                  <div class="alumno-avatar-fallback">{{ asis.alumno ? iniciales(asis.alumno.nombrecompleto) : '?' }}</div>
+                  <div class="alumno-name-group">
                     <span class="alumno-name">{{ asis.alumno?.nombrecompleto ?? 'ID #' + asis.alumno_id }}</span>
-                  </div>
-                </td>
-                <td>
-                  <div class="fecha-cell">
-                    <span class="fecha-line">{{ fechaHora(asis.fecha).fecha }}</span>
-                    <span class="hora-line">{{ fechaHora(asis.fecha).hora }}</span>
-                  </div>
-                </td>
-                <td>
-                  <select class="filter-select asis-edit-select" [(ngModel)]="editMaestroId">
-                    @for (m of maestros(); track m.id) {
-                      <option [value]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</option>
-                    }
-                  </select>
-                </td>
-                <td>
-                  <select class="filter-select asis-edit-select" [(ngModel)]="editAsistio">
-                    <option [ngValue]="true">Asistió</option>
-                    <option [ngValue]="false">Falta</option>
-                  </select>
-                </td>
-                <td>
-                  <ion-input class="asis-inline-input" [(ngModel)]="editNotas" placeholder="Notas" fill="outline"></ion-input>
-                </td>
-                <td class="td-actions">
-                  <button class="action-btn action-save" (click)="saveEdit(asis)" title="Guardar">
-                    <ion-icon name="checkmark-outline"></ion-icon>
-                  </button>
-                  <button class="action-btn action-cancel" (click)="cancelEdit()" title="Cancelar">
-                    <ion-icon name="close-outline"></ion-icon>
-                  </button>
-                </td>
-              } @else {
-                <!-- View mode -->
-                <td>
-                  <div class="alumno-cell">
-                    <div class="alumno-avatar-fallback">{{ asis.alumno ? iniciales(asis.alumno.nombrecompleto) : '?' }}</div>
-                    <div class="alumno-name-group">
-                      <span class="alumno-name">{{ asis.alumno?.nombrecompleto ?? 'ID #' + asis.alumno_id }}</span>
-                      @if (asis.alumno) {
-                        <span class="alumno-apellido">{{ asis.alumno.apellido_paterno }} {{ asis.alumno.apellido_materno ?? '' }}</span>
-                      }
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="fecha-cell">
-                    <span class="fecha-line">{{ fechaHora(asis.fecha).fecha }}</span>
-                    <span class="hora-line">{{ fechaHora(asis.fecha).hora }}</span>
-                  </div>
-                </td>
-                <td class="td-muted">{{ maestroNombre(asis.maestro_id) }}</td>
-                <td>
-                  <span class="status-badge" [class.status-falta]="!asis.asistio">
-                    {{ asis.asistio ? 'Asistió' : 'Falta' }}
-                  </span>
-                </td>
-                <td class="td-muted td-notas">
-                  <div class="notas-cell">
-                    <span>{{ asis.notas || '—' }}</span>
-                    @if (asis.alerta_impago) {
-                      <ion-badge class="impago-alert" title="{{ asis.alerta_impago }}">
-                        <ion-icon name="warning-outline"></ion-icon> Impago
-                      </ion-badge>
+                    @if (asis.alumno) {
+                      <span class="alumno-apellido">{{ asis.alumno.apellido_paterno }} {{ asis.alumno.apellido_materno ?? '' }}</span>
                     }
                   </div>
-                </td>
-                <td class="td-actions">
-                  <button class="action-btn action-edit" (click)="startEdit(asis)" title="Editar">
-                    <ion-icon name="pencil-outline"></ion-icon>
-                  </button>
-                  <button class="action-btn action-delete" (click)="deleteAsistencia(asis)" title="Eliminar">
-                    <ion-icon name="trash-outline"></ion-icon>
-                  </button>
-                </td>
-              }
+                </div>
+              </td>
+              <td>
+                <div class="fecha-cell">
+                  <span class="fecha-line">{{ fechaHora(asis.fecha).fecha }}</span>
+                  <span class="hora-line">{{ fechaHora(asis.fecha).hora }}</span>
+                </div>
+              </td>
+              <td class="td-muted">{{ maestroNombre(asis.maestro_id) }}</td>
+              <td>
+                <span class="status-badge" [class.status-falta]="!asis.asistio">
+                  {{ asis.asistio ? 'Asistió' : 'Falta' }}
+                </span>
+              </td>
+              <td class="td-muted td-notas">
+                <div class="notas-cell">
+                  <span>{{ asis.notas || '—' }}</span>
+                  @if (asis.alerta_impago) {
+                    <ion-badge class="impago-alert" title="{{ asis.alerta_impago }}">
+                      <ion-icon name="warning-outline"></ion-icon> Impago
+                    </ion-badge>
+                  }
+                </div>
+              </td>
             </tr>
           }
           @empty {
             <tr>
-              <td colspan="6" class="td-empty">
+              <td colspan="5" class="td-empty">
                 <div class="empty-state">
                   <ion-icon name="checkmark-circle-outline"></ion-icon>
                   <p>No se encontraron registros de asistencia</p>

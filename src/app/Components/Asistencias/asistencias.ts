@@ -2,19 +2,18 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonIcon, IonButton, IonInput, IonSkeletonText, IonBadge,
-  ToastController, AlertController,
+  ToastController, ModalController,
 } from '@ionic/angular/standalone';
 import { ApiService } from '../../Services/api-service';
 import { Asistencia } from '../../Models/asistencias';
 import { Maestro } from '../../Models/maestros';
-import { Alumno } from '../../Models/alumnos';
 import { addIcons } from 'ionicons';
 import {
   addOutline, searchOutline, closeCircleOutline,
   chevronBackOutline, chevronForwardOutline,
-  pencilOutline, checkmarkOutline, closeOutline,
-  trashOutline, warningOutline,
+  warningOutline,
 } from 'ionicons/icons';
+import { AsistenciaEditModal } from './asistencia-edit-modal';
 
 @Component({
   selector: 'app-asistencias',
@@ -25,7 +24,7 @@ import {
 export class Asistencias implements OnInit {
   private api = inject(ApiService);
   private toastCtrl = inject(ToastController);
-  private alertCtrl = inject(AlertController);
+  private modalCtrl = inject(ModalController);
 
   asistencias = signal<Asistencia[]>([]);
   maestros = signal<Maestro[]>([]);
@@ -38,17 +37,11 @@ export class Asistencias implements OnInit {
   page = signal(1);
   readonly pageSize = 8;
 
-  editingId = signal<number | null>(null);
-  editAsistio = false;
-  editNotas = '';
-  editMaestroId: number | null = null;
-
   constructor() {
     addIcons({
       addOutline, searchOutline, closeCircleOutline,
       chevronBackOutline, chevronForwardOutline,
-      pencilOutline, checkmarkOutline, closeOutline,
-      trashOutline, warningOutline,
+      warningOutline,
     });
   }
 
@@ -154,55 +147,18 @@ export class Asistencias implements OnInit {
     if (p >= 1 && p <= this.totalPages()) this.page.set(p);
   }
 
-  startEdit(asis: Asistencia): void {
-    this.editingId.set(asis.id);
-    this.editAsistio = asis.asistio;
-    this.editNotas = asis.notas ?? '';
-    this.editMaestroId = asis.maestro_id;
-  }
-
-  cancelEdit(): void {
-    this.editingId.set(null);
-  }
-
-  saveEdit(asis: Asistencia): void {
-    this.api.updateAsistencia(asis.id, {
-      asistio: this.editAsistio,
-      notas: this.editNotas || null,
-      maestro_id: this.editMaestroId ?? undefined,
-    }).subscribe({
-      next: () => {
-        this.editingId.set(null);
+  async openEditModal(asis: Asistencia): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: AsistenciaEditModal,
+      componentProps: { asistencia: asis, maestros: this.maestros() },
+    });
+    modal.onDidDismiss().then(({ data, role }) => {
+      if (role === 'saved') {
         this.loadAsistencias();
         this.showToast('Asistencia actualizada', 'success');
-      },
-      error: () => this.showToast('Error al actualizar', 'danger'),
+      }
     });
-  }
-
-  async deleteAsistencia(asis: Asistencia): Promise<void> {
-    const alert = await this.alertCtrl.create({
-      header: 'Eliminar Asistencia',
-      message: `¿Eliminar el registro de ${asis.alumno?.nombrecompleto ?? 'asistencia'} del día ${asis.fecha}?`,
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Eliminar',
-          role: 'destructive',
-          cssClass: 'alert-delete-btn',
-          handler: () => {
-            this.api.deleteAsistencia(asis.id).subscribe({
-              next: () => {
-                this.loadAsistencias();
-                this.showToast('Asistencia eliminada', 'success');
-              },
-              error: () => this.showToast('Error al eliminar', 'danger'),
-            });
-          },
-        },
-      ],
-    });
-    await alert.present();
+    await modal.present();
   }
 
   private async showToast(message: string, color: 'success' | 'danger' = 'success'): Promise<void> {
