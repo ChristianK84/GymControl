@@ -172,22 +172,9 @@ ion-button.btn-clear {
   border-bottom: none;
 }
 
-.maestros-table th:last-child {
-  width: 1%;
-  padding: 0.8rem 0.5rem;
-}
-
 .td-muted {
   color: #5e3f3b !important;
   font-size: 0.83rem;
-}
-
-.td-actions {
-  white-space: nowrap;
-  text-align: center;
-  vertical-align: middle;
-  width: 1%;
-  padding: 0.7rem 0.5rem !important;
 }
 
 .maestro-cell {
@@ -245,40 +232,6 @@ ion-badge.status-badge {
 ion-badge.status-badge.status-inactive {
   --background: rgba(148, 163, 184, 0.15);
   --color: #64748b;
-}
-
-/* Action icon buttons */
-ion-button.action-btn {
-  --padding-start: 0;
-  --padding-end: 0;
-  --padding-top: 0;
-  --padding-bottom: 0;
-  --border-radius: 0.4rem;
-  --box-shadow: none;
-  --min-height: auto;
-  width: 30px;
-  height: 30px;
-  --border-style: solid;
-  --border-width: 1px;
-  --background: #ffffff;
-  display: inline-flex;
-  vertical-align: middle;
-}
-
-ion-button.action-btn + ion-button.action-btn {
-  margin-left: 4px;
-}
-
-ion-button.action-btn ion-icon {
-  font-size: 0.95rem;
-}
-
-ion-button.action-edit {
-  --color: #2563eb;
-  --color-hover: #ffffff;
-  --border-color: #bfdbfe;
-  --background-hover: #2563eb;
-  --border-color-hover: #2563eb;
 }
 
 /* Empty state */
@@ -405,7 +358,6 @@ ion-skeleton-text {
 .skeleton-avatar { width: 2.25rem; height: 2.25rem; min-width: 2.25rem; --border-radius: 50%; }
 .skeleton-text { width: 120px; height: 0.85rem; }
 .skeleton-text-lg { width: 160px; height: 0.95rem; }
-.skeleton-text-sm { width: 60px; height: 0.8rem; }
 .skeleton-badge { width: 70px; height: 1.25rem; --border-radius: 999px; }
 
 .skeleton-cell {

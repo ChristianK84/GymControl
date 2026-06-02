@@ -18,33 +18,45 @@
 
   <!-- Filters Card -->
   <div class="filter-card">
+    <h3 class="filter-title">Filtros de búsqueda</h3>
     <div class="filter-grid">
-      <div class="search-box">
-        <ion-icon name="search-outline" class="search-icon"></ion-icon>
-        <ion-input
-          id="asis-list-search"
-          class="search-input"
-          placeholder="Buscar alumno o nota..."
-          fill="outline"
-          [ngModel]="searchTerm()"
-          (ngModelChange)="onSearchChange($event)"
-        ></ion-input>
-      </div>
-      <select class="filter-select" [ngModel]="maestroFilter() === null ? '' : maestroFilter()" (ngModelChange)="onMaestroChange($event)">
-        <option value="">Todos los maestros</option>
-        @for (m of maestros(); track m.id) {
-          <option [value]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</option>
-        }
-      </select>
-      <select class="filter-select" [ngModel]="tipoFilter()" (ngModelChange)="onTipoChange($event)">
-        <option value="todas">Todas</option>
-        <option value="asistio">Asistencia</option>
-        <option value="falta">Falta</option>
-      </select>
-      <div class="date-group">
-        <input type="date" class="filter-date" [(ngModel)]="filterFechaDesde" placeholder="Desde" />
-        <input type="date" class="filter-date" [(ngModel)]="filterFechaHasta" placeholder="Hasta" />
-      </div>
+      <label class="filter-label">
+        Buscar alumno o nota
+        <div class="search-box">
+          <ion-icon name="search-outline" class="search-icon"></ion-icon>
+          <ion-input
+            id="asis-list-search"
+            class="search-input"
+            placeholder="Buscar alumno o nota..."
+            fill="outline"
+            [ngModel]="searchTerm()"
+            (ngModelChange)="onSearchChange($event)"
+          ></ion-input>
+        </div>
+      </label>
+      <label class="filter-label">
+        Maestro
+        <select class="filter-select" [ngModel]="maestroFilter() === null ? '' : maestroFilter()" (ngModelChange)="onMaestroChange($event)">
+          <option value="">Todos los maestros</option>
+          @for (m of maestros(); track m.id) {
+            <option [value]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</option>
+          }
+        </select>
+      </label>
+      <label class="filter-label">
+        Tipo
+        <select class="filter-select" [ngModel]="tipoFilter()" (ngModelChange)="onTipoChange($event)">
+          <option value="todas">Todas</option>
+          <option value="asistio">Asistencia</option>
+          <option value="falta">Falta</option>
+        </select>
+      </label>
+      <label class="filter-label">Desde
+        <input type="date" class="filter-date" [(ngModel)]="filterFechaDesde" />
+      </label>
+      <label class="filter-label">Hasta
+        <input type="date" class="filter-date" [(ngModel)]="filterFechaHasta" />
+      </label>
       <div class="filter-actions">
         <ion-button class="btn-filter" (click)="applyFilters()" fill="solid" title="Filtrar">
           <ion-icon name="search-outline" slot="icon-only"></ion-icon>
@@ -64,7 +76,6 @@
           <th>Alumno</th>
           <th>Fecha y Hora</th>
           <th>Maestro</th>
-          <th>Estado</th>
           <th>Notas</th>
         </tr>
       </thead>
@@ -75,14 +86,13 @@
               <td><div class="skeleton-cell"><ion-skeleton-text class="sk-avatar" [animated]="true"></ion-skeleton-text><ion-skeleton-text class="sk-text-lg" [animated]="true"></ion-skeleton-text></div></td>
               <td><ion-skeleton-text class="sk-text" [animated]="true"></ion-skeleton-text></td>
               <td><ion-skeleton-text class="sk-text" [animated]="true"></ion-skeleton-text></td>
-              <td><ion-skeleton-text class="sk-badge" [animated]="true"></ion-skeleton-text></td>
               <td><ion-skeleton-text class="sk-text" [animated]="true"></ion-skeleton-text></td>
             </tr>
           }
         } @else {
           @for (asis of paged(); track asis.id) {
             <tr class="clickable-row" (click)="openEditModal(asis)">
-              <td>
+              <td class="td-alumno-indicator" [class.falta-indicator]="!asis.asistio">
                 <div class="alumno-cell">
                   <div class="alumno-avatar-fallback">{{ asis.alumno ? iniciales(asis.alumno.nombrecompleto) : '?' }}</div>
                   <div class="alumno-name-group">
@@ -100,11 +110,6 @@
                 </div>
               </td>
               <td class="td-muted">{{ maestroNombre(asis.maestro_id) }}</td>
-              <td>
-                <span class="status-badge" [class.status-falta]="!asis.asistio">
-                  {{ asis.asistio ? 'Asistió' : 'Falta' }}
-                </span>
-              </td>
               <td class="td-muted td-notas">
                 <div class="notas-cell">
                   <span>{{ asis.notas || '—' }}</span>
@@ -119,7 +124,7 @@
           }
           @empty {
             <tr>
-              <td colspan="5" class="td-empty">
+              <td colspan="4" class="td-empty">
                 <div class="empty-state">
                   <ion-icon name="checkmark-circle-outline"></ion-icon>
                   <p>No se encontraron registros de asistencia</p>

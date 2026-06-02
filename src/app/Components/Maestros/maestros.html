@@ -37,7 +37,6 @@
           <th>Maestro</th>
           <th>Teléfono</th>
           <th>Estado</th>
-          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -47,7 +46,6 @@
               <td><div class="skeleton-cell"><ion-skeleton-text class="skeleton-avatar" [animated]="true"></ion-skeleton-text><ion-skeleton-text class="skeleton-text-lg" [animated]="true"></ion-skeleton-text></div></td>
               <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
               <td><ion-skeleton-text class="skeleton-badge" [animated]="true"></ion-skeleton-text></td>
-              <td><ion-skeleton-text class="skeleton-text-sm" [animated]="true"></ion-skeleton-text></td>
             </tr>
           }
         } @else {
@@ -74,16 +72,11 @@
                   {{ maestro.is_active ? 'Activo' : 'Inactivo' }}
                 </ion-badge>
               </td>
-              <td class="td-actions">
-                <ion-button class="action-btn action-edit" title="Editar" (click)="editMaestro(maestro)" fill="outline">
-                  <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
-                </ion-button>
-              </td>
             </tr>
           }
           @empty {
             <tr>
-              <td colspan="4" class="td-empty">
+              <td colspan="3" class="td-empty">
                 <div class="empty-state">
                   <ion-icon name="body-outline"></ion-icon>
                   <p>No se encontraron maestros</p>
