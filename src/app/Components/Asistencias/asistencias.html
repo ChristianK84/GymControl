@@ -5,10 +5,15 @@
       <h1 class="asis-title">Control de Asistencias</h1>
       <p class="asis-subtitle">Registra y monitorea la asistencia diaria de todos los alumnos.</p>
     </div>
-    <ion-button class="btn-add" fill="solid">
-      <ion-icon name="add-outline" slot="start"></ion-icon>
-      Registrar Asistencia
-    </ion-button>
+    <div class="header-actions">
+      <ion-button class="btn-add" fill="solid" (click)="openRegisterModal()">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Registrar Asistencia
+      </ion-button>
+      <ion-button class="btn-qr" fill="outline" (click)="openQrScanner()">
+        <ion-icon name="qr-code-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
   </div>
 
   <!-- Filters Card -->
@@ -17,6 +22,7 @@
       <div class="search-box">
         <ion-icon name="search-outline" class="search-icon"></ion-icon>
         <ion-input
+          id="asis-list-search"
           class="search-input"
           placeholder="Buscar alumno o nota..."
           fill="outline"

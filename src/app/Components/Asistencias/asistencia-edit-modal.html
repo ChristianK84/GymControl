@@ -1,0 +1,96 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ isEdit ? 'Editar Asistencia' : 'Registrar Asistencia' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="modal-content">
+  <div class="modal-body">
+    <div class="identity-card">
+      <ion-avatar class="avatar-circle">{{ alumnoIniciales }}</ion-avatar>
+      <div class="identity-info">
+        <span class="identity-name">{{ alumnoNombre }}</span>
+        <span class="identity-id">{{ alumnoApellidos }}</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3 class="section-title">Detalles de la Asistencia</h3>
+      <div class="inline-fields">
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Fecha</ion-label>
+            <div class="field-value">{{ isEdit ? fechaHora(asistencia!.fecha).fecha : fechaActual }}</div>
+          </ion-item>
+        </div>
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Hora</ion-label>
+            <div class="field-value">{{ isEdit ? fechaHora(asistencia!.fecha).hora : horaActual }}</div>
+          </ion-item>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3 class="section-title">{{ isEdit ? 'Editar Registro' : 'Registrar Asistencia' }}</h3>
+
+      @if (isEdit) {
+        <ion-item class="field-row">
+          <ion-label position="stacked">Maestro</ion-label>
+          <ion-select id="asis-edit-maestro" class="field-select" [(ngModel)]="editMaestroId" interface="popover">
+            @for (m of maestros; track m.id) {
+              <ion-select-option [value]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+      } @else {
+        <ion-item class="field-row">
+          <ion-label position="stacked">Maestro</ion-label>
+          <div class="field-value">{{ maestroNombre }}</div>
+        </ion-item>
+      }
+
+      <ion-item class="field-row">
+        <ion-label position="stacked">Estado</ion-label>
+        <ion-select id="asis-edit-estado" class="field-select" [(ngModel)]="editAsistio" interface="popover">
+          <ion-select-option [value]="true">Asistió</ion-select-option>
+          <ion-select-option [value]="false">Falta</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item class="field-row">
+        <ion-label position="stacked">Notas</ion-label>
+        <ion-textarea
+          id="asis-edit-notas"
+          class="field-textarea"
+          [(ngModel)]="editNotas"
+          placeholder="Agregar notas..."
+          fill="outline"
+          rows="3"
+          auto-grow
+        ></ion-textarea>
+      </ion-item>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button class="btn-cancel" (click)="dismiss()">Cancelar</ion-button>
+      <ion-button class="btn-save" (click)="save()" [disabled]="saving">
+        @if (saving) {
+          <ion-spinner name="lines-small"></ion-spinner>
+        } @else {
+          {{ isEdit ? 'Guardar Cambios' : 'Registrar' }}
+        }
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

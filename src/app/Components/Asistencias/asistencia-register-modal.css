@@ -1,0 +1,19 @@
+.modal-content { --background: #f5f2f0; }
+
+.search-field { position: relative; margin: 1rem 1.25rem 0.5rem; }
+.search-icon { position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: #936e69; font-size: 1.15rem; z-index: 2; pointer-events: none; }
+.search-input { --padding-start: 2.6rem; --border-color: #e5e2e1; --border-radius: 0.5rem; --background: #faf8f7; --color: #2a1714; --placeholder-color: #936e69; font-family: 'Inter', sans-serif; font-size: 0.85rem; }
+
+.results-list { padding: 0 1.25rem 1rem; display: flex; flex-direction: column; gap: 0.35rem; }
+
+.alumno-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; background: #ffffff; border: 1px solid #e5e2e1; border-radius: 0.5rem; cursor: pointer; transition: background-color 0.15s; }
+.alumno-item:hover { background-color: #fff0ed; border-color: #d6cfcc; }
+
+.alumno-avatar { width: 2.25rem; height: 2.25rem; min-width: 2.25rem; border-radius: 50%; background: #2a1714; color: #ffffff; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+.alumno-info { display: flex; flex-direction: column; min-width: 0; }
+.alumno-name { font-family: 'Inter', sans-serif; font-size: 0.88rem; font-weight: 600; color: #2a1714; line-height: 1.2; }
+.alumno-meta { font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 500; color: #5e3f3b; margin-top: 1px; }
+
+.empty-state { text-align: center; padding: 2rem 1rem; font-family: 'Inter', sans-serif; font-size: 0.85rem; color: #5e3f3b; }
+.empty-state.hint { color: #936e69; }

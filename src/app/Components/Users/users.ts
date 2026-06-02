@@ -16,6 +16,7 @@ import {
 import { ApiService } from '../../Services/api-service';
 import { User } from '../../Models/users';
 import { Rol } from '../../Models/catalogs';
+import { Maestro } from '../../Models/maestros';
 import { UserFormModal } from './user-edit-modal';
 
 @Component({
@@ -32,6 +33,7 @@ export class Users implements OnInit {
 
   allUsers = signal<User[]>([]);
   roles = signal<Rol[]>([]);
+  maestros = signal<Maestro[]>([]);
   loading = signal(true);
   searchTerm = signal('');
   roleFilter = signal<number | null | undefined>(undefined);
@@ -91,6 +93,16 @@ export class Users implements OnInit {
   ngOnInit(): void {
     this.loadRoles();
     this.loadUsers();
+    this.loadMaestros();
+  }
+
+  private loadMaestros(): void {
+    this.api.getMaestros().subscribe({
+      next: (data) => {
+        this.maestros.set(data);
+        this.tryFinishLoading();
+      },
+    });
   }
 
   private loadRoles(): void {
@@ -111,7 +123,7 @@ export class Users implements OnInit {
     });
   }
 
-  private pending = 2;
+  private pending = 3;
   private tryFinishLoading(): void {
     this.pending--;
     if (this.pending <= 0) {
@@ -148,7 +160,7 @@ export class Users implements OnInit {
   async addUser(): Promise<void> {
     const modal = await this.modalCtrl.create({
       component: UserFormModal,
-      componentProps: { roles: this.roles() },
+      componentProps: { roles: this.roles(), maestros: this.maestros() },
     });
     await modal.present();
 
@@ -165,6 +177,7 @@ export class Users implements OnInit {
       componentProps: {
         user,
         roles: this.roles(),
+        maestros: this.maestros(),
       },
     });
     await modal.present();

@@ -1,0 +1,96 @@
+.modal-content { --background: #f5f2f0; }
+.modal-body { padding: 1rem 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+
+.identity-card { display: flex; align-items: center; gap: 1rem; padding: 1.25rem; background: #ffffff; border: 1px solid #e5e2e1; border-radius: 0.75rem; }
+ion-avatar.avatar-circle { width: 3rem; height: 3rem; min-width: 3rem; --border-radius: 50%; background: #2a1714; color: #ffffff; font-family: 'Inter', sans-serif; font-size: 1.3rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.identity-info { display: flex; flex-direction: column; min-width: 0; }
+.identity-name { font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 600; color: #2a1714; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.identity-id { font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 500; color: #5e3f3b; margin-top: 2px; }
+
+.section { background: #ffffff; border: 1px solid #e5e2e1; border-radius: 0.75rem; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem; }
+.section-title { font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #936e69; margin: 0; }
+
+.inline-fields { display: flex; gap: 0.75rem; }
+.flex-1 { flex: 1; min-width: 0; }
+
+ion-item.field-row {
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-start: 0;
+  --inner-padding-end: 0;
+  --min-height: auto;
+  --highlight-height: 0;
+  --background: transparent;
+  --border-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.3rem;
+  font-size: 0.88rem;
+}
+
+ion-item.field-row + ion-item.field-row {
+  margin-top: 1rem;
+}
+
+ion-item.field-row ion-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #2a1714;
+  margin: 0;
+  transform: none;
+  white-space: normal;
+}
+
+.field-value {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: #2a1714;
+  font-weight: 500;
+  padding: 0.65rem 0.85rem;
+  background: #faf8f7;
+  border: 1px solid #e5e2e1;
+  border-radius: 0.5rem;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+ion-select.field-select {
+  --border-color: #e5e2e1;
+  --border-radius: 0.5rem;
+  --placeholder-color: #b8aaa7;
+  --color: #2a1714;
+  --padding-start: 0.85rem;
+  --padding-end: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  min-height: 44px;
+  background: #faf8f7;
+  border: 1px solid #e5e2e1;
+  border-radius: 0.5rem;
+}
+
+ion-textarea.field-textarea {
+  --border-color: #e5e2e1;
+  --border-radius: 0.5rem;
+  --border-style: solid;
+  --border-width: 1px;
+  --background: #faf8f7;
+  --color: #2a1714;
+  --padding-start: 0.85rem;
+  --padding-end: 0.85rem;
+  --padding-top: 0.65rem;
+  --padding-bottom: 0.65rem;
+  --placeholder-color: #b8aaa7;
+  --highlight-color-focused: #2a1714;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  min-height: 44px;
+}
+
+.btn-cancel { --color: #5e3f3b; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.85rem; }
+.btn-save { --color: #ffffff; --background: #e30613; --background-hover: #b5000b; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.85rem; border-radius: 0.5rem; }
+
+@media (max-width: 500px) { .inline-fields { flex-direction: column; gap: 0.85rem; } }

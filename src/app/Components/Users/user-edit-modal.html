@@ -55,6 +55,15 @@
       @if (errors['roleId']) {
         <span class="error-msg">{{ errors['roleId'] }}</span>
       }
+      <ion-item class="field-row">
+        <ion-label position="stacked">Vincular maestro</ion-label>
+        <ion-select class="field-select" [(ngModel)]="selectedMaestroId" interface="popover">
+          <ion-select-option [value]="null">Sin vincular</ion-select-option>
+          @for (m of maestros; track m.id) {
+            <ion-select-option [value]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</ion-select-option>
+          }
+        </ion-select>
+      </ion-item>
       <div class="toggle-row">
         <div class="toggle-text">
           <span class="field-label">Estado de la cuenta</span>

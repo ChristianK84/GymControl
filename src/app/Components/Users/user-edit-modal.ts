@@ -1,6 +1,7 @@
 import { Component, inject, Input, OnInit, ChangeDetectorRef, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { forkJoin, of, Observable } from 'rxjs';
 import {
   IonHeader,
   IonToolbar,
@@ -24,6 +25,7 @@ import { closeOutline, eyeOutline, eyeOffOutline } from 'ionicons/icons';
 import { ApiService } from '../../Services/api-service';
 import { User } from '../../Models/users';
 import { Rol } from '../../Models/catalogs';
+import { Maestro } from '../../Models/maestros';
 
 @Component({
   selector: 'app-user-form-modal',
@@ -51,13 +53,18 @@ import { Rol } from '../../Models/catalogs';
 export class UserFormModal implements OnInit {
   @Input() user?: User;
   @Input() roles!: Rol[];
+  @Input() maestros: Maestro[] = [];
 
   private modalCtrl = inject(ModalController);
   private api = inject(ApiService);
-  private cdr = inject(ChangeDetectorRef);
 
   get isEdit(): boolean {
     return !!this.user;
+  }
+
+  get maestroVinculado(): Maestro | undefined {
+    if (!this.user) return undefined;
+    return this.maestros.find(m => m.user_id === this.user!.id);
   }
 
   fullName = '';
@@ -66,6 +73,7 @@ export class UserFormModal implements OnInit {
   isActive = true;
   createdAt = '';
   password = '';
+  selectedMaestroId: number | null = null;
 
   showPassword = signal(false);
   errors: Record<string, string> = {};
@@ -89,7 +97,7 @@ export class UserFormModal implements OnInit {
         "d 'de' MMMM 'del' yyyy",
       )!;
     }
-    this.cdr.detectChanges();
+    this.selectedMaestroId = this.maestroVinculado?.id ?? null;
   }
 
   dismiss(): void {
@@ -116,33 +124,44 @@ export class UserFormModal implements OnInit {
   }
 
   save(): void {
-    if (!this.validate()) {
-      return;
-    }
+    if (!this.validate()) return;
 
-    if (this.isEdit) {
-      this.api
-        .updateUser(this.user!.id, {
+    const obs = this.isEdit
+      ? this.api.updateUser(this.user!.id, {
           username: this.username || undefined,
           full_name: this.fullName || null,
           role_id: this.roleId!,
           is_active: this.isActive,
           password: this.password || undefined,
         })
-        .subscribe({
-          next: (updated) => this.modalCtrl.dismiss(updated, 'saved'),
-        });
-    } else {
-      this.api
-        .createUser({
+      : this.api.createUser({
           username: this.username,
           password: this.password,
           full_name: this.fullName || null,
           role_id: this.roleId!,
-        })
-        .subscribe({
-          next: (created) => this.modalCtrl.dismiss(created, 'saved'),
         });
+
+    obs.subscribe({
+      next: (result) => {
+        const userId = (result as User).id;
+        this.linkMaestro(userId).subscribe({
+          next: () => this.modalCtrl.dismiss(result, 'saved'),
+        });
+      },
+    });
+  }
+
+  private linkMaestro(userId: number): Observable<any> {
+    const oldId = this.maestroVinculado?.id ?? null;
+    const newId = this.selectedMaestroId;
+
+    const ops: Observable<any>[] = [];
+    if (oldId != null && oldId !== newId) {
+      ops.push(this.api.updateMaestro(oldId, { user_id: null }));
     }
+    if (newId != null && newId !== oldId) {
+      ops.push(this.api.updateMaestro(newId, { user_id: userId }));
+    }
+    return ops.length ? forkJoin(ops) : of(null);
   }
 }

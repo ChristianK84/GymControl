@@ -5,15 +5,17 @@ import {
   ToastController, ModalController,
 } from '@ionic/angular/standalone';
 import { ApiService } from '../../Services/api-service';
+import { SessionService } from '../../Services/session.service';
 import { Asistencia } from '../../Models/asistencias';
 import { Maestro } from '../../Models/maestros';
 import { addIcons } from 'ionicons';
 import {
   addOutline, searchOutline, closeCircleOutline,
   chevronBackOutline, chevronForwardOutline,
-  warningOutline,
+  warningOutline, qrCodeOutline,
 } from 'ionicons/icons';
 import { AsistenciaEditModal } from './asistencia-edit-modal';
+import { AsistenciaRegisterModal } from './asistencia-register-modal';
 
 @Component({
   selector: 'app-asistencias',
@@ -23,6 +25,7 @@ import { AsistenciaEditModal } from './asistencia-edit-modal';
 })
 export class Asistencias implements OnInit {
   private api = inject(ApiService);
+  private session = inject(SessionService);
   private toastCtrl = inject(ToastController);
   private modalCtrl = inject(ModalController);
 
@@ -41,7 +44,7 @@ export class Asistencias implements OnInit {
     addIcons({
       addOutline, searchOutline, closeCircleOutline,
       chevronBackOutline, chevronForwardOutline,
-      warningOutline,
+      warningOutline, qrCodeOutline,
     });
   }
 
@@ -65,6 +68,39 @@ export class Asistencias implements OnInit {
       },
       error: () => this.loading.set(false),
     });
+  }
+
+  openQrScanner(): void {
+    // TODO: Lógica del escáner QR
+  }
+
+  async openRegisterModal(): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: AsistenciaRegisterModal,
+    });
+    modal.onDidDismiss().then(async ({ data, role }) => {
+      if (role === 'selected' && data) {
+        const user = this.session.getUser();
+        const maestroVinculado = this.maestros().find(m => m.user_id === user?.user_id);
+
+        const editModal = await this.modalCtrl.create({
+          component: AsistenciaEditModal,
+          componentProps: {
+            selectedAlumno: data,
+            maestros: this.maestros(),
+            defaultMaestroId: maestroVinculado?.id,
+          },
+        });
+        editModal.onDidDismiss().then(({ role: editRole }) => {
+          if (editRole === 'saved') {
+            this.loadAsistencias();
+            this.showToast('Asistencia registrada', 'success');
+          }
+        });
+        await editModal.present();
+      }
+    });
+    await modal.present();
   }
 
   maestroNombre(id: number): string {

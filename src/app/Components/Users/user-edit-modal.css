@@ -61,6 +61,23 @@ ion-avatar.avatar-circle {
   margin-top: 2px;
 }
 
+/* ---------- Read-only value ---------- */
+.field-value {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: #2a1714;
+  font-weight: 500;
+  padding: 0.65rem 0.85rem;
+  background: #faf8f7;
+  border: 1px solid #e5e2e1;
+  border-radius: 0.5rem;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 /* ---------- Sections ---------- */
 .section {
   background: #ffffff;
