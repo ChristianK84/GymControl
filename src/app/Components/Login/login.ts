@@ -1,4 +1,5 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonContent, IonIcon, IonSpinner, ToastController } from '@ionic/angular/standalone';
@@ -23,6 +24,7 @@ export class Login implements OnInit {
   private session = inject(SessionService);
   private toastController = inject(ToastController);
   private router = inject(Router);
+  private platformId = inject(PLATFORM_ID);
 
   constructor() {
     addIcons({ personOutline, lockClosedOutline, eyeOutline, eyeOffOutline, logInOutline });
@@ -33,7 +35,7 @@ export class Login implements OnInit {
   }
 
   ngOnInit(): void {
-    if (sessionStorage.getItem('session_expired')) {
+    if (isPlatformBrowser(this.platformId) && sessionStorage.getItem('session_expired')) {
       sessionStorage.removeItem('session_expired');
       setTimeout(() => this.showToast('Su sesión ha expirado', 'warning'), 300);
     }
