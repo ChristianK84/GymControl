@@ -1,0 +1,65 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button class="btn-cancel" (click)="dismiss()">
+        <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="warning-outline" color="warning"></ion-icon>
+      Membresías impagas
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="modal-body">
+
+    @if (loading()) {
+      @for (i of [1,2,3]; track i) {
+        <div class="section">
+          <ion-skeleton-text [animated]="true" style="width: 70%; height: 1rem;"></ion-skeleton-text>
+          <ion-skeleton-text [animated]="true" style="width: 40%; height: 0.85rem;"></ion-skeleton-text>
+        </div>
+      }
+    } @else {
+      @for (m of impagas(); track m.id) {
+        <div class="section">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+            <div>
+              <div style="font-weight: 600; color: #2a1714; font-size: 0.9rem;">
+                {{ m.alumno?.nombrecompleto ?? '—' }} {{ m.alumno?.apellido_paterno ?? '' }}
+              </div>
+              <div style="font-size: 0.75rem; color: #936e69; margin-top: 2px;">
+                {{ m.tipo_membresia?.nombre ?? '—' }}
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-weight: 700; color: #dc2626; font-size: 0.95rem;">
+                {{ formatCurrency(m.costo_real) }}
+              </div>
+              <div style="font-size: 0.7rem; color: #936e69;">
+                Vence: {{ formatDate(m.fecha_vencimiento) }}
+              </div>
+            </div>
+          </div>
+          @if (m.porcentaje_beca > 0) {
+            <div style="font-size: 0.72rem; color: #5e3f3b; margin-top: 0.25rem;">
+              <ion-icon name="school-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
+              Beca: {{ m.porcentaje_beca }}%
+            </div>
+          }
+        </div>
+      } @empty {
+        <div class="section" style="text-align: center; padding: 2rem;">
+          <div class="empty-state">
+            <ion-icon name="checkmark-circle-outline" style="font-size: 2.5rem; color: #16a34a;"></ion-icon>
+            <p style="font-family: 'Inter', sans-serif; font-size: 0.9rem; color: #5e3f3b; margin: 0.5rem 0 0;">
+              No hay membresías impagas
+            </p>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</ion-content>

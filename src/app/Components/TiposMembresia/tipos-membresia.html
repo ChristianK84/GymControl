@@ -1,0 +1,134 @@
+<div class="tipos-container">
+  <div class="tipos-header">
+    <div>
+      <h1 class="tipos-title">Tipos de Membresía</h1>
+      <p class="tipos-subtitle">Catálogo de planes y precios</p>
+    </div>
+    <ion-button class="btn-add" (click)="addTipo()">
+      <ion-icon name="add-outline" slot="start"></ion-icon>
+      Nuevo tipo
+    </ion-button>
+  </div>
+
+  <div class="filters-bar">
+    <div class="search-box">
+      <ion-icon name="search-outline" class="search-icon"></ion-icon>
+      <ion-input
+        class="search-input"
+        placeholder="Buscar por nombre o descripción..."
+        [ngModel]="searchTerm()"
+        (ngModelChange)="onSearch($event)"
+        clearInput
+      ></ion-input>
+    </div>
+    @if (searchTerm()) {
+      <ion-button class="btn-clear" (click)="clearSearch()">
+        <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+        Limpiar
+      </ion-button>
+    }
+  </div>
+
+  <div class="table-wrapper">
+    <table class="tipos-table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Costo base</th>
+          <th>Duración</th>
+          <th>Días</th>
+          <th>Nivel</th>
+          <th>Estado</th>
+          <th style="width: 80px;"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading()) {
+          @for (i of [1,2,3,4,5]; track i) {
+            <tr class="skeleton-row">
+              <td>
+                <div class="skeleton-cell">
+                  <ion-skeleton-text [animated]="true" class="skeleton-avatar"></ion-skeleton-text>
+                  <ion-skeleton-text [animated]="true" class="skeleton-text-lg"></ion-skeleton-text>
+                </div>
+              </td>
+              <td><ion-skeleton-text [animated]="true" class="skeleton-text"></ion-skeleton-text></td>
+              <td><ion-skeleton-text [animated]="true" class="skeleton-text"></ion-skeleton-text></td>
+              <td><ion-skeleton-text [animated]="true" class="skeleton-text"></ion-skeleton-text></td>
+              <td><ion-skeleton-text [animated]="true" class="skeleton-badge"></ion-skeleton-text></td>
+              <td><ion-skeleton-text [animated]="true" class="skeleton-badge"></ion-skeleton-text></td>
+              <td></td>
+            </tr>
+          }
+        } @else {
+          @for (tipo of pagedTipos(); track tipo.id) {
+            <tr (click)="editTipo(tipo, $event)">
+              <td>
+                <div class="maestro-cell">
+                  @if (tipo.color) {
+                    <span class="color-dot" [style.background-color]="tipo.color"></span>
+                  }
+                  <div class="maestro-name-group">
+                    <span class="maestro-name">{{ tipo.nombre }}</span>
+                  </div>
+                </div>
+              </td>
+              <td>{{ formatCurrency(tipo.costo_base) }}</td>
+              <td>{{ tipo.duracion_dias }} días</td>
+              <td class="td-muted">{{ tipo.dias_incluidos }}</td>
+              <td>
+                @if (tipo.nivel_competitivo) {
+                  <span class="flag-competitive">Competitivo</span>
+                } @else {
+                  <span class="flag-standard">Estándar</span>
+                }
+              </td>
+              <td>
+                @if (tipo.is_active) {
+                  <ion-badge class="status-badge">Activo</ion-badge>
+                } @else {
+                  <ion-badge class="status-badge status-inactive">Inactivo</ion-badge>
+                }
+              </td>
+              <td>
+                <ion-button fill="clear" size="small" (click)="deleteTipo(tipo, $event)" color="danger">
+                  <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                </ion-button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="td-empty">
+                <div class="empty-state">
+                  <ion-icon name="file-tray-outline"></ion-icon>
+                  <p>No se encontraron tipos de membresía</p>
+                </div>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (!loading()) {
+    <div class="table-footer">
+      <span class="footer-count">{{ filtered().length }} tipo(s) de membresía</span>
+      @if (totalPages() > 1) {
+        <div class="pagination">
+          <ion-button class="page-btn" [disabled]="page() === 1" (click)="goToPage(page() - 1)">
+            <ion-icon name="chevron-back-outline"></ion-icon>
+          </ion-button>
+          @for (p of [].constructor(totalPages()); track $index) {
+            <ion-button class="page-btn" [class.page-active]="page() === $index + 1" (click)="goToPage($index + 1)">
+              {{ $index + 1 }}
+            </ion-button>
+          }
+          <ion-button class="page-btn" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </ion-button>
+        </div>
+      }
+    </div>
+  }
+</div>

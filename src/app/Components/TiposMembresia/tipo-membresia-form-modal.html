@@ -1,0 +1,140 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button class="btn-cancel" (click)="dismiss()">
+        <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ isEdit ? 'Editar tipo' : 'Nuevo tipo' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="btn-save" [disabled]="saving" (click)="save()">
+        @if (saving) {
+          <ion-icon name="sync-outline" class="spin"></ion-icon>
+        } @else {
+          <ion-icon name="save-outline" slot="start"></ion-icon>
+          Guardar
+        }
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="modal-body">
+
+    @if (isEdit) {
+      <div class="identity-card">
+        <ion-avatar class="avatar-circle">
+          <span>{{ nombre.charAt(0).toUpperCase() }}</span>
+        </ion-avatar>
+        <div class="identity-info">
+          <span class="identity-name">{{ nombre }}</span>
+          <span class="identity-id">ID: {{ tipo!.id }}</span>
+        </div>
+      </div>
+    }
+
+    <!-- Datos principales -->
+    <div class="section">
+      <h3 class="section-title">Datos principales</h3>
+
+      <ion-item class="field-row">
+        <ion-label>Nombre</ion-label>
+        <ion-input class="field-input" [class.field-error]="errors['nombre']" [(ngModel)]="nombre" placeholder="Ej: Lunes a Viernes — Básico — Mensual"></ion-input>
+        @if (errors['nombre']) { <span class="error-msg">{{ errors['nombre'] }}</span> }
+      </ion-item>
+
+      <ion-item class="field-row">
+        <ion-label>Descripción</ion-label>
+        <ion-textarea class="field-input" [(ngModel)]="descripcion" placeholder="Descripción del plan..." rows="2"></ion-textarea>
+      </ion-item>
+
+      <div class="inline-fields">
+        <ion-item class="field-row flex-1">
+          <ion-label>Costo base ($)</ion-label>
+          <ion-input class="field-input" [class.field-error]="errors['costo_base']" type="number" [(ngModel)]="costo_base" placeholder="0.00"></ion-input>
+          @if (errors['costo_base']) { <span class="error-msg">{{ errors['costo_base'] }}</span> }
+        </ion-item>
+
+        <ion-item class="field-row flex-1">
+          <ion-label>Duración (días)</ion-label>
+          <ion-input class="field-input" [class.field-error]="errors['duracion_dias']" type="number" [(ngModel)]="duracion_dias" placeholder="30 = mensual, 365 = anual"></ion-input>
+          @if (errors['duracion_dias']) { <span class="error-msg">{{ errors['duracion_dias'] }}</span> }
+        </ion-item>
+      </div>
+
+      <ion-item class="field-row">
+        <ion-label>Días incluidos</ion-label>
+        <ion-select class="field-input" [class.field-error]="errors['dias_incluidos']" [(ngModel)]="dias_incluidos" interface="popover" placeholder="Seleccionar...">
+          @for (opt of diasOptions; track opt.value) {
+            <ion-select-option [value]="opt.value">{{ opt.label }}</ion-select-option>
+          }
+        </ion-select>
+        @if (errors['dias_incluidos']) { <span class="error-msg">{{ errors['dias_incluidos'] }}</span> }
+      </ion-item>
+    </div>
+
+    <!-- Detalles del plan -->
+    <div class="section">
+      <h3 class="section-title">Detalles del plan</h3>
+
+      <div class="inline-fields">
+        <ion-item class="field-row flex-1">
+          <ion-label>Días por semana</ion-label>
+          <ion-input class="field-input" type="number" [(ngModel)]="dias_por_semana" placeholder="2"></ion-input>
+        </ion-item>
+
+        <ion-item class="field-row flex-1">
+          <ion-label>Horas por clase</ion-label>
+          <ion-input class="field-input" type="number" [(ngModel)]="horas_por_clase" placeholder="3"></ion-input>
+        </ion-item>
+      </div>
+
+      <ion-item class="field-row">
+        <ion-label>Color (hex)</ion-label>
+        <ion-input class="field-input" [(ngModel)]="color" placeholder="#3b82f6"></ion-input>
+      </ion-item>
+
+      <div class="toggle-row">
+        <span class="toggle-label">Nivel competitivo</span>
+        <ion-toggle [(ngModel)]="nivel_competitivo"></ion-toggle>
+      </div>
+    </div>
+
+    <!-- Opciones avanzadas -->
+    <div class="section">
+      <h3 class="section-title">Opciones avanzadas</h3>
+
+      <div class="toggle-row">
+        <span class="toggle-label">Permitir días extra</span>
+        <ion-toggle [(ngModel)]="permite_dias_extra"></ion-toggle>
+      </div>
+
+      @if (permite_dias_extra) {
+        <ion-item class="field-row">
+          <ion-label>Costo por día extra ($)</ion-label>
+          <ion-input class="field-input" [class.field-error]="errors['costo_dia_extra']" type="number" [(ngModel)]="costo_dia_extra" placeholder="150.00"></ion-input>
+          @if (errors['costo_dia_extra']) { <span class="error-msg">{{ errors['costo_dia_extra'] }}</span> }
+        </ion-item>
+      }
+
+      <div class="toggle-row">
+        <span class="toggle-label">Bloquear asistencia por impago</span>
+        <ion-toggle [(ngModel)]="bloquear_impago"></ion-toggle>
+      </div>
+
+      @if (isEdit) {
+        <div class="toggle-row">
+          <span class="toggle-label">Tipo activo</span>
+          <ion-toggle [(ngModel)]="is_active"></ion-toggle>
+        </div>
+      }
+    </div>
+
+    @if (isEdit) {
+      <div class="meta-footer">
+        <span>Creado: {{ tipo!.created_at | date:'mediumDate' }}</span>
+      </div>
+    }
+  </div>
+</ion-content>

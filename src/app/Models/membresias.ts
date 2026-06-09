@@ -10,6 +10,9 @@ export interface TipoMembresia {
   horas_por_clase: number | null;
   nivel_competitivo: boolean;
   color: string | null;
+  permite_dias_extra: boolean;
+  costo_dia_extra: number | null;
+  bloquear_impago: boolean;
   is_active: boolean;
   is_deleted: boolean;
   created_at: string;

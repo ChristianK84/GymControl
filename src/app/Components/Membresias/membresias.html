@@ -1,0 +1,131 @@
+<div class="membresias-container">
+  <div class="membresias-header">
+    <div>
+      <h1 class="membresias-title">Membresías</h1>
+      <p class="membresias-subtitle">Gestión de membresías por alumno</p>
+    </div>
+    <div class="header-actions">
+      <ion-button class="btn-secondary" (click)="verImpagas()">
+        <ion-icon name="warning-outline" slot="start"></ion-icon>
+        Impagas
+      </ion-button>
+      <ion-button class="btn-add" (click)="addMembresia()">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Nueva membresía
+      </ion-button>
+    </div>
+  </div>
+
+  <div class="filters-bar">
+    <ion-select class="filter-select" [ngModel]="filterEstado()" (ngModelChange)="filterEstado.set($event); onFilterChange()" placeholder="Estado" interface="popover">
+      <ion-select-option [value]="null">Todos los estados</ion-select-option>
+      <ion-select-option [value]="1">Activa</ion-select-option>
+      <ion-select-option [value]="2">Vencida</ion-select-option>
+      <ion-select-option [value]="3">Cancelada</ion-select-option>
+      <ion-select-option [value]="4">Pendiente</ion-select-option>
+    </ion-select>
+
+    <ion-select class="filter-select" [ngModel]="filterPagado()" (ngModelChange)="filterPagado.set($event); onFilterChange()" placeholder="Pago" interface="popover">
+      <ion-select-option [value]="null">Todos</ion-select-option>
+      <ion-select-option [value]="true">Pagado</ion-select-option>
+      <ion-select-option [value]="false">No pagado</ion-select-option>
+    </ion-select>
+
+    <ion-button class="btn-clear" (click)="clearFilters()">
+      <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+      Limpiar filtros
+    </ion-button>
+  </div>
+
+  <div class="table-wrapper">
+    <table class="membresias-table">
+      <thead>
+        <tr>
+          <th>Alumno</th>
+          <th>Tipo</th>
+          <th>Costo</th>
+          <th>Beca</th>
+          <th>Inicio</th>
+          <th>Vence</th>
+          <th>Estado</th>
+          <th>Pagado</th>
+          <th style="width: 80px;"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading()) {
+          @for (i of [1,2,3,4,5]; track i) {
+            <tr class="skeleton-row">
+              <td><ion-skeleton-text [animated]="true" class="skeleton-text-lg"></ion-skeleton-text></td>
+              <td><ion-skeleton-text [animated]="true" class="skeleton-text"></ion-skeleton-text></td>
+              <td><ion-skeleton-text [animated]="true" class="skeleton-text-sm"></ion-skeleton-text></td>
+              <td><ion-skeleton-text [animated]="true" class="skeleton-text-sm"></ion-skeleton-text></td>
+              <td><ion-skeleton-text [animated]="true" class="skeleton-text"></ion-skeleton-text></td>
+              <td><ion-skeleton-text [animated]="true" class="skeleton-text"></ion-skeleton-text></td>
+              <td><ion-skeleton-text [animated]="true" class="skeleton-badge"></ion-skeleton-text></td>
+              <td><ion-skeleton-text [animated]="true" class="skeleton-badge"></ion-skeleton-text></td>
+              <td></td>
+            </tr>
+          }
+        } @else {
+          @for (m of pagedMembresias(); track m.id) {
+            <tr (click)="editMembresia(m, $event)">
+              <td>
+                <span class="maestro-name">{{ m.alumno?.nombrecompleto ?? '—' }} {{ m.alumno?.apellido_paterno ?? '' }}</span>
+              </td>
+              <td class="td-muted">{{ m.tipo_membresia?.nombre ?? '—' }}</td>
+              <td>{{ formatCurrency(m.costo_real) }}</td>
+              <td>{{ m.porcentaje_beca }}%</td>
+              <td class="td-muted">{{ formatDate(m.fecha_inicio) }}</td>
+              <td class="td-muted">{{ formatDate(m.fecha_vencimiento) }}</td>
+              <td>
+                @let est = getEstadoLabel(m.estado_id);
+                <span class="estado-badge estado-{{ est.css }}">{{ est.label }}</span>
+              </td>
+              <td>
+                <span class="pagado-badge" [class.pagado-si]="m.pagado" [class.pagado-no]="!m.pagado">
+                  {{ m.pagado ? 'Sí' : 'No' }}
+                </span>
+              </td>
+              <td>
+                <ion-button fill="clear" size="small" (click)="cancelarMembresia(m, $event)" color="danger">
+                  <ion-icon slot="icon-only" name="close-circle-outline"></ion-icon>
+                </ion-button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="9" class="td-empty">
+                <div class="empty-state">
+                  <ion-icon name="file-tray-outline"></ion-icon>
+                  <p>No se encontraron membresías</p>
+                </div>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (!loading()) {
+    <div class="table-footer">
+      <span class="footer-count">{{ filtered().length }} membresía(s)</span>
+      @if (totalPages() > 1) {
+        <div class="pagination">
+          <ion-button class="page-btn" [disabled]="page() === 1" (click)="goToPage(page() - 1)">
+            <ion-icon name="chevron-back-outline"></ion-icon>
+          </ion-button>
+          @for (p of [].constructor(totalPages()); track $index) {
+            <ion-button class="page-btn" [class.page-active]="page() === $index + 1" (click)="goToPage($index + 1)">
+              {{ $index + 1 }}
+            </ion-button>
+          }
+          <ion-button class="page-btn" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </ion-button>
+        </div>
+      }
+    </div>
+  }
+</div>

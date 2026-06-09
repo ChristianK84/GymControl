@@ -49,6 +49,18 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./Components/Users/users').then((m) => m.Users),
       },
+      {
+        path: 'tipos-membresia',
+        loadComponent: () =>
+          import('./Components/TiposMembresia/tipos-membresia').then(
+            (m) => m.TiposMembresia,
+          ),
+      },
+      {
+        path: 'membresias',
+        loadComponent: () =>
+          import('./Components/Membresias/membresias').then((m) => m.Membresias),
+      },
     ],
   },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },

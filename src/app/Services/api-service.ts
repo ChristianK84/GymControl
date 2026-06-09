@@ -313,6 +313,9 @@ export class ApiService {
     nivel_competitivo?: boolean;
     color?: string | null;
     descripcion?: string | null;
+    permite_dias_extra?: boolean;
+    costo_dia_extra?: number | null;
+    bloquear_impago?: boolean;
   }): Observable<TipoMembresia> {
     return this.http.post<TipoMembresia>(
       `${this.baseUrl}tipos-membresia/`,
@@ -333,6 +336,9 @@ export class ApiService {
       color?: string | null;
       descripcion?: string | null;
       is_active?: boolean;
+      permite_dias_extra?: boolean;
+      costo_dia_extra?: number | null;
+      bloquear_impago?: boolean;
     },
   ): Observable<TipoMembresia> {
     return this.http.put<TipoMembresia>(
@@ -396,6 +402,10 @@ export class ApiService {
 
   deleteMembresia(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}membresias/${id}`);
+  }
+
+  getMembresiasImpagas(): Observable<Membresia[]> {
+    return this.http.get<Membresia[]>(`${this.baseUrl}membresias/impagas`);
   }
 
   // ── Transacciones ──

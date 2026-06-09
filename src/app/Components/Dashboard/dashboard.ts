@@ -20,6 +20,8 @@ import {
   menuOutline,
   chevronBackOutline,
   chevronForwardOutline,
+  pricetagOutline,
+  cardOutline,
 } from 'ionicons/icons';
 
 const ROLE_MAP: Record<number, string> = {
@@ -61,6 +63,8 @@ export class Dashboard implements OnInit, OnDestroy {
     { icon: 'people-outline', label: 'Alumnos', route: '/dashboard/alumnos' as string | null },
     { icon: 'body-outline', label: 'Maestros', route: '/dashboard/maestros' as string | null },
     { icon: 'checkmark-circle-outline', label: 'Asistencias', route: '/dashboard/asistencias' as string | null },
+    { icon: 'card-outline', label: 'Membresías', route: '/dashboard/membresias' as string | null },
+    { icon: 'pricetag-outline', label: 'Tipos Membresía', route: '/dashboard/tipos-membresia' as string | null },
     { icon: 'person-outline', label: 'Usuarios', route: '/dashboard/usuarios' as string | null },
   ];
 
@@ -69,6 +73,7 @@ export class Dashboard implements OnInit, OnDestroy {
       gridOutline, peopleOutline, bodyOutline, checkmarkCircleOutline,
       personOutline, logOutOutline, menuOutline,
       chevronBackOutline, chevronForwardOutline,
+      pricetagOutline, cardOutline,
     });
   }
 

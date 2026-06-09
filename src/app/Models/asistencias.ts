@@ -20,6 +20,8 @@ export interface Asistencia {
   asistio: boolean;
   notas: string | null;
   registrado_por: number | null;
+  es_dia_extra: boolean;
+  costo_extra: number;
   created_at: string;
   alerta_impago: string | null;
   alumno: AsistenciaAlumno | null;
