@@ -25,6 +25,7 @@ export interface MembresiaAlumno {
   apellido_paterno: string;
   apellido_materno: string | null;
   rama: string;
+  fotografia?: string;
 }
 
 export interface MembresiaTipoPlan {

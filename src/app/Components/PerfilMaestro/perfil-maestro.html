@@ -222,20 +222,26 @@
         </div>
       } @else {
         <!-- Filter -->
-        <div class="filters-bar">
-          <div class="search-box">
-            <ion-icon name="search-outline" class="search-icon"></ion-icon>
-            <ion-input
-              class="search-input"
-              placeholder="Buscar alumno..."
-              fill="outline"
-              [ngModel]="alumnoSearch()"
-              (ngModelChange)="alumnoSearch.set($event); alumnoPage.set(1)"
-            ></ion-input>
+        <div class="filter-card">
+          <h3 class="filter-title">Filtros de búsqueda</h3>
+          <div class="filter-grid">
+            <label class="filter-label">
+              Buscar alumno
+              <div class="search-box">
+                <ion-icon name="search-outline" class="search-icon"></ion-icon>
+                <ion-input
+                  class="search-input"
+                  placeholder="Buscar alumno..."
+                  fill="outline"
+                  [ngModel]="alumnoSearch()"
+                  (ngModelChange)="alumnoSearch.set($event); alumnoPage.set(1)"
+                ></ion-input>
+              </div>
+            </label>
+            @if (filteredAlumnos().length > 0) {
+              <span class="filter-count">{{ filteredAlumnos().length }} alumno{{ filteredAlumnos().length !== 1 ? 's' : '' }}</span>
+            }
           </div>
-          @if (filteredAlumnos().length > 0) {
-            <span class="filter-count">{{ filteredAlumnos().length }} alumno{{ filteredAlumnos().length !== 1 ? 's' : '' }}</span>
-          }
         </div>
 
         <!-- Table -->
@@ -323,16 +329,19 @@
         <!-- Filters -->
         <div class="asis-filter-card">
           <div class="asis-filter-grid">
-            <div class="search-box">
-              <ion-icon name="search-outline" class="search-icon"></ion-icon>
-              <ion-input
-                class="search-input"
-                placeholder="Buscar alumno o nota..."
-                fill="outline"
-                [ngModel]="asisSearch()"
-                (ngModelChange)="asisSearch.set($event); asisPage.set(1)"
-              ></ion-input>
-            </div>
+            <label class="filter-label">
+              Buscar alumno o nota
+              <div class="search-box">
+                <ion-icon name="search-outline" class="search-icon"></ion-icon>
+                <ion-input
+                  class="search-input"
+                  placeholder="Buscar alumno o nota..."
+                  fill="outline"
+                  [ngModel]="asisSearch()"
+                  (ngModelChange)="asisSearch.set($event); asisPage.set(1)"
+                ></ion-input>
+              </div>
+            </label>
             <div class="filter-group">
               <label class="filter-label">Desde</label>
               <input type="date" class="filter-date" [(ngModel)]="filterFechaDesde" />
@@ -378,19 +387,19 @@
                       </div>
                     </td>
                     <td>
-                      <select class="filter-select-native asis-edit-select" [(ngModel)]="editAsistio">
-                        <option [ngValue]="true">Asistió</option>
-                        <option [ngValue]="false">Falta</option>
-                      </select>
+                      <ion-select [(ngModel)]="editAsistio" interface="popover" class="asis-edit-select">
+                        <ion-select-option [value]="true">Asistió</ion-select-option>
+                        <ion-select-option [value]="false">Falta</ion-select-option>
+                      </ion-select>
                     </td>
                     <td><ion-input class="asis-inline-input" [(ngModel)]="editAsisNotas" placeholder="Notas" fill="outline"></ion-input></td>
                     <td class="td-actions">
-                      <button class="action-btn action-save" (click)="saveAsistencia(asis)" title="Guardar">
-                        <ion-icon name="checkmark-outline"></ion-icon>
-                      </button>
-                      <button class="action-btn action-cancel" (click)="cancelEditAsistencia()" title="Cancelar">
-                        <ion-icon name="close-outline"></ion-icon>
-                      </button>
+                      <ion-button class="action-btn action-save" (click)="saveAsistencia(asis)" title="Guardar" fill="outline">
+                        <ion-icon name="checkmark-outline" slot="icon-only"></ion-icon>
+                      </ion-button>
+                      <ion-button class="action-btn action-cancel" (click)="cancelEditAsistencia()" title="Cancelar" fill="outline">
+                        <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+                      </ion-button>
                     </td>
                   } @else {
                     <td>
@@ -414,9 +423,9 @@
                     </td>
                     <td class="td-muted">{{ asis.notas || '—' }}</td>
                     <td class="td-actions">
-                      <button class="action-btn action-edit" (click)="startEditAsistencia(asis)" title="Editar">
-                        <ion-icon name="pencil-outline"></ion-icon>
-                      </button>
+                      <ion-button class="action-btn action-edit" (click)="startEditAsistencia(asis)" title="Editar" fill="outline">
+                        <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+                      </ion-button>
                     </td>
                   }
                 </tr>

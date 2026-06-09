@@ -822,7 +822,7 @@ ion-card.asis-filter-card > ion-card-content {
   padding: 0.6rem 0.75rem;
   border: 1px solid #e5e2e1;
   border-radius: 0.5rem;
-  background: #ffffff;
+  background: transparent;
   font-family: 'Inter', sans-serif;
   font-size: 0.85rem;
   color: #2a1714;
@@ -1077,7 +1077,7 @@ ion-input.asis-inline-input {
   --color: #2a1714;
   font-family: 'Inter', sans-serif;
   font-size: 0.85rem;
-  background: #ffffff;
+  background: transparent;
   border: 1px solid #e5e2e1;
   border-radius: 0.5rem;
 }

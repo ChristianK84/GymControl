@@ -2,6 +2,7 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonIcon, IonButton, IonInput, IonSkeletonText, IonBadge,
+  IonSelect, IonSelectOption,
   ToastController, ModalController,
 } from '@ionic/angular/standalone';
 import { ApiService } from '../../Services/api-service';
@@ -19,7 +20,7 @@ import { AsistenciaRegisterModal } from './asistencia-register-modal';
 
 @Component({
   selector: 'app-asistencias',
-  imports: [FormsModule, IonIcon, IonButton, IonInput, IonSkeletonText, IonBadge],
+  imports: [FormsModule, IonIcon, IonButton, IonInput, IonSkeletonText, IonBadge, IonSelect, IonSelectOption],
   templateUrl: './asistencias.html',
   styleUrl: './asistencias.css',
 })
@@ -154,13 +155,13 @@ export class Asistencias implements OnInit {
     this.page.set(1);
   }
 
-  onMaestroChange(value: string): void {
-    this.maestroFilter.set(value === '' ? null : +value);
+  onMaestroChange(value: number | null): void {
+    this.maestroFilter.set(value);
     this.page.set(1);
   }
 
-  onTipoChange(value: string): void {
-    this.tipoFilter.set(value as any);
+  onTipoChange(value: 'todas' | 'asistio' | 'falta'): void {
+    this.tipoFilter.set(value);
     this.page.set(1);
   }
 

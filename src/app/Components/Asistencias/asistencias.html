@@ -36,20 +36,20 @@
       </label>
       <label class="filter-label">
         Maestro
-        <select class="filter-select" [ngModel]="maestroFilter() === null ? '' : maestroFilter()" (ngModelChange)="onMaestroChange($event)">
-          <option value="">Todos los maestros</option>
+        <ion-select class="filter-select" fill="outline" interface="popover" [ngModel]="maestroFilter()" (ngModelChange)="onMaestroChange($event)">
+          <ion-select-option [value]="null">Todos los maestros</ion-select-option>
           @for (m of maestros(); track m.id) {
-            <option [value]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</option>
+            <ion-select-option [value]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</ion-select-option>
           }
-        </select>
+        </ion-select>
       </label>
       <label class="filter-label">
         Tipo
-        <select class="filter-select" [ngModel]="tipoFilter()" (ngModelChange)="onTipoChange($event)">
-          <option value="todas">Todas</option>
-          <option value="asistio">Asistencia</option>
-          <option value="falta">Falta</option>
-        </select>
+        <ion-select class="filter-select" fill="outline" interface="popover" [ngModel]="tipoFilter()" (ngModelChange)="onTipoChange($event)">
+          <ion-select-option value="todas">Todas</ion-select-option>
+          <ion-select-option value="asistio">Asistencia</ion-select-option>
+          <ion-select-option value="falta">Falta</ion-select-option>
+        </ion-select>
       </label>
       <label class="filter-label">Desde
         <input type="date" class="filter-date" [(ngModel)]="filterFechaDesde" />

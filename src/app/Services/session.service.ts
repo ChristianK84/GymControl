@@ -11,7 +11,23 @@ export class SessionService {
   isAuthenticated = signal(false);
 
   constructor() {
-    this.isAuthenticated.set(this.getToken() !== null);
+    this.checkSession();
+  }
+
+  private checkSession(): void {
+    const token = this.getToken();
+    const user = this.getUser();
+    this.isAuthenticated.set(token !== null && user !== null && !this.isTokenExpired(token));
+  }
+
+  private isTokenExpired(token: string | null): boolean {
+    if (!token) return true;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return (payload.exp * 1000) < Date.now();
+    } catch {
+      return true;
+    }
   }
 
   private get storage(): Storage | null {

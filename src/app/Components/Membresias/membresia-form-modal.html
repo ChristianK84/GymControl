@@ -7,8 +7,8 @@
     </ion-buttons>
     <ion-title>{{ isEdit ? 'Editar membresía' : 'Nueva membresía' }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button class="btn-save" [disabled]="saving" (click)="save()">
-        @if (saving) {
+      <ion-button class="btn-save" [disabled]="saving()" (click)="save()">
+        @if (saving()) {
           <ion-icon name="sync-outline" class="spin"></ion-icon>
         } @else {
           <ion-icon name="save-outline" slot="start"></ion-icon>
@@ -19,7 +19,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="modal-content">
   <div class="modal-body">
 
     @if (isEdit) {
@@ -38,25 +38,29 @@
     <div class="section">
       <h3 class="section-title">Asignación</h3>
 
-      <ion-item class="field-row">
-        <ion-label>Alumno</ion-label>
-        <ion-select class="field-input" [class.field-error]="errors['alumno_id']" [(ngModel)]="alumno_id" interface="popover" placeholder="Buscar alumno..." [disabled]="isEdit">
-          @for (alumno of alumnos; track alumno.id) {
-            <ion-select-option [value]="alumno.id">{{ getAlumnoLabel(alumno) }}</ion-select-option>
-          }
-        </ion-select>
+      <div>
+        <ion-item class="field-row">
+          <ion-label position="stacked">Alumno</ion-label>
+          <ion-select id="memb-alumno" class="field-input" [class.field-error]="errors['alumno_id']" [(ngModel)]="alumno_id" interface="popover" placeholder="Buscar alumno..." [disabled]="isEdit">
+            @for (alumno of alumnos(); track alumno.id) {
+              <ion-select-option [value]="alumno.id">{{ getAlumnoLabel(alumno) }}</ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
         @if (errors['alumno_id']) { <span class="error-msg">{{ errors['alumno_id'] }}</span> }
-      </ion-item>
+      </div>
 
-      <ion-item class="field-row">
-        <ion-label>Tipo de membresía</ion-label>
-        <ion-select class="field-input" [class.field-error]="errors['tipo_membresia_id']" [(ngModel)]="tipo_membresia_id" (ngModelChange)="onTipoChange()" interface="popover" placeholder="Seleccionar tipo...">
-          @for (tipo of tipos; track tipo.id) {
-            <ion-select-option [value]="tipo.id">{{ tipo.nombre }} — ${{ tipo.costo_base }}</ion-select-option>
-          }
-        </ion-select>
+      <div>
+        <ion-item class="field-row">
+          <ion-label position="stacked">Tipo de membresía</ion-label>
+          <ion-select id="memb-tipo" class="field-input" [class.field-error]="errors['tipo_membresia_id']" [(ngModel)]="tipo_membresia_id" (ngModelChange)="onTipoChange()" interface="popover" placeholder="Seleccionar tipo...">
+            @for (tipo of tipos(); track tipo.id) {
+              <ion-select-option [value]="tipo.id">{{ tipo.nombre }} — ${{ tipo.costo_base }}</ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
         @if (errors['tipo_membresia_id']) { <span class="error-msg">{{ errors['tipo_membresia_id'] }}</span> }
-      </ion-item>
+      </div>
     </div>
 
     <!-- Costo y fechas -->
@@ -64,17 +68,21 @@
       <h3 class="section-title">Costo y fechas</h3>
 
       <div class="inline-fields">
-        <ion-item class="field-row flex-1">
-          <ion-label>Costo real ($)</ion-label>
-          <ion-input class="field-input" [class.field-error]="errors['costo_real']" type="number" [(ngModel)]="costo_real" placeholder="0.00"></ion-input>
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Costo real ($)</ion-label>
+            <ion-input id="memb-costo" class="field-input" [class.field-error]="errors['costo_real']" type="number" [(ngModel)]="costo_real" placeholder="0.00"></ion-input>
+          </ion-item>
           @if (errors['costo_real']) { <span class="error-msg">{{ errors['costo_real'] }}</span> }
-        </ion-item>
+        </div>
 
-        <ion-item class="field-row flex-1">
-          <ion-label>Porcentaje beca (0-100)</ion-label>
-          <ion-input class="field-input" [class.field-error]="errors['porcentaje_beca']" type="number" [(ngModel)]="porcentaje_beca" placeholder="0"></ion-input>
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Porcentaje beca (0-100)</ion-label>
+            <ion-input id="memb-beca" class="field-input" [class.field-error]="errors['porcentaje_beca']" type="number" [(ngModel)]="porcentaje_beca" placeholder="0"></ion-input>
+          </ion-item>
           @if (errors['porcentaje_beca']) { <span class="error-msg">{{ errors['porcentaje_beca'] }}</span> }
-        </ion-item>
+        </div>
       </div>
 
       @if (porcentaje_beca > 0) {
@@ -85,22 +93,26 @@
       }
 
       <div class="inline-fields">
-        <ion-item class="field-row flex-1">
-          <ion-label>Fecha de inicio</ion-label>
-          <ion-input class="field-input" [class.field-error]="errors['fecha_inicio']" type="date" [(ngModel)]="fecha_inicio" (ngModelChange)="onFechaInicioChange()"></ion-input>
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Fecha de inicio</ion-label>
+            <ion-input id="memb-inicio" class="field-input" [class.field-error]="errors['fecha_inicio']" type="date" [(ngModel)]="fecha_inicio" (ngModelChange)="onFechaInicioChange()"></ion-input>
+          </ion-item>
           @if (errors['fecha_inicio']) { <span class="error-msg">{{ errors['fecha_inicio'] }}</span> }
-        </ion-item>
+        </div>
 
-        <ion-item class="field-row flex-1">
-          <ion-label>Fecha de vencimiento</ion-label>
-          <ion-input class="field-input" [class.field-error]="errors['fecha_vencimiento']" type="date" [(ngModel)]="fecha_vencimiento"></ion-input>
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Fecha de vencimiento</ion-label>
+            <ion-input id="memb-vence" class="field-input" [class.field-error]="errors['fecha_vencimiento']" type="date" [(ngModel)]="fecha_vencimiento"></ion-input>
+          </ion-item>
           @if (errors['fecha_vencimiento']) { <span class="error-msg">{{ errors['fecha_vencimiento'] }}</span> }
-        </ion-item>
+        </div>
       </div>
 
       <div class="toggle-row">
         <span class="toggle-label">Pagado</span>
-        <ion-toggle [(ngModel)]="pagado"></ion-toggle>
+        <ion-toggle id="memb-pagado" [(ngModel)]="pagado"></ion-toggle>
       </div>
     </div>
 
@@ -108,7 +120,8 @@
     <div class="section">
       <h3 class="section-title">Notas</h3>
       <ion-item class="field-row">
-        <ion-textarea class="field-input" [(ngModel)]="notas" placeholder="Notas adicionales..." rows="2"></ion-textarea>
+        <ion-label position="stacked">Notas adicionales</ion-label>
+        <ion-textarea id="memb-notas" class="field-input" [(ngModel)]="notas" placeholder="Notas adicionales..." rows="3"></ion-textarea>
       </ion-item>
     </div>
 

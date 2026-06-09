@@ -103,14 +103,25 @@ export class Membresias implements OnInit {
     return ESTADO_LABELS[estadoId] ?? { label: 'Desconocido', css: '' };
   }
 
+  getVigenciaLabel(m: Membresia): { text: string; css: string } {
+    if (m.estado_id === 3) return { text: '—', css: 'cancelada' };
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const vence = new Date(m.fecha_vencimiento);
+    vence.setHours(0, 0, 0, 0);
+    const diff = Math.ceil((vence.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24));
+    if (diff > 0) return { text: `+${diff}`, css: 'ok' };
+    if (diff === 0) return { text: 'Hoy', css: 'warn' };
+    return { text: `${diff}`, css: 'vencida' };
+  }
+
   async addMembresia(): Promise<void> {
     const modal = await this.modalCtrl.create({
       component: MembresiaFormModal,
-      cssClass: 'modal-content',
     });
     await modal.present();
-    const { data } = await modal.onDidDismiss();
-    if (data?.role === 'saved') {
+    const { role } = await modal.onDidDismiss();
+    if (role === 'saved') {
       this.loadMembresias();
       this.showToast('Membresía creada correctamente');
     }
@@ -120,12 +131,11 @@ export class Membresias implements OnInit {
     event.stopPropagation();
     const modal = await this.modalCtrl.create({
       component: MembresiaFormModal,
-      cssClass: 'modal-content',
       componentProps: { membresia },
     });
     await modal.present();
-    const { data } = await modal.onDidDismiss();
-    if (data?.role === 'saved') {
+    const { role } = await modal.onDidDismiss();
+    if (role === 'saved') {
       this.loadMembresias();
       this.showToast('Membresía actualizada correctamente');
     }
@@ -145,17 +155,8 @@ export class Membresias implements OnInit {
   async verImpagas(): Promise<void> {
     const modal = await this.modalCtrl.create({
       component: MembresiaImpagasModal,
-      cssClass: 'modal-content',
     });
     await modal.present();
-  }
-
-  formatDate(dateStr: string): string {
-    return new Date(dateStr).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
-  }
-
-  formatCurrency(value: number): string {
-    return `$${value.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`;
   }
 
   private async showToast(message: string, color: 'success' | 'danger' = 'success'): Promise<void> {

@@ -276,6 +276,18 @@ ion-button.pass-toggle ion-icon {
   border-color: #dc2626 !important;
 }
 
+@media (max-width: 500px) {
+  .modal-body {
+    padding: 0.75rem 1rem 1rem;
+  }
+  .identity-card {
+    padding: 1rem;
+  }
+  .section {
+    padding: 1rem;
+  }
+}
+
 .error-msg {
   font-family: 'Inter', sans-serif;
   font-size: 0.7rem;

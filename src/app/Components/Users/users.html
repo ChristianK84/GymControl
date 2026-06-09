@@ -12,36 +12,43 @@
   </div>
 
   <!-- Filters -->
-  <div class="filters-bar">
-    <div class="search-box">
-      <ion-icon name="search-outline" class="search-icon"></ion-icon>
-      <ion-input
-        class="search-input"
-        placeholder="Buscar por nombre o usuario..."
-        fill="outline"
-        [ngModel]="searchTerm()"
-        (ngModelChange)="searchTerm.set($event); onFilterChange()"
-      ></ion-input>
+  <div class="filter-card">
+    <h3 class="filter-title">Filtros de búsqueda</h3>
+    <div class="filter-grid">
+      <label class="filter-label">
+        Buscar usuario
+        <div class="search-box">
+          <ion-icon name="search-outline" class="search-icon"></ion-icon>
+          <ion-input
+            class="search-input"
+            placeholder="Buscar por nombre o usuario..."
+            fill="outline"
+            [ngModel]="searchTerm()"
+            (ngModelChange)="searchTerm.set($event); onFilterChange()"
+          ></ion-input>
+        </div>
+      </label>
+      <label class="filter-label">
+        Rol
+        <ion-select
+          class="filter-select"
+          fill="outline"
+          interface="popover"
+          placeholder="Seleccione un Rol"
+          [ngModel]="roleFilter()"
+          (ngModelChange)="roleFilter.set($event); onFilterChange()"
+        >
+          <ion-select-option [value]="null">Todos los roles</ion-select-option>
+          @for (rol of roles(); track rol.id) {
+            <ion-select-option [value]="rol.id">{{ rol.nombre }}</ion-select-option>
+          }
+        </ion-select>
+      </label>
+      <ion-button class="btn-clear" (click)="clearFilters()" fill="outline">
+        <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+        Limpiar
+      </ion-button>
     </div>
-    <div class="filter-box">
-      <ion-icon name="filter-outline" class="filter-icon"></ion-icon>
-      <ion-select
-        class="filter-select"
-        interface="popover"
-        [ngModel]="roleFilter()"
-        (ngModelChange)="roleFilter.set($event); onFilterChange()"
-      >
-        <ion-select-option [value]="undefined" disabled>Seleccione un Rol</ion-select-option>
-        <ion-select-option [value]="null">Todos los roles</ion-select-option>
-        @for (rol of roles(); track rol.id) {
-          <ion-select-option [value]="rol.id">{{ rol.nombre }}</ion-select-option>
-        }
-      </ion-select>
-    </div>
-    <ion-button class="btn-clear" (click)="clearFilters()" fill="outline">
-      <ion-icon name="close-circle-outline" slot="start"></ion-icon>
-      Limpiar
-    </ion-button>
   </div>
 
   <!-- Table -->

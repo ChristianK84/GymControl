@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, ChangeDetectorRef, OnInit } from '@angular/core';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton,
   IonIcon, IonSkeletonText,
@@ -21,6 +21,7 @@ import { Membresia } from '../../Models/membresias';
 export class MembresiaImpagasModal implements OnInit {
   private api = inject(ApiService);
   private modalCtrl = inject(ModalController);
+  private cdr = inject(ChangeDetectorRef);
 
   impagas = signal<Membresia[]>([]);
   loading = signal(true);
@@ -40,6 +41,7 @@ export class MembresiaImpagasModal implements OnInit {
         this.loading.set(false);
       },
     });
+    this.cdr.detectChanges();
   }
 
   dismiss(): void {

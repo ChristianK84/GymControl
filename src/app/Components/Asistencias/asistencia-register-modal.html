@@ -10,18 +10,21 @@
 </ion-header>
 
 <ion-content class="modal-content">
-  <div class="search-field">
-    <ion-icon name="search-outline" class="search-icon"></ion-icon>
-    <ion-input
-      id="asis-register-search"
-      class="search-input"
-      placeholder="Buscar alumno..."
-      fill="outline"
-      [ngModel]="searchTerm()"
-      (ngModelChange)="searchTerm.set($event)"
-      autofocus
-    ></ion-input>
-  </div>
+  <label class="filter-label">
+    Buscar alumno
+    <div class="search-field">
+      <ion-icon name="search-outline" class="search-icon"></ion-icon>
+      <ion-input
+        id="asis-register-search"
+        class="search-input"
+        placeholder="Buscar alumno..."
+        fill="outline"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+        autofocus
+      ></ion-input>
+    </div>
+  </label>
 
   <div class="results-list">
     @if (loading()) {

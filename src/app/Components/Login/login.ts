@@ -35,6 +35,9 @@ export class Login implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loginForm.reset();
+    this.loggingIn.set(false);
+
     if (isPlatformBrowser(this.platformId) && sessionStorage.getItem('session_expired')) {
       sessionStorage.removeItem('session_expired');
       setTimeout(() => this.showToast('Su sesión ha expirado', 'warning'), 300);
@@ -64,7 +67,7 @@ export class Login implements OnInit {
         this.session.saveSession(res);
         (document.activeElement as HTMLElement)?.blur();
         this.showToast('Inicio de sesión exitoso', 'success');
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/dashboard'], { replaceUrl: true });
       },
       error: (err) => {
         this.loggingIn.set(false);

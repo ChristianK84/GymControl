@@ -10,23 +10,30 @@
     </ion-button>
   </div>
 
-  <div class="filters-bar">
-    <div class="search-box">
-      <ion-icon name="search-outline" class="search-icon"></ion-icon>
-      <ion-input
-        class="search-input"
-        placeholder="Buscar por nombre o descripción..."
-        [ngModel]="searchTerm()"
-        (ngModelChange)="onSearch($event)"
-        clearInput
-      ></ion-input>
+  <div class="filter-card">
+    <h3 class="filter-title">Filtros de búsqueda</h3>
+    <div class="filter-grid">
+      <label class="filter-label">
+        Buscar tipo de membresía
+        <div class="search-box">
+          <ion-icon name="search-outline" class="search-icon"></ion-icon>
+        <ion-input
+          class="search-input"
+          fill="outline"
+          placeholder="Buscar por nombre o descripción..."
+            [ngModel]="searchTerm()"
+            (ngModelChange)="onSearch($event)"
+            clearInput
+          ></ion-input>
+        </div>
+      </label>
+      @if (searchTerm()) {
+        <ion-button class="btn-clear" (click)="clearSearch()">
+          <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+          Limpiar
+        </ion-button>
+      }
     </div>
-    @if (searchTerm()) {
-      <ion-button class="btn-clear" (click)="clearSearch()">
-        <ion-icon name="close-circle-outline" slot="start"></ion-icon>
-        Limpiar
-      </ion-button>
-    }
   </div>
 
   <div class="table-wrapper">

@@ -78,6 +78,10 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    if (!this.session.isAuthenticated()) {
+      this.router.navigate(['/login'], { replaceUrl: true });
+      return;
+    }
     this.collapsed.set(window.innerWidth <= 768);
     this.clockInterval = setInterval(() => {
       this.clockDate.set(this.formatDate());
@@ -131,6 +135,6 @@ export class Dashboard implements OnInit, OnDestroy {
   logout(): void {
     (document.activeElement as HTMLElement)?.blur();
     this.session.clearSession();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/login'], { replaceUrl: true });
   }
 }

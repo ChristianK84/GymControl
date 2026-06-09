@@ -1,4 +1,4 @@
-import { Component, inject, Input, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, inject, Input, signal, ChangeDetectorRef, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import {
@@ -32,8 +32,8 @@ export class MembresiaFormModal implements OnInit {
   private toastCtrl = inject(ToastController);
   private cdr = inject(ChangeDetectorRef);
 
-  alumnos: Alumno[] = [];
-  tipos: TipoMembresia[] = [];
+  alumnos = signal<Alumno[]>([]);
+  tipos = signal<TipoMembresia[]>([]);
 
   alumno_id: number | null = null;
   tipo_membresia_id: number | null = null;
@@ -45,7 +45,7 @@ export class MembresiaFormModal implements OnInit {
   notas = '';
 
   errors: Record<string, string> = {};
-  saving = false;
+  saving = signal(false);
 
   constructor() {
     addIcons({ closeOutline, saveOutline, syncOutline, checkmarkCircleOutline, alertCircleOutline, informationCircleOutline });
@@ -55,32 +55,33 @@ export class MembresiaFormModal implements OnInit {
     return !!this.membresia;
   }
 
-  ngOnInit(): void {
-    this.api.getAlumnos().subscribe({
-      next: (data) => { this.alumnos = data; },
-    });
-    this.api.getTiposMembresia().subscribe({
-      next: (data) => { this.tipos = data; },
-    });
+  private tryInitForm(): void {
+    if (!this.membresia) return;
+    if (!this.alumnos().length || !this.tipos().length) return;
+    this.alumno_id = this.membresia.alumno_id;
+    this.tipo_membresia_id = this.membresia.tipo_membresia_id;
+    this.costo_real = this.membresia.costo_real;
+    this.porcentaje_beca = this.membresia.porcentaje_beca;
+    this.fecha_inicio = this.membresia.fecha_inicio;
+    this.fecha_vencimiento = this.membresia.fecha_vencimiento;
+    this.pagado = this.membresia.pagado;
+    this.notas = this.membresia.notas ?? '';
+    this.cdr.detectChanges();
   }
 
-  ionViewWillEnter(): void {
-    if (this.membresia) {
-      this.alumno_id = this.membresia.alumno_id;
-      this.tipo_membresia_id = this.membresia.tipo_membresia_id;
-      this.costo_real = this.membresia.costo_real;
-      this.porcentaje_beca = this.membresia.porcentaje_beca;
-      this.fecha_inicio = this.membresia.fecha_inicio;
-      this.fecha_vencimiento = this.membresia.fecha_vencimiento;
-      this.pagado = this.membresia.pagado;
-      this.notas = this.membresia.notas ?? '';
-      this.cdr.detectChanges();
-    }
+  ngOnInit(): void {
+    this.api.getAlumnos().subscribe({
+      next: (data) => { this.alumnos.set(data); this.tryInitForm(); },
+    });
+    this.api.getTiposMembresia().subscribe({
+      next: (data) => { this.tipos.set(data); this.tryInitForm(); },
+    });
+    this.cdr.detectChanges();
   }
 
   onTipoChange(): void {
     if (this.tipo_membresia_id && !this.isEdit) {
-      const tipo = this.tipos.find((t) => t.id === this.tipo_membresia_id);
+      const tipo = this.tipos().find((t) => t.id === this.tipo_membresia_id);
       if (tipo) {
         this.costo_real = tipo.costo_base;
         if (tipo.duracion_dias && this.fecha_inicio) {
@@ -94,7 +95,7 @@ export class MembresiaFormModal implements OnInit {
 
   onFechaInicioChange(): void {
     if (this.tipo_membresia_id && this.fecha_inicio && !this.isEdit) {
-      const tipo = this.tipos.find((t) => t.id === this.tipo_membresia_id);
+      const tipo = this.tipos().find((t) => t.id === this.tipo_membresia_id);
       if (tipo) {
         const inicio = new Date(this.fecha_inicio);
         inicio.setDate(inicio.getDate() + tipo.duracion_dias);
@@ -117,7 +118,7 @@ export class MembresiaFormModal implements OnInit {
   async save(): Promise<void> {
     if (!this.validate()) return;
 
-    this.saving = true;
+    this.saving.set(true);
     const body = {
       alumno_id: this.alumno_id!,
       tipo_membresia_id: this.tipo_membresia_id!,
@@ -135,11 +136,11 @@ export class MembresiaFormModal implements OnInit {
 
     request.subscribe({
       next: () => {
-        this.saving = false;
+        this.saving.set(false);
         this.modalCtrl.dismiss(null, 'saved');
       },
       error: (err) => {
-        this.saving = false;
+        this.saving.set(false);
         const msg = err?.error?.detail || 'Error al guardar';
         this.showToast(msg, 'danger');
       },

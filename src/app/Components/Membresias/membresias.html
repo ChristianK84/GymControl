@@ -16,25 +16,32 @@
     </div>
   </div>
 
-  <div class="filters-bar">
-    <ion-select class="filter-select" [ngModel]="filterEstado()" (ngModelChange)="filterEstado.set($event); onFilterChange()" placeholder="Estado" interface="popover">
-      <ion-select-option [value]="null">Todos los estados</ion-select-option>
-      <ion-select-option [value]="1">Activa</ion-select-option>
-      <ion-select-option [value]="2">Vencida</ion-select-option>
-      <ion-select-option [value]="3">Cancelada</ion-select-option>
-      <ion-select-option [value]="4">Pendiente</ion-select-option>
-    </ion-select>
-
-    <ion-select class="filter-select" [ngModel]="filterPagado()" (ngModelChange)="filterPagado.set($event); onFilterChange()" placeholder="Pago" interface="popover">
-      <ion-select-option [value]="null">Todos</ion-select-option>
-      <ion-select-option [value]="true">Pagado</ion-select-option>
-      <ion-select-option [value]="false">No pagado</ion-select-option>
-    </ion-select>
-
-    <ion-button class="btn-clear" (click)="clearFilters()">
-      <ion-icon name="close-circle-outline" slot="start"></ion-icon>
-      Limpiar filtros
-    </ion-button>
+  <div class="filter-card">
+    <h3 class="filter-title">Filtros de búsqueda</h3>
+    <div class="filter-grid">
+      <label class="filter-label">
+        Estado
+        <ion-select class="filter-select" fill="outline" [ngModel]="filterEstado()" (ngModelChange)="filterEstado.set($event); onFilterChange()" interface="popover">
+          <ion-select-option [value]="null">Todos los estados</ion-select-option>
+          <ion-select-option [value]="1">Activa</ion-select-option>
+          <ion-select-option [value]="2">Vencida</ion-select-option>
+          <ion-select-option [value]="3">Cancelada</ion-select-option>
+          <ion-select-option [value]="4">Pendiente</ion-select-option>
+        </ion-select>
+      </label>
+      <label class="filter-label">
+        Pago
+        <ion-select class="filter-select" fill="outline" [ngModel]="filterPagado()" (ngModelChange)="filterPagado.set($event); onFilterChange()" interface="popover">
+          <ion-select-option [value]="null">Todos</ion-select-option>
+          <ion-select-option [value]="true">Pagado</ion-select-option>
+          <ion-select-option [value]="false">No pagado</ion-select-option>
+        </ion-select>
+      </label>
+      <ion-button class="btn-clear" (click)="clearFilters()">
+        <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+        Limpiar filtros
+      </ion-button>
+    </div>
   </div>
 
   <div class="table-wrapper">
@@ -43,13 +50,9 @@
         <tr>
           <th>Alumno</th>
           <th>Tipo</th>
-          <th>Costo</th>
-          <th>Beca</th>
-          <th>Inicio</th>
-          <th>Vence</th>
+          <th>Vigencia</th>
           <th>Estado</th>
           <th>Pagado</th>
-          <th style="width: 80px;"></th>
         </tr>
       </thead>
       <tbody>
@@ -58,26 +61,32 @@
             <tr class="skeleton-row">
               <td><ion-skeleton-text [animated]="true" class="skeleton-text-lg"></ion-skeleton-text></td>
               <td><ion-skeleton-text [animated]="true" class="skeleton-text"></ion-skeleton-text></td>
-              <td><ion-skeleton-text [animated]="true" class="skeleton-text-sm"></ion-skeleton-text></td>
-              <td><ion-skeleton-text [animated]="true" class="skeleton-text-sm"></ion-skeleton-text></td>
-              <td><ion-skeleton-text [animated]="true" class="skeleton-text"></ion-skeleton-text></td>
               <td><ion-skeleton-text [animated]="true" class="skeleton-text"></ion-skeleton-text></td>
               <td><ion-skeleton-text [animated]="true" class="skeleton-badge"></ion-skeleton-text></td>
               <td><ion-skeleton-text [animated]="true" class="skeleton-badge"></ion-skeleton-text></td>
-              <td></td>
             </tr>
           }
         } @else {
           @for (m of pagedMembresias(); track m.id) {
             <tr (click)="editMembresia(m, $event)">
               <td>
-                <span class="maestro-name">{{ m.alumno?.nombrecompleto ?? '—' }} {{ m.alumno?.apellido_paterno ?? '' }}</span>
+                <div class="alumno-cell">
+                  @if (m.alumno?.fotografia) {
+                    <img class="alumno-avatar" [src]="m.alumno!.fotografia" [alt]="m.alumno!.nombrecompleto" />
+                  } @else {
+                    <div class="alumno-avatar alumno-avatar-fallback">{{ m.alumno?.nombrecompleto?.charAt(0)?.toUpperCase() ?? '?' }}</div>
+                  }
+                  <div class="alumno-name-group">
+                    <span class="alumno-name">{{ m.alumno?.nombrecompleto ?? '—' }}</span>
+                    <span class="alumno-apellido">{{ m.alumno?.apellido_paterno ?? '' }} {{ m.alumno?.apellido_materno ?? '' }}</span>
+                  </div>
+                </div>
               </td>
               <td class="td-muted">{{ m.tipo_membresia?.nombre ?? '—' }}</td>
-              <td>{{ formatCurrency(m.costo_real) }}</td>
-              <td>{{ m.porcentaje_beca }}%</td>
-              <td class="td-muted">{{ formatDate(m.fecha_inicio) }}</td>
-              <td class="td-muted">{{ formatDate(m.fecha_vencimiento) }}</td>
+              <td>
+                @let vig = getVigenciaLabel(m);
+                <span class="vigencia-badge" [class.vigencia-ok]="vig.css === 'ok'" [class.vigencia-warning]="vig.css === 'warn'" [class.vigencia-vencida]="vig.css === 'vencida'" [class.vigencia-cancelada]="vig.css === 'cancelada'">{{ vig.text }}</span>
+              </td>
               <td>
                 @let est = getEstadoLabel(m.estado_id);
                 <span class="estado-badge estado-{{ est.css }}">{{ est.label }}</span>
@@ -87,15 +96,10 @@
                   {{ m.pagado ? 'Sí' : 'No' }}
                 </span>
               </td>
-              <td>
-                <ion-button fill="clear" size="small" (click)="cancelarMembresia(m, $event)" color="danger">
-                  <ion-icon slot="icon-only" name="close-circle-outline"></ion-icon>
-                </ion-button>
-              </td>
             </tr>
           } @empty {
             <tr>
-              <td colspan="9" class="td-empty">
+              <td colspan="5" class="td-empty">
                 <div class="empty-state">
                   <ion-icon name="file-tray-outline"></ion-icon>
                   <p>No se encontraron membresías</p>
