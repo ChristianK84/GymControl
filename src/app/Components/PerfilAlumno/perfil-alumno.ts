@@ -1,6 +1,8 @@
 import { Component, inject, signal, OnInit, computed, ChangeDetectorRef, ElementRef, viewChild, effect } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 import {
   IonIcon, IonSpinner, IonSegment, IonSegmentButton, IonLabel,
   IonSelect, IonSelectOption, ToastController,
@@ -25,7 +27,7 @@ import {
   pencilOutline, trashOutline, calendarOutline, timeOutline,
   searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline,
   arrowBackOutline, cardOutline, qrCodeOutline, addOutline,
-  schoolOutline, cashOutline, downloadOutline,
+  schoolOutline, cashOutline, downloadOutline, alertCircleOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -52,7 +54,6 @@ export class PerfilAlumno implements OnInit {
 
   // QR
   qrCanvas = viewChild<ElementRef<HTMLCanvasElement>>('qrCanvas');
-  qrGenerated = false;
 
   // Membresias
   membresias = signal<Membresia[]>([]);
@@ -94,12 +95,12 @@ export class PerfilAlumno implements OnInit {
       pencilOutline, trashOutline, calendarOutline, timeOutline,
       searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline,
       arrowBackOutline, cardOutline, qrCodeOutline, addOutline,
-      schoolOutline, cashOutline, downloadOutline,
+      schoolOutline, cashOutline, downloadOutline, alertCircleOutline,
     });
     effect(() => {
       const canvas = this.qrCanvas();
       const a = this.alumno();
-      if (canvas && a && !this.qrGenerated) {
+      if (canvas && a) {
         this.generateQr(canvas.nativeElement, a.id);
       }
     });
@@ -130,23 +131,25 @@ export class PerfilAlumno implements OnInit {
       margin: 2,
       color: { dark: '#2a1714', light: '#ffffff' },
     });
-    this.qrGenerated = true;
   }
 
-  downloadQr(): void {
+  async downloadQr(): Promise<void> {
     const canvas = this.qrCanvas()?.nativeElement;
     if (!canvas) return;
+    const dataUrl = canvas.toDataURL('image/png');
     const a = this.alumno();
-    const filename = `qr-alumno-${a?.id ?? 'x'}-${(a?.nombrecompleto ?? 'alumno').replace(/\s+/g, '-')}.png`;
-    canvas.toBlob((blob) => {
-      if (!blob) return;
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      link.click();
-      URL.revokeObjectURL(url);
-    });
+    const filename = `qr-alumno-${a?.id ?? 'x'}.png`;
+
+    try {
+      const result = await Filesystem.writeFile({
+        path: filename,
+        data: dataUrl,
+        directory: Directory.Cache,
+      });
+      await Share.share({ files: [result.uri] });
+    } catch {
+      window.open(dataUrl, '_blank');
+    }
   }
 
   edad(fecha: string): number {
@@ -440,7 +443,6 @@ export class PerfilAlumno implements OnInit {
       1: { label: 'Activa', css: 'activa' },
       2: { label: 'Vencida', css: 'vencida' },
       3: { label: 'Cancelada', css: 'cancelada' },
-      4: { label: 'Pendiente', css: 'pendiente' },
     };
     return map[estadoId] ?? { label: '—', css: '' };
   }
@@ -450,25 +452,24 @@ export class PerfilAlumno implements OnInit {
     if (!a) return;
     const modal = await this.modalCtrl.create({
       component: MembresiaFormModal,
-      cssClass: 'modal-content',
     });
     await modal.present();
-    const { data } = await modal.onDidDismiss();
-    if (data?.role === 'saved') {
+    const { role } = await modal.onDidDismiss();
+    if (role === 'saved') {
       this.loadMembresias();
       this.showToast('Membresía creada', 'success');
     }
   }
 
   async editMembresia(m: Membresia): Promise<void> {
+    if (m.estado_id === 2) return;
     const modal = await this.modalCtrl.create({
       component: MembresiaFormModal,
-      cssClass: 'modal-content',
       componentProps: { membresia: m },
     });
     await modal.present();
-    const { data } = await modal.onDidDismiss();
-    if (data?.role === 'saved') {
+    const { role } = await modal.onDidDismiss();
+    if (role === 'saved') {
       this.loadMembresias();
       this.showToast('Membresía actualizada', 'success');
     }

@@ -169,17 +169,16 @@
 
 /* ── Asistencias Filters ── */
 .asis-filter-card { background: #ffffff; border: 1px solid #e5e2e1; border-radius: 0.75rem; padding: 1rem 1.25rem; margin-bottom: 1rem; }
-.asis-filter-grid { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.65rem; }
-.asis-filter-grid .search-box { flex: 1; min-width: 180px; position: relative; }
-.asis-filter-grid .search-icon { position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: #936e69; font-size: 1.15rem; z-index: 2; pointer-events: none; }
-.asis-filter-grid .search-input { --padding-start: 2.6rem; --border-color: #e5e2e1; --border-radius: 0.5rem; --background: transparent; --color: #2a1714; --placeholder-color: #936e69; font-family: 'Inter', sans-serif; font-size: 0.85rem; }
-.filter-group { display: flex; flex-direction: column; gap: 0.2rem; }
-.filter-label { font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 600; color: #936e69; text-transform: uppercase; letter-spacing: 0.04em; }
-.filter-date { padding: 0.5rem 0.65rem; border: 1px solid #e5e2e1; border-radius: 0.5rem; background: transparent; font-family: 'Inter', sans-serif; font-size: 0.82rem; color: #2a1714; outline: none; min-height: 40px; }
+.asis-filter-grid { display: flex; flex-direction: column; gap: 0.65rem; }
+.asis-filter-search { min-width: 0; flex: none; }
+.asis-filter-row { display: flex; gap: 0.65rem; }
+.asis-filter-row .filter-label { min-width: 0; }
+.filter-date { padding: 0.5rem 0.65rem; border: 1px solid #e5e2e1; border-radius: 0.5rem; background: transparent; font-family: 'Inter', sans-serif; font-size: 0.82rem; color: #2a1714; outline: none; min-height: 42px; width: 100%; box-sizing: border-box; }
 .filter-date:focus { border-color: #2a1714; background: #ffffff; }
-.asis-filter-actions { display: flex; gap: 0.35rem; }
-.btn-filtrar { --background: #2a1714; --background-hover: #412b28; --color: #fff; --border-radius: 0.5rem; --padding-start: 0.75rem; --padding-end: 0.75rem; height: 40px; }
-.btn-limpiar { --background: #ffffff; --background-hover: #f0edec; --color: #5e3f3b; --border-color: #e5e2e1; --border-style: solid; --border-width: 1px; --border-radius: 0.5rem; --padding-start: 0.75rem; --padding-end: 0.75rem; height: 40px; }
+.asis-filter-actions { display: flex; gap: 0.5rem; justify-content: flex-end; }
+.btn-asis-filtrar { --background: #2a1714; --background-hover: #412b28; --color: #fff; --border-radius: 0.5rem; --padding-start: 0; --padding-end: 0; height: 44px; width: 44px; }
+.btn-asis-limpiar { --background: #ffffff; --background-hover: #f0edec; --color: #5e3f3b; --border-color: #e5e2e1; --border-style: solid; --border-width: 1px; --border-radius: 0.5rem; --padding-start: 0; --padding-end: 0; height: 44px; width: 44px; }
+.btn-asis-filtrar ion-icon, .btn-asis-limpiar ion-icon { font-size: 1.25rem; }
 
 /* ── Action column (thin) ── */
 .th-action { width: 1px; padding: 0 !important; }

@@ -41,6 +41,7 @@ export class MembresiaFormModal implements OnInit {
   porcentaje_beca = 0;
   fecha_inicio = '';
   fecha_vencimiento = '';
+  estado_id: number | null = null;
   pagado = true;
   notas = '';
 
@@ -64,6 +65,7 @@ export class MembresiaFormModal implements OnInit {
     this.porcentaje_beca = this.membresia.porcentaje_beca;
     this.fecha_inicio = this.membresia.fecha_inicio;
     this.fecha_vencimiento = this.membresia.fecha_vencimiento;
+    this.estado_id = this.membresia.estado_id;
     this.pagado = this.membresia.pagado;
     this.notas = this.membresia.notas ?? '';
     this.cdr.detectChanges();
@@ -126,6 +128,7 @@ export class MembresiaFormModal implements OnInit {
       porcentaje_beca: this.porcentaje_beca,
       fecha_inicio: this.fecha_inicio,
       fecha_vencimiento: this.fecha_vencimiento,
+      ...(this.isEdit && this.estado_id !== null ? { estado_id: this.estado_id } : {}),
       pagado: this.pagado,
       notas: this.notas || null,
     };

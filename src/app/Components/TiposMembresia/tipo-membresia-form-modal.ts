@@ -1,4 +1,4 @@
-import { Component, inject, Input, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, Input, signal, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import {
@@ -55,7 +55,7 @@ export class TipoMembresiaFormModal {
   is_active = true;
 
   errors: Record<string, string> = {};
-  saving = false;
+  saving = signal(false);
 
   readonly diasOptions = DIAS_OPTIONS;
 
@@ -100,8 +100,8 @@ export class TipoMembresiaFormModal {
 
   async save(): Promise<void> {
     if (!this.validate()) return;
+    this.saving.set(true);
 
-    this.saving = true;
     const body = {
       nombre: this.nombre.trim(),
       costo_base: this.costo_base!,
@@ -123,11 +123,11 @@ export class TipoMembresiaFormModal {
 
     request.subscribe({
       next: () => {
-        this.saving = false;
+        this.saving.set(false);
         this.modalCtrl.dismiss(null, 'saved');
       },
       error: (err) => {
-        this.saving = false;
+        this.saving.set(false);
         const msg = err?.error?.detail || 'Error al guardar';
         this.showToast(msg, 'danger');
       },

@@ -16,7 +16,6 @@ const ESTADO_LABELS: Record<number, { label: string; css: string }> = {
   1: { label: 'Activa', css: 'activa' },
   2: { label: 'Vencida', css: 'vencida' },
   3: { label: 'Cancelada', css: 'cancelada' },
-  4: { label: 'Pendiente', css: 'pendiente' },
 };
 
 @Component({

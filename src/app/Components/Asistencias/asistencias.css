@@ -152,14 +152,64 @@ ion-button.btn-stop-scan {
   height: auto;
 }
 
-.qr-reader {
-  width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
-  border-radius: 0.5rem;
-  overflow: hidden;
+/* ── Confirm Overlay ── */
+.confirm-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
 }
 
-.qr-reader video {
-  border-radius: 0.5rem;
+.confirm-card {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  max-width: 340px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.confirm-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2a1714;
+  margin: 0 0 0.75rem;
+}
+
+.confirm-message {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  color: #5e3f3b;
+  margin: 0 0 1.25rem;
+  line-height: 1.5;
+}
+
+.confirm-actions {
+  display: flex; gap: 0.75rem;
+}
+
+.btn-confirm-cancel {
+  --color: #5e3f3b;
+  --color-hover: #2a1714;
+  --border-color: #e5e2e1;
+  --border-radius: 0.5rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.88rem;
+  flex: 1;
+  min-height: 44px;
+}
+
+.btn-confirm-action {
+  --color: #ffffff;
+  --background: #e30613;
+  --background-hover: #b5000b;
+  --border-radius: 0.5rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.88rem;
+  flex: 1;
+  min-height: 44px;
 }

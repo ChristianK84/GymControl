@@ -54,7 +54,7 @@ export class Dashboard implements OnInit, OnDestroy {
   user = this.session.getUser();
   userName = this.user?.full_name ?? 'Usuario';
   userRole = ROLE_MAP[this.user?.role_id ?? 0] ?? 'Usuario';
-  collapsed = signal(false);
+  collapsed = signal(true);
   mobileOpen = signal(false);
   clockDate = signal(this.formatDate());
   clockTime = signal(this.formatTime());
@@ -82,7 +82,6 @@ export class Dashboard implements OnInit, OnDestroy {
       this.router.navigate(['/login'], { replaceUrl: true });
       return;
     }
-    this.collapsed.set(window.innerWidth <= 768);
     this.clockInterval = setInterval(() => {
       this.clockDate.set(this.formatDate());
       this.clockTime.set(this.formatTime());

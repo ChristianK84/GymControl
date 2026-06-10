@@ -20,13 +20,30 @@
   @if (scanning()) {
     <div class="qr-scanner-section">
       <div class="qr-scanner-header">
-        <span>Escaneando QR del alumno...</span>
+        <ion-spinner name="lines-small"></ion-spinner>
+        <span>Escaneando QR...</span>
         <ion-button class="btn-stop-scan" fill="solid" (click)="stopQrScanner()">
-          <ion-icon name="stop-outline" slot="start"></ion-icon>
-          Detener
+          Cancelar
         </ion-button>
       </div>
-      <div id="qr-reader" class="qr-reader"></div>
+    </div>
+  }
+
+  <!-- Day Confirm -->
+  @if (showConfirm()) {
+    <div class="confirm-overlay">
+      <div class="confirm-card">
+        <h3 class="confirm-title">Día fuera de plan</h3>
+        <p class="confirm-message">{{ confirmMensaje() }}</p>
+        <div class="confirm-actions">
+          <ion-button class="btn-confirm-cancel" (click)="dismissConfirm()" fill="outline">
+            Cancelar
+          </ion-button>
+          <ion-button class="btn-confirm-action" (click)="acceptConfirm()" fill="solid">
+            {{ confirmBtnText() }}
+          </ion-button>
+        </div>
+      </div>
     </div>
   }
 

@@ -248,7 +248,7 @@
         }
       } @else {
         @for (m of membresias(); track m.id) {
-          <div class="membresia-card" (click)="editMembresia(m)" [class.m-card-vencida]="m.estado_id === 2" [class.m-card-cancelada]="m.estado_id === 3">
+          <div class="membresia-card" (click)="editMembresia(m)" [class.m-card-vencida]="m.estado_id === 2" [class.m-card-cancelada]="m.estado_id === 3" [class.m-card-disabled]="m.estado_id === 2 || m.estado_id === 4">
             <div class="m-card-top">
               <div class="m-card-type">
                 <span class="m-type-name">{{ m.tipo_membresia?.nombre ?? '—' }}</span>

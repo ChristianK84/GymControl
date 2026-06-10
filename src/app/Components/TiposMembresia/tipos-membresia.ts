@@ -88,11 +88,10 @@ export class TiposMembresia implements OnInit {
   async addTipo(): Promise<void> {
     const modal = await this.modalCtrl.create({
       component: TipoMembresiaFormModal,
-      cssClass: 'modal-content',
     });
     await modal.present();
-    const { data } = await modal.onDidDismiss();
-    if (data?.role === 'saved') {
+    const { role } = await modal.onDidDismiss();
+    if (role === 'saved') {
       this.loadTipos();
       this.showToast('Tipo de membresía creado correctamente');
     }
@@ -102,12 +101,11 @@ export class TiposMembresia implements OnInit {
     event.stopPropagation();
     const modal = await this.modalCtrl.create({
       component: TipoMembresiaFormModal,
-      cssClass: 'modal-content',
       componentProps: { tipo },
     });
     await modal.present();
-    const { data } = await modal.onDidDismiss();
-    if (data?.role === 'saved') {
+    const { role } = await modal.onDidDismiss();
+    if (role === 'saved') {
       this.loadTipos();
       this.showToast('Tipo de membresía actualizado correctamente');
     }

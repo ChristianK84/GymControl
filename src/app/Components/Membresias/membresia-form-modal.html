@@ -6,16 +6,6 @@
       </ion-button>
     </ion-buttons>
     <ion-title>{{ isEdit ? 'Editar membresía' : 'Nueva membresía' }}</ion-title>
-    <ion-buttons slot="end">
-      <ion-button class="btn-save" [disabled]="saving()" (click)="save()">
-        @if (saving()) {
-          <ion-icon name="sync-outline" class="spin"></ion-icon>
-        } @else {
-          <ion-icon name="save-outline" slot="start"></ion-icon>
-          Guardar
-        }
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -116,6 +106,22 @@
       </div>
     </div>
 
+    @if (isEdit) {
+      <div class="section">
+        <h3 class="section-title">Estado</h3>
+        <div>
+          <ion-item class="field-row">
+            <ion-label position="stacked">Estado de la membresía</ion-label>
+            <ion-select id="memb-estado" class="field-input" [(ngModel)]="estado_id" interface="popover" placeholder="Seleccionar estado...">
+              <ion-select-option [value]="1">Activa</ion-select-option>
+              <ion-select-option [value]="2">Vencida</ion-select-option>
+              <ion-select-option [value]="3">Cancelada</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </div>
+      </div>
+    }
+
     <!-- Notas -->
     <div class="section">
       <h3 class="section-title">Notas</h3>
@@ -130,5 +136,19 @@
         <span>Creado: {{ membresia!.created_at | date:'mediumDate' }}</span>
       </div>
     }
+  </div>
+
+  <div class="modal-footer">
+    <ion-button class="btn-cancel-footer" (click)="dismiss()" fill="outline">
+      Cancelar
+    </ion-button>
+    <ion-button class="btn-save-footer" [disabled]="saving()" (click)="save()" fill="solid">
+      @if (saving()) {
+        <ion-icon name="sync-outline" class="spin"></ion-icon>
+      } @else {
+        <ion-icon name="save-outline" slot="start"></ion-icon>
+        Guardar
+      }
+    </ion-button>
   </div>
 </ion-content>

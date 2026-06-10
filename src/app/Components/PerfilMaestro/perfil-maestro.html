@@ -329,7 +329,7 @@
         <!-- Filters -->
         <div class="asis-filter-card">
           <div class="asis-filter-grid">
-            <label class="filter-label">
+            <label class="filter-label asis-filter-search">
               Buscar alumno o nota
               <div class="search-box">
                 <ion-icon name="search-outline" class="search-icon"></ion-icon>
@@ -342,19 +342,21 @@
                 ></ion-input>
               </div>
             </label>
-            <div class="filter-group">
-              <label class="filter-label">Desde</label>
-              <input type="date" class="filter-date" [(ngModel)]="filterFechaDesde" />
-            </div>
-            <div class="filter-group">
-              <label class="filter-label">Hasta</label>
-              <input type="date" class="filter-date" [(ngModel)]="filterFechaHasta" />
+            <div class="asis-filter-row">
+              <label class="filter-label">
+                Desde
+                <input type="date" class="filter-date" [(ngModel)]="filterFechaDesde" />
+              </label>
+              <label class="filter-label">
+                Hasta
+                <input type="date" class="filter-date" [(ngModel)]="filterFechaHasta" />
+              </label>
             </div>
             <div class="asis-filter-actions">
-              <ion-button class="btn-filtrar" (click)="applyAsisFilters()" fill="solid" title="Filtrar">
+              <ion-button class="btn-asis-filtrar" (click)="applyAsisFilters()" fill="solid">
                 <ion-icon name="search-outline" slot="icon-only"></ion-icon>
               </ion-button>
-              <ion-button class="btn-limpiar" (click)="clearAsisFilters()" fill="solid" title="Limpiar">
+              <ion-button class="btn-asis-limpiar" (click)="clearAsisFilters()" fill="outline">
                 <ion-icon name="close-circle-outline" slot="icon-only"></ion-icon>
               </ion-button>
             </div>
