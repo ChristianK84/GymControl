@@ -1147,3 +1147,228 @@ ion-input.asis-inline-input {
   .asis-filter-row { flex-direction: column; align-items: stretch; }
   .asis-date, .asis-select { max-width: none; }
 }
+
+/* ========== QR Card ========== */
+.card-qr ion-card-content {
+  display: flex;
+  justify-content: center;
+}
+
+.qr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.qr-container canvas {
+  border: 2px solid #e9bcb6;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  background: #ffffff;
+}
+
+ion-button.btn-download-qr {
+  --color: #2a1714;
+  --color-hover: #ffffff;
+  --background-hover: #2a1714;
+  --border-color: #2a1714;
+  --border-radius: 0.5rem;
+  --box-shadow: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  min-height: 38px;
+  height: auto;
+}
+
+.qr-hint {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  color: #936e69;
+  margin: 0;
+  text-align: center;
+}
+
+/* ========== Membresía Section ========== */
+.membresia-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.membresia-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.membresia-header h3 {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2a1714;
+  margin: 0;
+}
+
+ion-button.btn-add {
+  --background: #e30613;
+  --background-hover: #b5000b;
+  --color: #ffffff;
+  --border-radius: 0.5rem;
+  --box-shadow: none;
+  --padding-start: 1rem;
+  --padding-end: 1rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  min-height: 40px;
+  height: auto;
+}
+
+.membresia-card {
+  background: #ffffff;
+  border: 1px solid #e5e2e1;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.membresia-card:hover {
+  background-color: #fff8f7;
+  border-color: #e9bcb6;
+}
+
+.membresia-card.m-card-vencida {
+  border-left: 3px solid #dc2626;
+}
+
+.membresia-card.m-card-cancelada {
+  opacity: 0.6;
+}
+
+.membresia-card.skeleton {
+  cursor: default;
+  gap: 0.4rem;
+  padding: 1.25rem;
+}
+
+.m-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.m-card-type {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.m-type-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2a1714;
+}
+
+.m-estado-badge {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.estado-badge-activa { background: rgba(34,197,94,0.1); color: #16a34a; }
+.estado-badge-vencida { background: rgba(220,38,38,0.1); color: #dc2626; }
+.estado-badge-cancelada { background: rgba(148,163,184,0.15); color: #64748b; }
+.estado-badge-pendiente { background: rgba(245,158,11,0.1); color: #d97706; }
+
+.m-card-cost {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #2a1714;
+}
+
+.m-card-dates {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.m-date-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  color: #5e3f3b;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.m-date-label ion-icon {
+  font-size: 0.85rem;
+  color: #936e69;
+}
+
+.m-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.m-beca-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #2563eb;
+  background: rgba(37,99,235,0.08);
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+}
+
+.m-beca-badge ion-icon {
+  font-size: 0.8rem;
+}
+
+.m-pago-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+}
+
+.m-pago-badge.pagado-si { background: rgba(34,197,94,0.1); color: #16a34a; }
+.m-pago-badge.pagado-no { background: rgba(220,38,38,0.1); color: #dc2626; }
+
+.m-pago-badge ion-icon {
+  font-size: 0.8rem;
+}
+
+.m-card-notas {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: #936e69;
+  margin: 0;
+  padding-top: 0.25rem;
+  border-top: 1px solid #f3efee;
+}

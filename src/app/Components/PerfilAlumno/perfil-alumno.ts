@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit, computed, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, signal, OnInit, computed, ChangeDetectorRef, ElementRef, viewChild, effect } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import {
@@ -6,11 +6,15 @@ import {
   IonSelect, IonSelectOption, ToastController,
   IonButton, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonBadge,
   IonSkeletonText, IonAvatar, IonItem,
+  ModalController,
 } from '@ionic/angular/standalone';
+import QRCode from 'qrcode';
 import { ApiService } from '../../Services/api-service';
 import { Alumno } from '../../Models/alumnos';
 import { Maestro } from '../../Models/maestros';
 import { Asistencia } from '../../Models/asistencias';
+import { Membresia } from '../../Models/membresias';
+import { MembresiaFormModal } from '../Membresias/membresia-form-modal';
 import { addIcons } from 'ionicons';
 import {
   checkmarkCircleOutline, personOutline, medicalOutline,
@@ -20,7 +24,8 @@ import {
   idCardOutline, peopleOutline, shieldCheckmarkOutline,
   pencilOutline, trashOutline, calendarOutline, timeOutline,
   searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline,
-  arrowBackOutline, cardOutline,
+  arrowBackOutline, cardOutline, qrCodeOutline, addOutline,
+  schoolOutline, cashOutline, downloadOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -35,6 +40,7 @@ export class PerfilAlumno implements OnInit {
   private api = inject(ApiService);
   private toastCtrl = inject(ToastController);
   private cdr = inject(ChangeDetectorRef);
+  private modalCtrl = inject(ModalController);
 
   alumno = signal<Alumno | null>(null);
   maestro = signal<Maestro | null>(null);
@@ -43,6 +49,14 @@ export class PerfilAlumno implements OnInit {
   editing = signal(false);
   saving = signal(false);
   activeTab = signal('info');
+
+  // QR
+  qrCanvas = viewChild<ElementRef<HTMLCanvasElement>>('qrCanvas');
+  qrGenerated = false;
+
+  // Membresias
+  membresias = signal<Membresia[]>([]);
+  loadingMembresias = signal(false);
 
   // Asistencias
   asistencias = signal<Asistencia[]>([]);
@@ -79,7 +93,15 @@ export class PerfilAlumno implements OnInit {
       idCardOutline, peopleOutline, shieldCheckmarkOutline,
       pencilOutline, trashOutline, calendarOutline, timeOutline,
       searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline,
-      arrowBackOutline, cardOutline,
+      arrowBackOutline, cardOutline, qrCodeOutline, addOutline,
+      schoolOutline, cashOutline, downloadOutline,
+    });
+    effect(() => {
+      const canvas = this.qrCanvas();
+      const a = this.alumno();
+      if (canvas && a && !this.qrGenerated) {
+        this.generateQr(canvas.nativeElement, a.id);
+      }
     });
   }
 
@@ -102,6 +124,31 @@ export class PerfilAlumno implements OnInit {
     });
   }
 
+  private generateQr(canvas: HTMLCanvasElement, alumnoId: number): void {
+    QRCode.toCanvas(canvas, String(alumnoId), {
+      width: 180,
+      margin: 2,
+      color: { dark: '#2a1714', light: '#ffffff' },
+    });
+    this.qrGenerated = true;
+  }
+
+  downloadQr(): void {
+    const canvas = this.qrCanvas()?.nativeElement;
+    if (!canvas) return;
+    const a = this.alumno();
+    const filename = `qr-alumno-${a?.id ?? 'x'}-${(a?.nombrecompleto ?? 'alumno').replace(/\s+/g, '-')}.png`;
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
   edad(fecha: string): number {
     const hoy = new Date();
     const nac = new Date(fecha);
@@ -115,6 +162,16 @@ export class PerfilAlumno implements OnInit {
     return new Date(fecha + 'T00:00:00').toLocaleDateString('es-MX', {
       day: 'numeric', month: 'long', year: 'numeric',
     });
+  }
+
+  fechaCorta(fecha: string): string {
+    return new Date(fecha + 'T00:00:00').toLocaleDateString('es-MX', {
+      day: '2-digit', month: 'short', year: 'numeric',
+    });
+  }
+
+  formatCurrency(value: number): string {
+    return `$${value.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`;
   }
 
   startEditing(): void {
@@ -363,10 +420,65 @@ export class PerfilAlumno implements OnInit {
     if (p >= 1 && p <= this.asisTotalPages()) this.asisPage.set(p);
   }
 
+  // ── Membresías ──
+
+  loadMembresias(): void {
+    const a = this.alumno();
+    if (!a) return;
+    this.loadingMembresias.set(true);
+    this.api.getMembresias({ alumno_id: a.id }).subscribe({
+      next: (data) => {
+        this.membresias.set(data);
+        this.loadingMembresias.set(false);
+      },
+      error: () => this.loadingMembresias.set(false),
+    });
+  }
+
+  getEstadoLabel(estadoId: number): { label: string; css: string } {
+    const map: Record<number, { label: string; css: string }> = {
+      1: { label: 'Activa', css: 'activa' },
+      2: { label: 'Vencida', css: 'vencida' },
+      3: { label: 'Cancelada', css: 'cancelada' },
+      4: { label: 'Pendiente', css: 'pendiente' },
+    };
+    return map[estadoId] ?? { label: '—', css: '' };
+  }
+
+  async addMembresia(): Promise<void> {
+    const a = this.alumno();
+    if (!a) return;
+    const modal = await this.modalCtrl.create({
+      component: MembresiaFormModal,
+      cssClass: 'modal-content',
+    });
+    await modal.present();
+    const { data } = await modal.onDidDismiss();
+    if (data?.role === 'saved') {
+      this.loadMembresias();
+      this.showToast('Membresía creada', 'success');
+    }
+  }
+
+  async editMembresia(m: Membresia): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: MembresiaFormModal,
+      cssClass: 'modal-content',
+      componentProps: { membresia: m },
+    });
+    await modal.present();
+    const { data } = await modal.onDidDismiss();
+    if (data?.role === 'saved') {
+      this.loadMembresias();
+      this.showToast('Membresía actualizada', 'success');
+    }
+  }
+
   onTabChange(value: unknown): void {
     const tab = String(value ?? 'info');
     this.activeTab.set(tab);
     if (tab === 'asistencias') this.loadAsistencias();
+    if (tab === 'membresia') this.loadMembresias();
   }
 
   private async showToast(message: string, color: 'success' | 'danger'): Promise<void> {

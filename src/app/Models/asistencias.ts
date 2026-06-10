@@ -27,3 +27,11 @@ export interface Asistencia {
   alumno: AsistenciaAlumno | null;
   maestro: AsistenciaMaestro | null;
 }
+
+export interface ScanResult {
+  permitido: boolean;
+  motivo: string;
+  mensaje: string;
+  costo_extra: number | null;
+  asistencia: Asistencia | null;
+}

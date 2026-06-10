@@ -88,10 +88,8 @@
     </ion-segment>
 
     @if (activeTab() === 'info') {
-    <!-- Bento Grid -->
     <div class="bento-grid">
 
-      <!-- Datos Personales -->
       <ion-card class="card card-wide">
         <ion-card-header>
           <ion-card-title>
@@ -101,191 +99,44 @@
         </ion-card-header>
         <ion-card-content>
           <div class="data-grid">
-            <div class="data-item">
-              <span class="data-label">Nombre Completo</span>
-              @if (editing()) {
-                <ion-input class="field-input" [(ngModel)]="editNombre" fill="outline"></ion-input>
-              } @else {
-                <span class="data-value">{{ a.nombrecompleto }}</span>
-              }
-            </div>
-            <div class="data-item">
-              <span class="data-label">Apellido Paterno</span>
-              @if (editing()) {
-                <ion-input class="field-input" [(ngModel)]="editApellidoP" fill="outline"></ion-input>
-              } @else {
-                <span class="data-value">{{ a.apellido_paterno }}</span>
-              }
-            </div>
-            <div class="data-item">
-              <span class="data-label">Apellido Materno</span>
-              @if (editing()) {
-                <ion-input class="field-input" [(ngModel)]="editApellidoM" placeholder="Opcional" fill="outline"></ion-input>
-              } @else {
-                <span class="data-value">{{ a.apellido_materno || '—' }}</span>
-              }
-            </div>
-            <div class="data-item">
-              <span class="data-label">Fecha de Nacimiento</span>
-              @if (editing()) {
-                <input type="date" class="field-input field-input-native" [(ngModel)]="editFechaNac" />
-              } @else {
-                <span class="data-value">{{ fechaFormato(a.fecha_nacimiento) }}</span>
-              }
-            </div>
-            <div class="data-item">
-              <span class="data-label">Edad</span>
-              <span class="data-value">{{ edad(a.fecha_nacimiento) }} años</span>
-            </div>
-            <div class="data-item">
-              <span class="data-label">Rama</span>
-              @if (editing()) {
-                <ion-select [(ngModel)]="editRama" interface="popover" class="field-ion-select">
-                  <ion-select-option value="Varonil">Varonil</ion-select-option>
-                  <ion-select-option value="Femenil">Femenil</ion-select-option>
-                </ion-select>
-              } @else {
-                <span class="data-value">{{ a.rama }}</span>
-              }
-            </div>
-            <div class="data-item">
-              <span class="data-label">Entrenador</span>
-              @if (editing()) {
-                <ion-select [(ngModel)]="editMaestroId" interface="popover" class="field-ion-select">
-                  @for (m of allMaestros(); track m.id) {
-                    <ion-select-option [value]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</ion-select-option>
-                  }
-                </ion-select>
-              } @else {
-                <span class="data-value">{{ maestro()?.nombre ?? '—' }} {{ maestro()?.apellido_paterno ?? '' }}</span>
-              }
-            </div>
-            <div class="data-item">
-              <span class="data-label">Tipo de Sangre</span>
-              @if (editing()) {
-                <ion-select [(ngModel)]="editTipoSangre" interface="popover" class="field-ion-select">
-                  <ion-select-option value="">No lo sé</ion-select-option>
-                  <ion-select-option value="A+">A+</ion-select-option>
-                  <ion-select-option value="A-">A-</ion-select-option>
-                  <ion-select-option value="B+">B+</ion-select-option>
-                  <ion-select-option value="B-">B-</ion-select-option>
-                  <ion-select-option value="AB+">AB+</ion-select-option>
-                  <ion-select-option value="AB-">AB-</ion-select-option>
-                  <ion-select-option value="O+">O+</ion-select-option>
-                  <ion-select-option value="O-">O-</ion-select-option>
-                </ion-select>
-              } @else {
-                <span class="data-value">{{ a.ficha_medica?.tipo_sangre || 'No especificado' }}</span>
-              }
-            </div>
-            <div class="data-item">
-              <span class="data-label">NSS</span>
-              @if (editing()) {
-                <ion-input class="field-input" [(ngModel)]="editNss" placeholder="Número de seguro social" fill="outline"></ion-input>
-              } @else {
-                <span class="data-value">{{ a.ficha_medica?.nss || 'No registrado' }}</span>
-              }
-            </div>
-            <div class="data-item">
-              <span class="data-label">Fecha de Ingreso</span>
-              @if (editing()) {
-                <input type="date" class="field-input field-input-native" [(ngModel)]="editFechaIns" />
-              } @else {
-                <span class="data-value">{{ fechaFormato(a.fecha_inscripcion) }}</span>
-              }
-            </div>
-            <div class="data-item">
-              <span class="data-label">Estado</span>
-              @if (editing()) {
-                <ion-select [(ngModel)]="editIsActive" interface="popover" class="field-ion-select">
-                  <ion-select-option [value]="true">Activo</ion-select-option>
-                  <ion-select-option [value]="false">Inactivo</ion-select-option>
-                </ion-select>
-              } @else {
-                <span class="data-value">{{ a.is_active ? 'Activo' : 'Inactivo' }}</span>
-              }
-            </div>
+            <div class="data-item"><span class="data-label">Nombre Completo</span>@if (editing()) {<ion-input class="field-input" [(ngModel)]="editNombre" fill="outline"></ion-input>} @else {<span class="data-value">{{ a.nombrecompleto }}</span>}</div>
+            <div class="data-item"><span class="data-label">Apellido Paterno</span>@if (editing()) {<ion-input class="field-input" [(ngModel)]="editApellidoP" fill="outline"></ion-input>} @else {<span class="data-value">{{ a.apellido_paterno }}</span>}</div>
+            <div class="data-item"><span class="data-label">Apellido Materno</span>@if (editing()) {<ion-input class="field-input" [(ngModel)]="editApellidoM" placeholder="Opcional" fill="outline"></ion-input>} @else {<span class="data-value">{{ a.apellido_materno || '—' }}</span>}</div>
+            <div class="data-item"><span class="data-label">Fecha de Nacimiento</span>@if (editing()) {<input type="date" class="field-input field-input-native" [(ngModel)]="editFechaNac" />} @else {<span class="data-value">{{ fechaFormato(a.fecha_nacimiento) }}</span>}</div>
+            <div class="data-item"><span class="data-label">Edad</span><span class="data-value">{{ edad(a.fecha_nacimiento) }} años</span></div>
+            <div class="data-item"><span class="data-label">Rama</span>@if (editing()) {<ion-select [(ngModel)]="editRama" interface="popover" class="field-ion-select"><ion-select-option value="Varonil">Varonil</ion-select-option><ion-select-option value="Femenil">Femenil</ion-select-option></ion-select>} @else {<span class="data-value">{{ a.rama }}</span>}</div>
+            <div class="data-item"><span class="data-label">Entrenador</span>@if (editing()) {<ion-select [(ngModel)]="editMaestroId" interface="popover" class="field-ion-select">@for (m of allMaestros(); track m.id) {<ion-select-option [value]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</ion-select-option>}</ion-select>} @else {<span class="data-value">{{ maestro()?.nombre ?? '—' }} {{ maestro()?.apellido_paterno ?? '' }}</span>}</div>
+            <div class="data-item"><span class="data-label">Tipo de Sangre</span>@if (editing()) {<ion-select [(ngModel)]="editTipoSangre" interface="popover" class="field-ion-select"><ion-select-option value="">No lo sé</ion-select-option><ion-select-option value="A+">A+</ion-select-option><ion-select-option value="A-">A-</ion-select-option><ion-select-option value="B+">B+</ion-select-option><ion-select-option value="B-">B-</ion-select-option><ion-select-option value="AB+">AB+</ion-select-option><ion-select-option value="AB-">AB-</ion-select-option><ion-select-option value="O+">O+</ion-select-option><ion-select-option value="O-">O-</ion-select-option></ion-select>} @else {<span class="data-value">{{ a.ficha_medica?.tipo_sangre || 'No especificado' }}</span>}</div>
+            <div class="data-item"><span class="data-label">NSS</span>@if (editing()) {<ion-input class="field-input" [(ngModel)]="editNss" placeholder="Número de seguro social" fill="outline"></ion-input>} @else {<span class="data-value">{{ a.ficha_medica?.nss || 'No registrado' }}</span>}</div>
+            <div class="data-item"><span class="data-label">Fecha de Ingreso</span>@if (editing()) {<input type="date" class="field-input field-input-native" [(ngModel)]="editFechaIns" />} @else {<span class="data-value">{{ fechaFormato(a.fecha_inscripcion) }}</span>}</div>
+            <div class="data-item"><span class="data-label">Estado</span>@if (editing()) {<ion-select [(ngModel)]="editIsActive" interface="popover" class="field-ion-select"><ion-select-option [value]="true">Activo</ion-select-option><ion-select-option [value]="false">Inactivo</ion-select-option></ion-select>} @else {<span class="data-value">{{ a.is_active ? 'Activo' : 'Inactivo' }}</span>}</div>
           </div>
         </ion-card-content>
       </ion-card>
 
-      <!-- Información Médica -->
       <ion-card class="card card-medical">
-        <ion-card-header>
-          <ion-card-title>
-            <ion-icon name="medical-outline"></ion-icon>
-            Información Médica
-          </ion-card-title>
-        </ion-card-header>
+        <ion-card-header><ion-card-title><ion-icon name="medical-outline"></ion-icon>Información Médica</ion-card-title></ion-card-header>
         <ion-card-content>
           @if (editing()) {
             <div class="edit-medical">
-              <ion-item class="field-row">
-                <ion-label position="stacked">Alergias</ion-label>
-                <ion-input class="field-input" [(ngModel)]="editAlergias" placeholder="Describa alergias" fill="outline"></ion-input>
-              </ion-item>
-              <ion-item class="field-row">
-                <ion-label position="stacked">Medicamentos</ion-label>
-                <ion-input class="field-input" [(ngModel)]="editMedicamentos" placeholder="Medicamentos actuales" fill="outline"></ion-input>
-              </ion-item>
-              <ion-item class="field-row">
-                <ion-label position="stacked">Condiciones Médicas</ion-label>
-                <ion-input class="field-input" [(ngModel)]="editCondiciones" placeholder="Condiciones especiales" fill="outline"></ion-input>
-              </ion-item>
+              <ion-item class="field-row"><ion-label position="stacked">Alergias</ion-label><ion-input class="field-input" [(ngModel)]="editAlergias" placeholder="Describa alergias" fill="outline"></ion-input></ion-item>
+              <ion-item class="field-row"><ion-label position="stacked">Medicamentos</ion-label><ion-input class="field-input" [(ngModel)]="editMedicamentos" placeholder="Medicamentos actuales" fill="outline"></ion-input></ion-item>
+              <ion-item class="field-row"><ion-label position="stacked">Condiciones Médicas</ion-label><ion-input class="field-input" [(ngModel)]="editCondiciones" placeholder="Condiciones especiales" fill="outline"></ion-input></ion-item>
             </div>
           } @else {
             <div class="medical-alerts">
-              @if (a.ficha_medica?.alergias) {
-                <div class="alert-card alert-info">
-                  <ion-icon name="warning-outline"></ion-icon>
-                  <div>
-                    <p class="alert-title">Alergias</p>
-                    <p class="alert-text">{{ a.ficha_medica!.alergias }}</p>
-                  </div>
-                </div>
-              }
-              @if (a.ficha_medica?.condiciones_medicas) {
-                <div class="alert-card alert-info">
-                  <ion-icon name="star-outline"></ion-icon>
-                  <div>
-                    <p class="alert-title">Condiciones Médicas</p>
-                    <p class="alert-text">{{ a.ficha_medica!.condiciones_medicas }}</p>
-                  </div>
-                </div>
-              }
-              @if (a.ficha_medica?.medicamentos) {
-                <div class="alert-card alert-info">
-                  <ion-icon name="medical-outline"></ion-icon>
-                  <div>
-                    <p class="alert-title">Medicamentos</p>
-                    <p class="alert-text">{{ a.ficha_medica!.medicamentos }}</p>
-                  </div>
-                </div>
-              }
-              @if (!a.ficha_medica?.alergias && !a.ficha_medica?.condiciones_medicas && !a.ficha_medica?.medicamentos) {
-                <div class="alert-card alert-info">
-                  <ion-icon name="checkmark-circle-outline"></ion-icon>
-                  <div>
-                    <p class="alert-title">Sin registro médico</p>
-                    <p class="alert-text">No se han registrado alergias ni condiciones médicas.</p>
-                  </div>
-                </div>
-              }
+              @if (a.ficha_medica?.alergias) {<div class="alert-card alert-info"><ion-icon name="warning-outline"></ion-icon><div><p class="alert-title">Alergias</p><p class="alert-text">{{ a.ficha_medica!.alergias }}</p></div></div>}
+              @if (a.ficha_medica?.condiciones_medicas) {<div class="alert-card alert-info"><ion-icon name="star-outline"></ion-icon><div><p class="alert-title">Condiciones Médicas</p><p class="alert-text">{{ a.ficha_medica!.condiciones_medicas }}</p></div></div>}
+              @if (a.ficha_medica?.medicamentos) {<div class="alert-card alert-info"><ion-icon name="medical-outline"></ion-icon><div><p class="alert-title">Medicamentos</p><p class="alert-text">{{ a.ficha_medica!.medicamentos }}</p></div></div>}
+              @if (!a.ficha_medica?.alergias && !a.ficha_medica?.condiciones_medicas && !a.ficha_medica?.medicamentos) {<div class="alert-card alert-info"><ion-icon name="checkmark-circle-outline"></ion-icon><div><p class="alert-title">Sin registro médico</p><p class="alert-text">No se han registrado alergias ni condiciones médicas.</p></div></div>}
             </div>
           }
         </ion-card-content>
       </ion-card>
 
-      <!-- Tutor & Contacto de Emergencia -->
       <ion-card class="card">
-        <ion-card-header>
-          <ion-card-title>
-            <ion-icon name="people-outline"></ion-icon>
-            Datos de Contacto
-          </ion-card-title>
-        </ion-card-header>
+        <ion-card-header><ion-card-title><ion-icon name="people-outline"></ion-icon>Datos de Contacto</ion-card-title></ion-card-header>
         <ion-card-content>
-          <!-- Tutor -->
           <div class="combined-section">
             <h4 class="combined-section-title">Tutor Principal</h4>
             @if (editing()) {
@@ -297,35 +148,10 @@
                 <ion-item class="field-row"><ion-label position="stacked">Email</ion-label><ion-input class="field-input" type="email" [(ngModel)]="editTutorEmail" placeholder="Opcional" fill="outline"></ion-input></ion-item>
               </div>
             } @else if (a.tutor) {
-              <div class="tutor-info">
-                <div class="tutor-header">
-                  <ion-avatar class="tutor-avatar"><ion-icon name="person-outline"></ion-icon></ion-avatar>
-                  <div>
-                    <p class="tutor-name">{{ a.tutor.nombre }} {{ a.tutor.apellido_paterno }}</p>
-                    <p class="tutor-relation">Tutor</p>
-                  </div>
-                </div>
-                <div class="tutor-details">
-                  <div class="tutor-field">
-                    <span class="data-label"><ion-icon name="call-outline"></ion-icon> Teléfono</span>
-                    <span class="data-value">{{ a.tutor.telefono }}</span>
-                  </div>
-                  @if (a.tutor.email) {
-                    <div class="tutor-field">
-                      <span class="data-label"><ion-icon name="mail-outline"></ion-icon> Email</span>
-                      <span class="data-value">{{ a.tutor.email }}</span>
-                    </div>
-                  }
-                </div>
-              </div>
-            } @else {
-              <p class="empty-text">No se ha registrado un tutor.</p>
-            }
+              <div class="tutor-info"><div class="tutor-header"><ion-avatar class="tutor-avatar"><ion-icon name="person-outline"></ion-icon></ion-avatar><div><p class="tutor-name">{{ a.tutor.nombre }} {{ a.tutor.apellido_paterno }}</p><p class="tutor-relation">Tutor</p></div></div><div class="tutor-details"><div class="tutor-field"><span class="data-label"><ion-icon name="call-outline"></ion-icon> Teléfono</span><span class="data-value">{{ a.tutor.telefono }}</span></div>@if (a.tutor.email) {<div class="tutor-field"><span class="data-label"><ion-icon name="mail-outline"></ion-icon> Email</span><span class="data-value">{{ a.tutor.email }}</span></div>}</div></div>
+            } @else {<p class="empty-text">No se ha registrado un tutor.</p>}
           </div>
-
           <hr class="combined-divider" />
-
-          <!-- Contacto de Emergencia -->
           <div class="combined-section">
             <h4 class="combined-section-title">Contacto de Emergencia</h4>
             @if (editing()) {
@@ -336,24 +162,25 @@
                 <ion-item class="field-row"><ion-label position="stacked">Teléfono</ion-label><ion-input class="field-input" type="tel" [(ngModel)]="editContactoTelefono" fill="outline"></ion-input></ion-item>
               </div>
             } @else if (a.contacto_emergencia) {
-              <div class="tutor-info">
-                <div class="tutor-header">
-                  <ion-avatar class="tutor-avatar emergency"><ion-icon name="shield-checkmark-outline"></ion-icon></ion-avatar>
-                  <div>
-                    <p class="tutor-name">{{ a.contacto_emergencia.nombre }} {{ a.contacto_emergencia.apellido_paterno }}</p>
-                    <p class="tutor-relation">Contacto de emergencia</p>
-                  </div>
-                </div>
-                <div class="tutor-details">
-                  <div class="tutor-field">
-                    <span class="data-label"><ion-icon name="call-outline"></ion-icon> Teléfono</span>
-                    <span class="data-value">{{ a.contacto_emergencia.telefono }}</span>
-                  </div>
-                </div>
-              </div>
-            } @else {
-              <p class="empty-text">No se ha registrado contacto de emergencia.</p>
-            }
+              <div class="tutor-info"><div class="tutor-header"><ion-avatar class="tutor-avatar emergency"><ion-icon name="shield-checkmark-outline"></ion-icon></ion-avatar><div><p class="tutor-name">{{ a.contacto_emergencia.nombre }} {{ a.contacto_emergencia.apellido_paterno }}</p><p class="tutor-relation">Contacto de emergencia</p></div></div><div class="tutor-details"><div class="tutor-field"><span class="data-label"><ion-icon name="call-outline"></ion-icon> Teléfono</span><span class="data-value">{{ a.contacto_emergencia.telefono }}</span></div></div></div>
+            } @else {<p class="empty-text">No se ha registrado contacto de emergencia.</p>}
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- QR Code -->
+      <ion-card class="card card-qr">
+        <ion-card-header>
+          <ion-card-title><ion-icon name="qr-code-outline"></ion-icon>Código QR — Registro de Asistencia</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="qr-container">
+            <canvas #qrCanvas></canvas>
+            <p class="qr-hint">Escanear para registrar asistencia</p>
+            <ion-button class="btn-download-qr" fill="outline" (click)="downloadQr()">
+              <ion-icon name="download-outline" slot="start"></ion-icon>
+              Descargar QR
+            </ion-button>
           </div>
         </ion-card-content>
       </ion-card>
@@ -363,148 +190,95 @@
 
     @if (activeTab() === 'asistencias') {
     <div class="asis-section">
-      <!-- Filters Card -->
       <ion-card class="asis-filter-card">
-        <ion-card-header>
-          <ion-card-title class="asis-filter-title">Filtros de búsqueda</ion-card-title>
-        </ion-card-header>
+        <ion-card-header><ion-card-title class="asis-filter-title">Filtros de búsqueda</ion-card-title></ion-card-header>
         <ion-card-content>
           <div class="asis-filter-grid">
-            <div class="filter-group">
-              <label class="filter-label">Desde</label>
-              <input type="date" class="filter-date" [(ngModel)]="filterFechaDesde" />
-            </div>
-            <div class="filter-group">
-              <label class="filter-label">Hasta</label>
-              <input type="date" class="filter-date" [(ngModel)]="filterFechaHasta" />
-            </div>
-            <div class="filter-group">
-              <label class="filter-label">Tipo</label>
-              <ion-select [(ngModel)]="filterTipo" fill="outline" interface="popover" class="filter-ion-select">
-                <ion-select-option value="todas">Todas</ion-select-option>
-                <ion-select-option value="asistencia">Asistencia</ion-select-option>
-                <ion-select-option value="falta">Falta</ion-select-option>
-              </ion-select>
-            </div>
-            <div class="asis-filter-actions">
-              <ion-button class="btn-filtrar" (click)="applyAsisFilters()" fill="solid" title="Filtrar">
-                <ion-icon name="search-outline" slot="icon-only"></ion-icon>
-              </ion-button>
-              <ion-button class="btn-limpiar" (click)="clearAsisFilters()" fill="solid" title="Limpiar">
-                <ion-icon name="close-circle-outline" slot="icon-only"></ion-icon>
-              </ion-button>
-            </div>
+            <div class="filter-group"><label class="filter-label">Desde</label><input type="date" class="filter-date" [(ngModel)]="filterFechaDesde" /></div>
+            <div class="filter-group"><label class="filter-label">Hasta</label><input type="date" class="filter-date" [(ngModel)]="filterFechaHasta" /></div>
+            <div class="filter-group"><label class="filter-label">Tipo</label><ion-select [(ngModel)]="filterTipo" fill="outline" interface="popover" class="filter-ion-select"><ion-select-option value="todas">Todas</ion-select-option><ion-select-option value="asistencia">Asistencia</ion-select-option><ion-select-option value="falta">Falta</ion-select-option></ion-select></div>
+            <div class="asis-filter-actions"><ion-button class="btn-filtrar" (click)="applyAsisFilters()" fill="solid" title="Filtrar"><ion-icon name="search-outline" slot="icon-only"></ion-icon></ion-button><ion-button class="btn-limpiar" (click)="clearAsisFilters()" fill="solid" title="Limpiar"><ion-icon name="close-circle-outline" slot="icon-only"></ion-icon></ion-button></div>
           </div>
         </ion-card-content>
       </ion-card>
-
-      <!-- Table -->
       <div class="table-wrapper">
         <table class="alumnos-table">
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Registrado por</th>
-              <th>Notas</th>
-              <th></th>
-            </tr>
-          </thead>
+          <thead><tr><th>Fecha</th><th>Registrado por</th><th>Notas</th><th></th></tr></thead>
           <tbody>
             @if (loadingAsistencias()) {
-              @for (row of [1,2,3,4,5]; track row) {
-                <tr class="skeleton-row">
-                  <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
-                  <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
-                  <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
-                  <td><ion-skeleton-text class="skeleton-text-sm" [animated]="true"></ion-skeleton-text></td>
-                </tr>
-              }
+              @for (row of [1,2,3,4,5]; track row) {<tr class="skeleton-row"><td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td><td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td><td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td><td><ion-skeleton-text class="skeleton-text-sm" [animated]="true"></ion-skeleton-text></td></tr>}
             } @else {
               @for (asis of pagedAsistencias(); track asis.id) {
                 <tr>
                   @if (editingAsistenciaId() === asis.id) {
-                    <td class="td-fecha-indicator" [class.falta-indicator]="!editAsistio">
-                      <span class="fecha-linea">{{ fechaHora(asis.fecha).fecha }}</span>
-                      <span class="hora-linea">{{ fechaHora(asis.fecha).hora }}</span>
-                      <ion-select [(ngModel)]="editAsistio" interface="popover" class="asis-inline-ion-select asis-edit-select">
-                        <ion-select-option [value]="true">Asistencia</ion-select-option>
-                        <ion-select-option [value]="false">Falta</ion-select-option>
-                      </ion-select>
-                    </td>
-                    <td>
-                      <ion-select [(ngModel)]="editAsisMaestroId" interface="popover" class="asis-inline-ion-select">
-                        <ion-select-option [value]="null">—</ion-select-option>
-                        @for (m of allMaestros(); track m.id) {
-                          <ion-select-option [value]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</ion-select-option>
-                        }
-                      </ion-select>
-                    </td>
+                    <td class="td-fecha-indicator" [class.falta-indicator]="!editAsistio"><span class="fecha-linea">{{ fechaHora(asis.fecha).fecha }}</span><span class="hora-linea">{{ fechaHora(asis.fecha).hora }}</span><ion-select [(ngModel)]="editAsistio" interface="popover" class="asis-inline-ion-select asis-edit-select"><ion-select-option [value]="true">Asistencia</ion-select-option><ion-select-option [value]="false">Falta</ion-select-option></ion-select></td>
+                    <td><ion-select [(ngModel)]="editAsisMaestroId" interface="popover" class="asis-inline-ion-select"><ion-select-option [value]="null">—</ion-select-option>@for (m of allMaestros(); track m.id) {<ion-select-option [value]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</ion-select-option>}</ion-select></td>
                     <td><ion-input class="asis-inline-input" [(ngModel)]="editAsisNotas" placeholder="Notas" fill="outline"></ion-input></td>
-                    <td class="td-actions">
-                      <ion-button class="action-btn action-edit" (click)="saveAsistencia(asis)" title="Guardar" fill="outline">
-                        <ion-icon name="checkmark-outline" slot="icon-only"></ion-icon>
-                      </ion-button>
-                      <ion-button class="action-btn action-delete" (click)="cancelEditAsistencia()" title="Cancelar" fill="outline">
-                        <ion-icon name="close-outline" slot="icon-only"></ion-icon>
-                      </ion-button>
-                    </td>
+                    <td class="td-actions"><ion-button class="action-btn action-edit" (click)="saveAsistencia(asis)" title="Guardar" fill="outline"><ion-icon name="checkmark-outline" slot="icon-only"></ion-icon></ion-button><ion-button class="action-btn action-delete" (click)="cancelEditAsistencia()" title="Cancelar" fill="outline"><ion-icon name="close-outline" slot="icon-only"></ion-icon></ion-button></td>
                   } @else {
-                    <td class="td-fecha-indicator" [class.falta-indicator]="!asis.asistio">
-                      <span class="fecha-linea">{{ fechaHora(asis.fecha).fecha }}</span>
-                      <span class="hora-linea">{{ fechaHora(asis.fecha).hora }}</span>
-                    </td>
-                    <td>
-                      <div class="registrado-name-group">
-                        <span class="alumno-name">{{ registradoPorNombre(asis) }}</span>
-                        @if (registradoPorApellido(asis)) {
-                          <span class="alumno-apellido">{{ registradoPorApellido(asis) }}</span>
-                        }
-                      </div>
-                    </td>
+                    <td class="td-fecha-indicator" [class.falta-indicator]="!asis.asistio"><span class="fecha-linea">{{ fechaHora(asis.fecha).fecha }}</span><span class="hora-linea">{{ fechaHora(asis.fecha).hora }}</span></td>
+                    <td><div class="registrado-name-group"><span class="alumno-name">{{ registradoPorNombre(asis) }}</span>@if (registradoPorApellido(asis)) {<span class="alumno-apellido">{{ registradoPorApellido(asis) }}</span>}</div></td>
                     <td class="td-muted">{{ asis.notas || '—' }}</td>
-                    <td class="td-actions">
-                      <ion-button class="action-btn action-edit" title="Editar" (click)="startEditAsistencia(asis)" fill="outline">
-                        <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
-                      </ion-button>
-                    </td>
+                    <td class="td-actions"><ion-button class="action-btn action-edit" title="Editar" (click)="startEditAsistencia(asis)" fill="outline"><ion-icon name="pencil-outline" slot="icon-only"></ion-icon></ion-button></td>
                   }
                 </tr>
               }
-              @empty {
-                <tr><td colspan="4" class="td-empty">Sin asistencias registradas</td></tr>
-              }
+              @empty {<tr><td colspan="4" class="td-empty">Sin asistencias registradas</td></tr>}
             }
           </tbody>
         </table>
       </div>
-
-      <!-- Footer -->
-      <div class="table-footer">
-        <span class="footer-count">{{ filteredAsistencias().length }} registro{{ filteredAsistencias().length !== 1 ? 's' : '' }}</span>
-        @if (asisTotalPages() > 1) {
-          <div class="pagination">
-            <ion-button class="page-btn" [disabled]="asisPage() === 1" (click)="goToAsisPage(asisPage() - 1)" fill="outline">
-              <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
-            </ion-button>
-            @for (p of [].constructor(asisTotalPages()); track $index; let i = $index) {
-              <ion-button class="page-btn" [class.page-active]="i + 1 === asisPage()" (click)="goToAsisPage(i + 1)" fill="outline">
-                {{ i + 1 }}
-              </ion-button>
-            }
-            <ion-button class="page-btn" [disabled]="asisPage() === asisTotalPages()" (click)="goToAsisPage(asisPage() + 1)" fill="outline">
-              <ion-icon name="chevron-forward-outline" slot="icon-only"></ion-icon>
-            </ion-button>
-          </div>
-        }
-      </div>
+      <div class="table-footer"><span class="footer-count">{{ filteredAsistencias().length }} registro{{ filteredAsistencias().length !== 1 ? 's' : '' }}</span>@if (asisTotalPages() > 1) {<div class="pagination"><ion-button class="page-btn" [disabled]="asisPage() === 1" (click)="goToAsisPage(asisPage() - 1)" fill="outline"><ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon></ion-button>@for (p of [].constructor(asisTotalPages()); track $index; let i = $index) {<ion-button class="page-btn" [class.page-active]="i + 1 === asisPage()" (click)="goToAsisPage(i + 1)" fill="outline">{{ i + 1 }}</ion-button>}<ion-button class="page-btn" [disabled]="asisPage() === asisTotalPages()" (click)="goToAsisPage(asisPage() + 1)" fill="outline"><ion-icon name="chevron-forward-outline" slot="icon-only"></ion-icon></ion-button></div>}</div>
     </div>
     }
 
     @if (activeTab() === 'membresia') {
-    <div class="empty-tab">
-      <ion-icon name="card-outline"></ion-icon>
-      <p>Sección de Membresía</p>
-      <span>Próximamente</span>
+    <div class="membresia-section">
+      <div class="membresia-header">
+        <h3>Historial de Membresías</h3>
+        <ion-button class="btn-add" (click)="addMembresia()" fill="solid">
+          <ion-icon name="add-outline" slot="start"></ion-icon>
+          Nueva
+        </ion-button>
+      </div>
+
+      @if (loadingMembresias()) {
+        @for (i of [1,2,3]; track i) {
+          <div class="membresia-card skeleton"><ion-skeleton-text [animated]="true" style="width:60%;height:1rem;"></ion-skeleton-text><ion-skeleton-text [animated]="true" style="width:40%;height:0.85rem;"></ion-skeleton-text></div>
+        }
+      } @else {
+        @for (m of membresias(); track m.id) {
+          <div class="membresia-card" (click)="editMembresia(m)" [class.m-card-vencida]="m.estado_id === 2" [class.m-card-cancelada]="m.estado_id === 3">
+            <div class="m-card-top">
+              <div class="m-card-type">
+                <span class="m-type-name">{{ m.tipo_membresia?.nombre ?? '—' }}</span>
+                @let est = getEstadoLabel(m.estado_id);
+                <span class="m-estado-badge estado-badge-{{ est.css }}">{{ est.label }}</span>
+              </div>
+              <span class="m-card-cost">{{ formatCurrency(m.costo_real) }}</span>
+            </div>
+            <div class="m-card-dates">
+              <span class="m-date-label"><ion-icon name="calendar-outline"></ion-icon>{{ fechaCorta(m.fecha_inicio) }} — {{ fechaCorta(m.fecha_vencimiento) }}</span>
+            </div>
+            <div class="m-card-footer">
+              @if (m.porcentaje_beca > 0) {
+                <span class="m-beca-badge"><ion-icon name="school-outline"></ion-icon>{{ m.porcentaje_beca }}% beca</span>
+              }
+              <span class="m-pago-badge" [class.pagado-si]="m.pagado" [class.pagado-no]="!m.pagado">
+                <ion-icon [name]="m.pagado ? 'checkmark-circle-outline' : 'alert-circle-outline'"></ion-icon>
+                {{ m.pagado ? 'Pagado' : 'Pendiente' }}
+              </span>
+            </div>
+            @if (m.notas) {<p class="m-card-notas">{{ m.notas }}</p>}
+          </div>
+        } @empty {
+          <div class="empty-tab">
+            <ion-icon name="card-outline"></ion-icon>
+            <p>Sin membresías registradas</p>
+            <ion-button class="btn-add" (click)="addMembresia()" fill="outline"><ion-icon name="add-outline" slot="start"></ion-icon>Registrar primera membresía</ion-button>
+          </div>
+        }
+      }
     </div>
     }
   }

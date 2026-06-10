@@ -115,3 +115,51 @@ ion-select.filter-select {
   .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .asis-table { min-width: 750px; }
 }
+
+/* ========== QR Scanner ========== */
+.qr-scanner-section {
+  background: #ffffff;
+  border: 1px solid #e5e2e1;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 4px 20px rgba(15,15,15,0.05);
+}
+
+.qr-scanner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2a1714;
+}
+
+ion-button.btn-stop-scan {
+  --background: #dc2626;
+  --background-hover: #b91c1c;
+  --color: #fff;
+  --border-radius: 0.5rem;
+  --box-shadow: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  min-height: 36px;
+  height: auto;
+}
+
+.qr-reader {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.qr-reader video {
+  border-radius: 0.5rem;
+}

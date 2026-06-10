@@ -3,8 +3,9 @@ import { FormsModule } from '@angular/forms';
 import {
   IonIcon, IonButton, IonInput, IonSkeletonText, IonBadge,
   IonSelect, IonSelectOption,
-  ToastController, ModalController,
+  ToastController, ModalController, AlertController,
 } from '@ionic/angular/standalone';
+import { Html5Qrcode } from 'html5-qrcode';
 import { ApiService } from '../../Services/api-service';
 import { SessionService } from '../../Services/session.service';
 import { Asistencia } from '../../Models/asistencias';
@@ -13,7 +14,8 @@ import { addIcons } from 'ionicons';
 import {
   addOutline, searchOutline, closeCircleOutline,
   chevronBackOutline, chevronForwardOutline,
-  warningOutline, qrCodeOutline,
+  warningOutline, qrCodeOutline, checkmarkCircleOutline,
+  alertCircleOutline, cameraOutline, stopOutline,
 } from 'ionicons/icons';
 import { AsistenciaEditModal } from './asistencia-edit-modal';
 import { AsistenciaRegisterModal } from './asistencia-register-modal';
@@ -29,6 +31,7 @@ export class Asistencias implements OnInit {
   private session = inject(SessionService);
   private toastCtrl = inject(ToastController);
   private modalCtrl = inject(ModalController);
+  private alertCtrl = inject(AlertController);
 
   asistencias = signal<Asistencia[]>([]);
   maestros = signal<Maestro[]>([]);
@@ -41,11 +44,15 @@ export class Asistencias implements OnInit {
   page = signal(1);
   readonly pageSize = 8;
 
+  scanning = signal(false);
+  private scanner: Html5Qrcode | null = null;
+
   constructor() {
     addIcons({
       addOutline, searchOutline, closeCircleOutline,
       chevronBackOutline, chevronForwardOutline,
-      warningOutline, qrCodeOutline,
+      warningOutline, qrCodeOutline, checkmarkCircleOutline,
+      alertCircleOutline, cameraOutline, stopOutline,
     });
   }
 
@@ -71,8 +78,153 @@ export class Asistencias implements OnInit {
     });
   }
 
-  openQrScanner(): void {
-    // TODO: Lógica del escáner QR
+  async openQrScanner(): Promise<void> {
+    const user = this.session.getUser();
+    if (!user) {
+      this.showScanResult('Sesión expirada. Inicia sesión nuevamente.', false);
+      return;
+    }
+
+    const maestroVinculado = this.maestros().find(m => m.user_id === user.user_id);
+    if (maestroVinculado) {
+      this.startScan(maestroVinculado.id);
+      return;
+    }
+
+    const isAdmin = user.role_id === 1;
+    const maestros = this.maestros();
+
+    if (isAdmin && maestros.length > 0) {
+      const inputs = maestros.map(m => ({
+        name: 'maestro',
+        type: 'radio' as const,
+        label: `${m.nombre} ${m.apellido_paterno}`,
+        value: m.id,
+      }));
+
+      const alert = await this.alertCtrl.create({
+        header: 'Seleccionar maestro',
+        message: 'Como administrador, elige con qué perfil registrar la asistencia.',
+        inputs,
+        buttons: [
+          { text: 'Cancelar', role: 'cancel' },
+          {
+            text: 'Seleccionar',
+            handler: (selectedId: number) => {
+              if (selectedId) this.startScan(Number(selectedId));
+            },
+          },
+        ],
+      });
+      await alert.present();
+      return;
+    }
+
+    this.showScanResult('No tienes un perfil de maestro vinculado. Contacta al administrador.', false);
+  }
+
+  private startScan(maestroId: number): void {
+    this.scanning.set(true);
+
+    this.scanner = new Html5Qrcode('qr-reader');
+    this.scanner.start(
+      { facingMode: { ideal: 'environment' } },
+      { fps: 5, qrbox: { width: 250, height: 250 } },
+      (decodedText: string) => this.handleScan(decodedText, maestroId),
+      () => {},
+    ).catch(() => {
+      this.scanning.set(false);
+      this.showScanResult('No se pudo acceder a la cámara. Verifica los permisos.', false);
+    });
+  }
+
+  private async handleScan(decodedText: string, maestroId: number): Promise<void> {
+    const alumnoId = parseInt(decodedText, 10);
+    if (isNaN(alumnoId)) {
+      this.stopScanner();
+      this.showScanResult('Código QR no válido.', false);
+      return;
+    }
+
+    this.api.scanAsistencia({ alumno_id: alumnoId, maestro_id: maestroId }).subscribe({
+      next: (result) => {
+        this.stopScanner();
+        if (result.motivo === 'fuera_de_plan') {
+          this.showExtraDayConfirm(result.mensaje, result.costo_extra!, alumnoId, maestroId);
+        } else if (result.permitido) {
+          this.loadAsistencias();
+          this.showScanResult(result.mensaje, true);
+        } else {
+          this.showScanResult(result.mensaje, false);
+        }
+      },
+      error: () => {
+        this.stopScanner();
+        this.showScanResult('Error al procesar el escaneo.', false);
+      },
+    });
+  }
+
+  private async showExtraDayConfirm(mensaje: string, costoExtra: number, alumnoId: number, maestroId: number): Promise<void> {
+    const alert = await this.alertCtrl.create({
+      header: 'Día fuera de plan',
+      message: mensaje,
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: `Cobrar $${costoExtra.toFixed(2)}`,
+          handler: () => {
+            const body = {
+              alumno_id: alumnoId,
+              maestro_id: maestroId,
+              fecha: new Date().toISOString(),
+              asistio: true,
+              es_dia_extra: true,
+              costo_extra: costoExtra,
+            };
+            this.api.createAsistencia(body).subscribe({
+              next: () => {
+                this.loadAsistencias();
+                this.showScanResult('Asistencia registrada con costo extra.', true);
+              },
+              error: () => this.showScanResult('Error al registrar asistencia.', false),
+            });
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  private stopScanner(): void {
+    if (this.scanner) {
+      this.scanner.stop().then(() => {
+        this.scanner = null;
+        this.scanning.set(false);
+      }).catch(() => {
+        this.scanner = null;
+        this.scanning.set(false);
+      });
+    } else {
+      this.scanning.set(false);
+    }
+  }
+
+  stopQrScanner(): void {
+    this.stopScanner();
+    this.showScanResult('Escáner detenido.', false);
+  }
+
+  private async showScanResult(message: string, success: boolean): Promise<void> {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 4000,
+      position: 'top',
+      color: success ? 'success' : 'danger',
+      icon: success ? 'checkmark-circle' : 'close-circle',
+      cssClass: 'custom-toast',
+    });
+    await toast.present();
   }
 
   async openRegisterModal(): Promise<void> {
@@ -95,7 +247,7 @@ export class Asistencias implements OnInit {
         editModal.onDidDismiss().then(({ role: editRole }) => {
           if (editRole === 'saved') {
             this.loadAsistencias();
-            this.showToast('Asistencia registrada', 'success');
+            this.showScanResult('Asistencia registrada', true);
           }
         });
         await editModal.present();
@@ -192,18 +344,9 @@ export class Asistencias implements OnInit {
     modal.onDidDismiss().then(({ data, role }) => {
       if (role === 'saved') {
         this.loadAsistencias();
-        this.showToast('Asistencia actualizada', 'success');
+        this.showScanResult('Asistencia actualizada', true);
       }
     });
     await modal.present();
-  }
-
-  private async showToast(message: string, color: 'success' | 'danger' = 'success'): Promise<void> {
-    const icons: Record<string, string> = { success: 'checkmark-circle', danger: 'close-circle' };
-    const toast = await this.toastCtrl.create({
-      message, duration: 2500, color, position: 'top',
-      icon: icons[color], cssClass: 'custom-toast',
-    });
-    await toast.present();
   }
 }

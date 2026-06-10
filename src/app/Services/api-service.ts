@@ -7,7 +7,7 @@ import { Rol } from '../Models/catalogs';
 import { User } from '../Models/users';
 import { Alumno } from '../Models/alumnos';
 import { Maestro } from '../Models/maestros';
-import { Asistencia } from '../Models/asistencias';
+import { Asistencia, ScanResult } from '../Models/asistencias';
 import { Membresia, TipoMembresia } from '../Models/membresias';
 import { Transaccion, ProfitMensual } from '../Models/transacciones';
 import { EstadoMembresia } from '../Models/catalogs';
@@ -270,6 +270,13 @@ export class ApiService {
     return this.http.delete<void>(
       `${this.baseUrl}asistencias/${asistenciaId}`,
     );
+  }
+
+  scanAsistencia(body: {
+    alumno_id: number;
+    maestro_id: number;
+  }): Observable<ScanResult> {
+    return this.http.post<ScanResult>(`${this.baseUrl}asistencias/scan`, body);
   }
 
   // ── Estados de Membresía ──

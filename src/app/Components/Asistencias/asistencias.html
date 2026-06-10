@@ -16,6 +16,20 @@
     </div>
   </div>
 
+  <!-- QR Scanner -->
+  @if (scanning()) {
+    <div class="qr-scanner-section">
+      <div class="qr-scanner-header">
+        <span>Escaneando QR del alumno...</span>
+        <ion-button class="btn-stop-scan" fill="solid" (click)="stopQrScanner()">
+          <ion-icon name="stop-outline" slot="start"></ion-icon>
+          Detener
+        </ion-button>
+      </div>
+      <div id="qr-reader" class="qr-reader"></div>
+    </div>
+  }
+
   <!-- Filters Card -->
   <div class="filter-card">
     <h3 class="filter-title">Filtros de búsqueda</h3>
