@@ -1,11 +1,11 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button class="btn-cancel" (click)="dismiss()">
+    <ion-title>{{ isEdit ? 'Editar membresía' : 'Nueva membresía' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
         <ion-icon name="close-outline" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>{{ isEdit ? 'Editar membresía' : 'Nueva membresía' }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -137,18 +137,20 @@
       </div>
     }
   </div>
-
-  <div class="modal-footer">
-    <ion-button class="btn-cancel-footer" (click)="dismiss()" fill="outline">
-      Cancelar
-    </ion-button>
-    <ion-button class="btn-save-footer" [disabled]="saving()" (click)="save()" fill="solid">
-      @if (saving()) {
-        <ion-icon name="sync-outline" class="spin"></ion-icon>
-      } @else {
-        <ion-icon name="save-outline" slot="start"></ion-icon>
-        Guardar
-      }
-    </ion-button>
-  </div>
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button class="btn-cancel" (click)="dismiss()" fill="clear">Cancelar</ion-button>
+      <ion-button class="btn-save" (click)="save()" [disabled]="saving()" fill="solid">
+        @if (saving()) {
+          <ion-icon name="sync-outline" class="spin"></ion-icon>
+        } @else {
+          <ion-icon name="save-outline" slot="start"></ion-icon>
+          Guardar
+        }
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

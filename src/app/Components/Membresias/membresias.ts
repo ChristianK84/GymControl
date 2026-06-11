@@ -3,10 +3,11 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import {
   IonButton, IonIcon, IonSkeletonText, IonSelect, IonSelectOption,
+  IonInput,
   ModalController, ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { createOutline, warningOutline, fileTrayOutline, addOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline, checkmarkCircleOutline, alertCircleOutline } from 'ionicons/icons';
+import { createOutline, warningOutline, fileTrayOutline, addOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline, checkmarkCircleOutline, alertCircleOutline, searchOutline } from 'ionicons/icons';
 import { ApiService } from '../../Services/api-service';
 import { Membresia } from '../../Models/membresias';
 import { MembresiaFormModal } from './membresia-form-modal';
@@ -23,6 +24,7 @@ const ESTADO_LABELS: Record<number, { label: string; css: string }> = {
   imports: [
     FormsModule,
     IonButton, IonIcon, IonSkeletonText, IonSelect, IonSelectOption,
+    IonInput,
   ],
   templateUrl: './membresias.html',
   styleUrl: './membresias.css',
@@ -41,9 +43,10 @@ export class Membresias implements OnInit {
   filterEstado = signal<number | null>(null);
   filterPagado = signal<boolean | null>(null);
   filterVencidas = signal(false);
+  searchTerm = signal('');
 
   constructor() {
-    addIcons({ createOutline, warningOutline, fileTrayOutline, addOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline, checkmarkCircleOutline, alertCircleOutline });
+    addIcons({ createOutline, warningOutline, fileTrayOutline, addOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline, checkmarkCircleOutline, alertCircleOutline, searchOutline });
   }
 
   ngOnInit(): void {
@@ -72,7 +75,15 @@ export class Membresias implements OnInit {
     });
   }
 
-  filtered = computed(() => this.allMembresias());
+  filtered = computed(() => {
+    const term = this.searchTerm().toLowerCase().trim();
+    if (!term) return this.allMembresias();
+    return this.allMembresias().filter(m =>
+      m.alumno?.nombrecompleto?.toLowerCase().includes(term) ||
+      m.alumno?.apellido_paterno?.toLowerCase().includes(term) ||
+      m.alumno?.apellido_materno?.toLowerCase().includes(term)
+    );
+  });
 
   totalPages = computed(() => Math.max(1, Math.ceil(this.filtered().length / this.pageSize)));
 
@@ -94,6 +105,7 @@ export class Membresias implements OnInit {
     this.filterEstado.set(null);
     this.filterPagado.set(null);
     this.filterVencidas.set(false);
+    this.searchTerm.set('');
     this.page.set(1);
     this.loadMembresias();
   }
@@ -104,14 +116,16 @@ export class Membresias implements OnInit {
 
   getVigenciaLabel(m: Membresia): { text: string; css: string } {
     if (m.estado_id === 3) return { text: '—', css: 'cancelada' };
+    const fecha = new Date(m.fecha_vencimiento);
+    const text = fecha.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
     const vence = new Date(m.fecha_vencimiento);
     vence.setHours(0, 0, 0, 0);
     const diff = Math.ceil((vence.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24));
-    if (diff > 0) return { text: `+${diff}`, css: 'ok' };
-    if (diff === 0) return { text: 'Hoy', css: 'warn' };
-    return { text: `${diff}`, css: 'vencida' };
+    if (m.estado_id === 2 || diff < 0) return { text, css: 'vencida' };
+    if (diff === 0) return { text, css: 'warn' };
+    return { text, css: 'ok' };
   }
 
   async addMembresia(): Promise<void> {

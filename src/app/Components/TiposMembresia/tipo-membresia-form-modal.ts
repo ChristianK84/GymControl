@@ -2,7 +2,7 @@ import { Component, inject, Input, signal, ChangeDetectorRef } from '@angular/co
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton,
+  IonHeader, IonToolbar, IonTitle, IonContent, IonFooter, IonButtons, IonButton,
   IonIcon, IonItem, IonLabel, IonInput, IonTextarea, IonSelect, IonSelectOption,
   IonToggle, IonAvatar,
   ModalController, ToastController,
@@ -25,7 +25,7 @@ const DIAS_OPTIONS = [
   selector: 'app-tipo-membresia-form-modal',
   imports: [
     FormsModule, DatePipe,
-    IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton,
+    IonHeader, IonToolbar, IonTitle, IonContent, IonFooter, IonButtons, IonButton,
     IonIcon, IonItem, IonLabel, IonInput, IonTextarea, IonSelect, IonSelectOption,
     IonToggle, IonAvatar,
   ],

@@ -19,6 +19,19 @@
   <div class="filter-card">
     <h3 class="filter-title">Filtros de búsqueda</h3>
     <div class="filter-grid">
+      <label class="filter-label filter-search">
+        Buscar alumno
+        <div class="search-box">
+          <ion-icon name="search-outline" class="search-icon"></ion-icon>
+          <ion-input
+            class="search-input"
+            placeholder="Buscar por nombre o apellido..."
+            fill="outline"
+            [ngModel]="searchTerm()"
+            (ngModelChange)="searchTerm.set($event); page.set(1)"
+          ></ion-input>
+        </div>
+      </label>
       <label class="filter-label">
         Estado
         <ion-select class="filter-select" fill="outline" [ngModel]="filterEstado()" (ngModelChange)="filterEstado.set($event); onFilterChange()" interface="popover">
@@ -36,7 +49,7 @@
           <ion-select-option [value]="false">No pagado</ion-select-option>
         </ion-select>
       </label>
-      <ion-button class="btn-clear" (click)="clearFilters()">
+      <ion-button class="btn-clear" (click)="clearFilters()" fill="outline">
         <ion-icon name="close-circle-outline" slot="start"></ion-icon>
         Limpiar filtros
       </ion-button>
@@ -82,9 +95,9 @@
                 </div>
               </td>
               <td class="td-muted">{{ m.tipo_membresia?.nombre ?? '—' }}</td>
-              <td>
+              <td class="td-vigencia">
                 @let vig = getVigenciaLabel(m);
-                <span class="vigencia-badge" [class.vigencia-ok]="vig.css === 'ok'" [class.vigencia-warning]="vig.css === 'warn'" [class.vigencia-vencida]="vig.css === 'vencida'" [class.vigencia-cancelada]="vig.css === 'cancelada'">{{ vig.text }}</span>
+                <span [class.vigencia-ok]="vig.css === 'ok'" [class.vigencia-warn]="vig.css === 'warn'" [class.vigencia-vencida]="vig.css === 'vencida'" [class.vigencia-cancelada]="vig.css === 'cancelada'">{{ vig.text }}</span>
               </td>
               <td>
                 @let est = getEstadoLabel(m.estado_id);

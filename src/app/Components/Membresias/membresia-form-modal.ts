@@ -2,7 +2,7 @@ import { Component, inject, Input, signal, ChangeDetectorRef, OnInit } from '@an
 import { FormsModule } from '@angular/forms';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton,
+  IonHeader, IonToolbar, IonTitle, IonContent, IonFooter, IonButtons, IonButton,
   IonIcon, IonItem, IonLabel, IonInput, IonTextarea, IonSelect, IonSelectOption,
   IonToggle, IonAvatar,
   ModalController, ToastController,
@@ -17,7 +17,7 @@ import { Alumno } from '../../Models/alumnos';
   selector: 'app-membresia-form-modal',
   imports: [
     FormsModule, DatePipe, DecimalPipe,
-    IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton,
+    IonHeader, IonToolbar, IonTitle, IonContent, IonFooter, IonButtons, IonButton,
     IonIcon, IonItem, IonLabel, IonInput, IonTextarea, IonSelect, IonSelectOption,
     IonToggle, IonAvatar,
   ],

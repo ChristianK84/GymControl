@@ -836,10 +836,10 @@ ion-card.asis-filter-card > ion-card-content {
 
 /* Filter action buttons */
 ion-button.btn-filtrar {
-  --background: #16a34a;
-  --background-hover: #15803d;
+  --background: #2a1714;
+  --background-hover: #412b28;
   --color: #fff;
-  --border-color: #16a34a;
+  --border-color: #2a1714;
   --border-radius: 0.5rem;
   --box-shadow: none;
   --padding-start: 0.45rem;
@@ -856,10 +856,12 @@ ion-button.btn-filtrar ion-icon {
 }
 
 ion-button.btn-limpiar {
-  --background: #f59e0b;
-  --background-hover: #d97706;
-  --color: #fff;
-  --border-color: #f59e0b;
+  --background: #ffffff;
+  --background-hover: #f0edec;
+  --color: #5e3f3b;
+  --border-color: #e5e2e1;
+  --border-style: solid;
+  --border-width: 1px;
   --border-radius: 0.5rem;
   --box-shadow: none;
   --padding-start: 0.45rem;

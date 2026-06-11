@@ -28,7 +28,7 @@
         </div>
       </label>
       @if (searchTerm()) {
-        <ion-button class="btn-clear" (click)="clearSearch()">
+        <ion-button class="btn-clear" (click)="clearSearch()" fill="outline">
           <ion-icon name="close-circle-outline" slot="start"></ion-icon>
           Limpiar
         </ion-button>
@@ -46,7 +46,6 @@
           <th>Días</th>
           <th>Nivel</th>
           <th>Estado</th>
-          <th style="width: 80px;"></th>
         </tr>
       </thead>
       <tbody>
@@ -64,7 +63,6 @@
               <td><ion-skeleton-text [animated]="true" class="skeleton-text"></ion-skeleton-text></td>
               <td><ion-skeleton-text [animated]="true" class="skeleton-badge"></ion-skeleton-text></td>
               <td><ion-skeleton-text [animated]="true" class="skeleton-badge"></ion-skeleton-text></td>
-              <td></td>
             </tr>
           }
         } @else {
@@ -97,15 +95,10 @@
                   <ion-badge class="status-badge status-inactive">Inactivo</ion-badge>
                 }
               </td>
-              <td>
-                <ion-button fill="clear" size="small" (click)="deleteTipo(tipo, $event)" color="danger">
-                  <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-                </ion-button>
-              </td>
             </tr>
           } @empty {
             <tr>
-              <td colspan="7" class="td-empty">
+              <td colspan="6" class="td-empty">
                 <div class="empty-state">
                   <ion-icon name="file-tray-outline"></ion-icon>
                   <p>No se encontraron tipos de membresía</p>
