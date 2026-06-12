@@ -59,9 +59,7 @@
           <th>Usuario</th>
           <th>Nombre Completo</th>
           <th>Rol</th>
-          <th>Fecha</th>
           <th>Estado</th>
-          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -71,14 +69,12 @@
               <td><ion-skeleton-text class="skeleton-text-lg" [animated]="true"></ion-skeleton-text></td>
               <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
               <td><ion-skeleton-text class="skeleton-badge" [animated]="true"></ion-skeleton-text></td>
-              <td><ion-skeleton-text class="skeleton-text-sm" [animated]="true"></ion-skeleton-text></td>
               <td><ion-skeleton-text class="skeleton-badge" [animated]="true"></ion-skeleton-text></td>
-              <td><ion-skeleton-text class="skeleton-text-sm" [animated]="true"></ion-skeleton-text></td>
             </tr>
           }
         } @else {
           @for (user of pagedUsers(); track user.id) {
-            <tr>
+            <tr class="clickable-row" (click)="openEditModal(user)">
               <td class="td-username">{{ user.username }}</td>
               <td>{{ user.full_name }}</td>
               <td>
@@ -86,25 +82,16 @@
                   {{ roleName().get(user.role_id) ?? '—' }}
                 </ion-badge>
               </td>
-              <td class="td-date">{{ user.created_at | date: 'dd/MM/yyyy' }}</td>
               <td>
                 <ion-badge class="status-badge" [class.status-inactive]="!user.is_active">
                   {{ user.is_active ? 'Activo' : 'Inactivo' }}
                 </ion-badge>
               </td>
-              <td class="td-actions">
-                <ion-button class="action-btn action-edit" title="Editar" (click)="editUser(user)" fill="outline">
-                  <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
-                </ion-button>
-                <ion-button class="action-btn action-delete" title="Eliminar" (click)="deleteUser(user)" fill="outline">
-                  <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-                </ion-button>
-              </td>
             </tr>
           }
           @empty {
             <tr>
-              <td colspan="6" class="td-empty">No se encontraron usuarios</td>
+              <td colspan="4" class="td-empty">No se encontraron usuarios</td>
             </tr>
           }
         }

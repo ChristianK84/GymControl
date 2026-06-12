@@ -26,14 +26,14 @@
       <h3 class="section-title">Perfil</h3>
       <ion-item class="field-row">
         <ion-label position="stacked">Nombre Completo</ion-label>
-        <ion-input class="field-input" [class.field-error]="errors['fullName']" [(ngModel)]="fullName" placeholder="Nombre completo" fill="outline"></ion-input>
+        <ion-input class="field-input" [class.field-error]="errors['fullName']" [(ngModel)]="fullName" placeholder="Nombre completo"></ion-input>
       </ion-item>
       @if (errors['fullName']) {
         <span class="error-msg">{{ errors['fullName'] }}</span>
       }
       <ion-item class="field-row">
         <ion-label position="stacked">Usuario</ion-label>
-        <ion-input class="field-input" [class.field-error]="errors['username']" [(ngModel)]="username" placeholder="Nombre de usuario" fill="outline"></ion-input>
+        <ion-input class="field-input" [class.field-error]="errors['username']" [(ngModel)]="username" placeholder="Nombre de usuario"></ion-input>
       </ion-item>
       @if (errors['username']) {
         <span class="error-msg">{{ errors['username'] }}</span>
@@ -85,7 +85,6 @@
             [class.field-error]="errors['password']"
             [(ngModel)]="password"
             [placeholder]="isEdit ? 'Dejar vacío para conservar la actual' : 'Contraseña del usuario'"
-            fill="outline"
           ></ion-input>
           <ion-button class="pass-toggle" (click)="togglePassword()" fill="clear" [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'">
             <ion-icon [name]="showPassword() ? 'eye-off-outline' : 'eye-outline'" slot="icon-only"></ion-icon>
@@ -95,9 +94,37 @@
       @if (errors['password']) {
         <span class="error-msg">{{ errors['password'] }}</span>
       }
+
+      @if (isEdit) {
+        <ion-item class="field-row">
+          <ion-label position="stacked">Intentos fallidos</ion-label>
+          <div class="field-value">{{ failedAttempts }} de 5</div>
+        </ion-item>
+
+        <ion-item class="field-row">
+          <ion-label position="stacked">Estado de bloqueo</ion-label>
+          <div class="field-value" [class.locked-value]="isLocked">{{ isLocked ? 'Bloqueado hasta las ' + lockedUntilText : 'Desbloqueado' }}</div>
+        </ion-item>
+
+        <div class="inline-buttons">
+          <ion-button class="btn-outline" (click)="unlockUser()" [disabled]="unlocking()" fill="outline">
+            <ion-icon name="lock-open-outline" slot="start"></ion-icon>
+            @if (unlocking()) { <ion-spinner name="lines-small"></ion-spinner> } @else { Desbloquear }
+          </ion-button>
+          <ion-button class="btn-outline" (click)="resetPassword()" [disabled]="resettingPassword()" fill="outline">
+            <ion-icon name="key-outline" slot="start"></ion-icon>
+            @if (resettingPassword()) { <ion-spinner name="lines-small"></ion-spinner> } @else { Reset Password }
+          </ion-button>
+        </div>
+      }
     </div>
 
     @if (isEdit) {
+      <ion-button class="btn-delete" (click)="deleteUser()" fill="clear" expand="block">
+        <ion-icon name="trash-outline" slot="start"></ion-icon>
+        Eliminar usuario
+      </ion-button>
+
       <div class="meta-footer">
         <span>Creado el {{ createdAt }}</span>
       </div>

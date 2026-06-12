@@ -77,6 +77,8 @@ export class ApiService {
       role_id?: number;
       is_active?: boolean;
       password?: string;
+      locked_until?: string | null;
+      failed_login_attempts?: number;
     },
   ): Observable<User> {
     return this.http.put<User>(`${this.baseUrl}users/${userId}`, body);
@@ -84,6 +86,13 @@ export class ApiService {
 
   deleteUser(userId: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}users/${userId}`);
+  }
+
+  resetPassword(userId: number): Observable<{ new_password: string }> {
+    return this.http.post<{ new_password: string }>(
+      `${this.baseUrl}users/${userId}/reset-password`,
+      {},
+    );
   }
 
   // ── Maestros ──

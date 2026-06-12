@@ -6,6 +6,8 @@ export interface User {
   role_id: number;
   is_active: boolean;
   is_deleted: boolean;
+  failed_login_attempts: number;
+  locked_until: string | null;
   created_at: string;
   updated_at: string;
 }

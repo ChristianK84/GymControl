@@ -1,7 +1,6 @@
 import { Component, signal, computed, inject, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonIcon, IonButton, IonInput, IonSelect, IonSelectOption, IonSkeletonText, IonBadge, AlertController, ModalController, ToastController } from '@ionic/angular/standalone';
+import { IonIcon, IonButton, IonInput, IonSelect, IonSelectOption, IonSkeletonText, IonBadge, ModalController, ToastController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   personAddOutline,
@@ -10,8 +9,6 @@ import {
   closeCircleOutline,
   chevronBackOutline,
   chevronForwardOutline,
-  pencilOutline,
-  trashOutline,
 } from 'ionicons/icons';
 import { ApiService } from '../../Services/api-service';
 import { User } from '../../Models/users';
@@ -21,13 +18,12 @@ import { UserFormModal } from './user-edit-modal';
 
 @Component({
   selector: 'app-users',
-  imports: [DatePipe, FormsModule, IonIcon, IonButton, IonInput, IonSelect, IonSelectOption, IonSkeletonText, IonBadge],
+  imports: [FormsModule, IonIcon, IonButton, IonInput, IonSelect, IonSelectOption, IonSkeletonText, IonBadge],
   templateUrl: './users.html',
   styleUrl: './users.css',
 })
 export class Users implements OnInit {
   private api = inject(ApiService);
-  private alertCtrl = inject(AlertController);
   private modalCtrl = inject(ModalController);
   private toastCtrl = inject(ToastController);
 
@@ -85,8 +81,6 @@ export class Users implements OnInit {
       closeCircleOutline,
       chevronBackOutline,
       chevronForwardOutline,
-      pencilOutline,
-      trashOutline,
     });
   }
 
@@ -171,47 +165,20 @@ export class Users implements OnInit {
     }
   }
 
-  async editUser(user: User): Promise<void> {
+  async openEditModal(user: User): Promise<void> {
     const modal = await this.modalCtrl.create({
       component: UserFormModal,
-      componentProps: {
-        user,
-        roles: this.roles(),
-        maestros: this.maestros(),
-      },
+      componentProps: { user, roles: this.roles(), maestros: this.maestros() },
     });
     await modal.present();
 
     const { role } = await modal.onDidDismiss();
-    if (role === 'saved') {
+    if (role === 'saved' || role === 'deleted' || role === 'unlocked' || role === 'reset') {
       this.loadUsers();
-      this.showToast('Usuario actualizado con éxito', 'success');
+      if (role === 'saved')    this.showToast('Usuario actualizado', 'success');
+      if (role === 'deleted')  this.showToast('Usuario eliminado', 'success');
+      if (role === 'unlocked') this.showToast('Usuario desbloqueado', 'success');
+      if (role === 'reset')    this.showToast('Contraseña restablecida', 'success');
     }
-  }
-
-  async deleteUser(user: User): Promise<void> {
-    const alert = await this.alertCtrl.create({
-      header: 'Eliminar Usuario',
-      message: `¿Estás seguro de eliminar a "${user.username}"? Esta acción no se puede deshacer.`,
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Eliminar',
-          role: 'destructive',
-          cssClass: 'alert-delete-btn',
-          handler: () => {
-            this.api.deleteUser(user.id).subscribe({
-              next: () => {
-                this.loadUsers();
-                if (this.pagedUsers().length === 0 && this.page() > 1) {
-                  this.page.set(this.page() - 1);
-                }
-              },
-            });
-          },
-        },
-      ],
-    });
-    await alert.present();
   }
 }
