@@ -1,113 +1,113 @@
-# GymControl - Agent Notes
+# GymControl — Notas del agente
 
-Hybrid Angular 20 + Ionic app: gym management UI (alumnos, maestros, users, attendance, memberships). Targets web, Electron (Windows), and Android via Capacitor. Spanish (es-MX).
+App híbrida Angular 20 + Ionic 8 para gestión de gimnasio (alumnos, maestros, usuarios, asistencias, membresías). Apunta a web, Electron (Windows) y Android vía Capacitor. UI en español (es-MX).
 
-Backend lives elsewhere: `https://gymcontrol-api-sne4.onrender.com/api/v1/`. This repo is frontend only.
+El backend vive en `https://gymcontrol-api-sne4.onrender.com/api/v1/`. Este repo es solo el frontend.
 
 ---
 
-## Commands
+## Comandos
 
-| Task | Command | Notes |
+| Tarea | Comando | Notas |
 |---|---|---|
-| Dev server (web) | `npm start` | Angular CLI on port 4200 |
-| Dev server + Electron | `npm run electron:dev` | Uses `concurrently` + `wait-on http://localhost:4200`; sets `ELECTRON_DEV=true` |
-| Production web build | `npm run build` | SSR enabled, output `dist/GymControl/server` + `browser` |
-| Capacitor build (mobile) | `npm run capacitor:build` | Builds with `--configuration capacitor` then `npx cap sync` |
-| Electron installer | `npm run electron:build` | Uses `capacitor` build config + `electron-builder` → `release/` |
-| Electron only (no Angular) | `npm run electron:dist` | Assumes `dist/` already exists |
-| Run SSR server | `npm run serve:ssr:GymControl` | Express on `PORT` (default 4000) |
-| Unit tests | `npm test` | **Karma + Chrome** (not Jest). Requires Chrome installed. CI uses headless flags. |
-| Open Android Studio | `npm run capacitor:open` | |
+| Servidor dev (web) | `npm start` | Angular CLI en puerto 4200 |
+| Servidor dev + Electron | `npm run electron:dev` | Usa `concurrently` + `wait-on http://localhost:4200`; setea `ELECTRON_DEV=true` |
+| Build producción web | `npm run build` | SSR habilitado, output en `dist/GymControl/server` + `browser` |
+| Build Capacitor (mobile) | `npm run capacitor:build` | Build con `--configuration capacitor` luego `npx cap sync` |
+| Instalador Electron | `npm run electron:build` | Usa config `capacitor` + `electron-builder` → `release/` |
+| Electron solo (sin Angular) | `npm run electron:dist` | Asume que `dist/` ya existe |
+| Servidor SSR | `npm run serve:ssr:GymControl` | Express en `PORT` (default 4000) |
+| Tests unitarios | `npm test` | **Karma + Chrome** (no Jest). Requiere Chrome instalado. CI usa flags headless. |
+| Abrir Android Studio | `npm run capacitor:open` | |
 
-There is **no lint script** and no separate typecheck script. `ng build` performs typecheck+lint-equivalent checks via Angular's strict compiler.
+No hay script de lint ni typecheck separado. `ng build` ya verifica tipos y lint equivalentes vía el compilador strict de Angular.
 
-### Build configurations (`angular.json`)
+### Configuraciones de build (`angular.json`)
 
-- `production` (default) — SSR on, server output, budget 800kB warn / 2MB error
-- `development` — no SSR, file replacement swaps `environment.ts` → `environment.development.ts`
-- `capacitor` — static output, budget 2MB warn / 5MB error. Used by `electron:build` and `capacitor:build`
+- `production` (default) — SSR activo, output server, presupuesto 800kB warn / 2MB error
+- `development` — sin SSR, file replacement intercambia `environment.ts` → `environment.development.ts`
+- `capacitor` — output estático, presupuesto 2MB warn / 5MB error. Usado por `electron:build` y `capacitor:build`
 
 ---
 
-## Architecture (not obvious from filenames)
+## Arquitectura (no obvio por los nombres)
 
-- **Zoneless change detection**: `provideZonelessChangeDetection()` is set in `app.config.ts`. There is no `zone.js` polyfill; do not add zone-based code (e.g. `setTimeout` triggers won't auto-detect).
-- **All components are standalone** — no NgModules. Each component declares its `imports` array.
-- **Functional DI everywhere**: use `inject()` not constructor injection.
-- **Functional guards/interceptors**: `authGuard` (`CanActivateFn`) and `authInterceptor` (`HttpInterceptorFn`) — not class-based.
-- **Heavy use of signals**: `signal()`, `computed()`. Prefer signals over RxJS subjects for component state.
-- **All routes are lazy**: every route uses `loadComponent` with dynamic imports. New routes must follow the same pattern.
-- **Spanish UI**: locale `es-MX` is registered globally in `app.config.ts`. Date formatting uses Spanish conventions. Keep UI text in Spanish.
-- **Soft delete**: entities use `is_deleted` boolean. Use `?include_deleted=true` query param on list endpoints to fetch them.
+- **Change detection zoneless**: `provideZonelessChangeDetection()` en `app.config.ts`. No hay polyfill de `zone.js`; no agregues código basado en zone (ej. `setTimeout` no dispara detección automática).
+- **Todos los componentes son standalone** — sin NgModules. Cada componente declara su arreglo `imports`.
+- **DI funcional en todas partes**: usa `inject()` en vez de inyección por constructor.
+- **Guards/interceptors funcionales**: `authGuard` (`CanActivateFn`) y `authInterceptor` (`HttpInterceptorFn`) — no basados en clases.
+- **Uso intensivo de signals**: `signal()`, `computed()`. Prefiere signals sobre RxJS subjects para estado de componentes.
+- **Todas las rutas son lazy**: cada ruta usa `loadComponent` con imports dinámicos. Las rutas nuevas deben seguir el mismo patrón.
+- **UI en español**: locale `es-MX` registrado globalmente en `app.config.ts`. El formateo de fechas usa convenciones españolas. Mantén el texto de UI en español.
+- **Soft delete**: las entidades usan booleano `is_deleted`. Usa `?include_deleted=true` en endpoints de listado para obtenerlos.
 
-### File layout
+### Estructura de archivos
 
 ```
 src/app/
   app.config.ts / app.routes.ts    # Providers + routing
-  Models/                          # TypeScript interfaces (no decorators)
+  Models/                          # Interfaces TypeScript (sin decoradores)
   Services/
-    api-service.ts                 # All HTTP calls — single source of truth for the API
-    session.service.ts             # JWT + user in localStorage, isAuthenticated signal
-  Guards/auth.guard.ts             # Redirects to /login if not authenticated
-  Interceptors/auth.interceptor.ts # Attaches Bearer token; 401 → clears session
-  Components/<Name>/<name>.ts|html|css
+    api-service.ts                 # Todos los HTTP calls — fuente única de verdad para la API
+    session.service.ts             # JWT + user en localStorage, signal isAuthenticated
+  Guards/auth.guard.ts             # Redirige a /login si no está autenticado
+  Interceptors/auth.interceptor.ts # Agrega Bearer token; 401 → limpia sesión
+  Components/<Nombre>/<nombre>.ts|html|css
 ```
 
-Each Component folder has the component, its template, styles, and a sibling modal (e.g. `alumnos.ts` + `alumno-form-modal.ts`) when CRUD is via modal.
+Cada carpeta de Componente tiene el componente, su template, estilos, y un modal hermano (ej. `alumnos.ts` + `alumno-form-modal.ts`) cuando el CRUD es vía modal.
 
 ---
 
-## Auth flow
+## Flujo de autenticación
 
-- `SessionService` stores `auth_token` and `auth_user` in `localStorage`. Exposes `isAuthenticated` signal.
-- `authInterceptor` clones every request to add `Authorization: Bearer <token>`. On 401, it clears the session, sets `session_expired=1` in `sessionStorage`, and routes to `/login`.
-- `authGuard` checks `session.isAuthenticated()` and returns a UrlTree to `/login` otherwise.
-- Login component reads `sessionStorage.getItem('session_expired')` to show the "session expired" toast.
+- `SessionService` guarda `auth_token` y `auth_user` en `localStorage`. Expone el signal `isAuthenticated`.
+- `authInterceptor` clona cada request para agregar `Authorization: Bearer <token>`. En 401, limpia la sesión, setea `session_expired=1` en `sessionStorage`, y redirige a `/login`.
+- `authGuard` verifica `session.isAuthenticated()` y retorna un UrlTree a `/login` en caso contrario.
+- El componente Login lee `sessionStorage.getItem('session_expired')` para mostrar el toast de "sesión expirada".
 
 ---
 
-## Environment / API
+## Entorno / API
 
-`src/environments/environment.ts` holds `apiUrl`. The dev file (`environment.development.ts`) currently points at the **production** Render URL — the local `http://localhost:5000/api/v1/` line is commented out. Uncomment it to point dev at a local backend.
+`src/environments/environment.ts` contiene `apiUrl`. El archivo dev (`environment.development.ts`) actualmente apunta a la URL de **producción** en Render — la línea de `http://localhost:5000/api/v1/` está comentada. Descoméntala para apuntar dev a un backend local.
 
-Cloudinary is used for student/teacher photos:
+Cloudinary se usa para fotos de alumnos/maestros:
 - Cloud name: `dyvqspnz7`
-- Student preset: `gymcontrol_upload`
-- Maestro preset: `gymcontrol_upload_maestros`
+- Preset alumnos: `gymcontrol_upload`
+- Preset maestros: `gymcontrol_upload_maestros`
 
-The app uploads directly to Cloudinary via `fetch` (no SDK). Search for `cloudinary` in `alumno-form-modal.ts` and `maestro-form-modal.ts`.
+La app sube directamente a Cloudinary vía `fetch` (sin SDK). Busca `cloudinary` en `alumno-form-modal.ts` y `maestro-form-modal.ts`.
 
 ---
 
-## Conventions
+## Convenciones
 
-- Prettier: 2-space indent, single quotes, `printWidth: 100`, Angular HTML parser for `*.html`.
-- TypeScript: `strict`, `noImplicitOverride`, `noPropertyAccessFromIndexSignature`, `noImplicitReturns`, `noFallthroughCasesInSwitch` all on. **`noPropertyAccessFromIndexSignature` is the one that bites** — use `obj['key']` not `obj.key` for index signatures.
-- Angular: `strictTemplates`, `strictInjectionParameters`, `strictInputAccessModifiers` all on.
-- Don't add comments unless asked.
-- Match the file style: components use `imports: [...]` arrays and `inject()` calls in field initializers, not constructors.
+- Prettier: indentación 2 espacios, comillas simples, `printWidth: 100`, parser Angular HTML para `*.html`.
+- TypeScript: `strict`, `noImplicitOverride`, `noPropertyAccessFromIndexSignature`, `noImplicitReturns`, `noFallthroughCasesInSwitch` activos. **`noPropertyAccessFromIndexSignature` es el que más molesta** — usa `obj['key']` no `obj.key` para index signatures.
+- Angular: `strictTemplates`, `strictInjectionParameters`, `strictInputAccessModifiers` activos.
+- No agregues comentarios a menos que se pidan.
+- Sigue el estilo del archivo: los componentes usan arreglos `imports: [...]` y llamadas `inject()` en inicializadores de campo, no constructores.
 
 ---
 
 ## Gotchas
 
-- `package-lock.json` is **gitignored** (`.gitignore` line 13). Only `package.json` is committed. Do not commit the lockfile.
-- `dist/`, `release/`, `out-tsc/`, `coverage/`, `.angular/`, `.env` are all gitignored.
-- There is **no e2e directory** and no ESLint config.
-- Test files (`*.spec.ts`) are colocated with source. `tsconfig.app.json` excludes them from the browser build; `tsconfig.spec.json` includes all of `src/**/*.ts` for tests.
-- Tests need a real Chrome binary. No headless config is set in `angular.json` — running in CI may require `CHROME_BIN` env var or a custom Karma launcher.
-- `main` is set in `package.json` to `electron/main.js` for Electron packaging; this does not affect `ng serve`.
-- `capacitor.config.ts` points `webDir` at `dist/GymControl/browser` — this is the output of the `capacitor` build config (and matches the static `outputMode`). Do not point it at the SSR server output.
-- `android/` directory is the Capacitor-generated Android project. Run `npm run capacitor:build` after web changes to sync.
+- `package-lock.json` está en **gitignore** (`.gitignore` línea 13). Solo se commitea `package.json`. No commitees el lockfile.
+- `dist/`, `release/`, `out-tsc/`, `coverage/`, `.angular/`, `.env` están en gitignore.
+- No hay directorio **e2e** ni configuración de ESLint.
+- Los archivos de test (`*.spec.ts`) están colocalizados con el source. `tsconfig.app.json` los excluye del build browser; `tsconfig.spec.json` incluye todo `src/**/*.ts` para tests.
+- Los tests necesitan un Chrome binary real. No hay configuración headless en `angular.json` — ejecutar en CI puede requerir la variable `CHROME_BIN` o un launcher Karma personalizado.
+- `main` está seteado en `package.json` a `electron/main.js` para empaquetado de Electron; esto no afecta `ng serve`.
+- `capacitor.config.ts` apunta `webDir` a `dist/GymControl/browser` — es el output de la configuración de build `capacitor` (coincide con `outputMode` estático). No lo apuntes al output del servidor SSR.
+- El directorio `android/` es el proyecto Android generado por Capacitor. Ejecuta `npm run capacitor:build` después de cambios web para sincronizar.
 
 ---
 
-## Where to start when changing X
+## Dónde empezar al cambiar X
 
-- **Add a new entity/feature**: add a model in `Models/`, add methods to `api-service.ts`, create a folder under `Components/<Name>/`, add a lazy route in `app.routes.ts` (under `dashboard` if protected).
-- **Add a new guarded route**: child of `dashboard` in `app.routes.ts`; `authGuard` is already on the parent.
-- **Change API base URL**: edit `environment.ts` (and/or `environment.development.ts`).
-- **Add a new build target**: edit `angular.json` → `projects.GymControl.architect.build.configurations`.
-- **Add a new npm script**: edit `package.json`; keep the `concurrently` + `wait-on` + `cross-env` pattern used in `electron:dev` if both server and shell need to run.
+- **Agregar una nueva entidad/feature**: agrega un modelo en `Models/`, agrega métodos a `api-service.ts`, crea una carpeta en `Components/<Nombre>/`, agrega una ruta lazy en `app.routes.ts` (bajo `dashboard` si está protegida).
+- **Agregar una nueva ruta protegida**: hija de `dashboard` en `app.routes.ts`; `authGuard` ya está en el padre.
+- **Cambiar la URL base de la API**: edita `environment.ts` (y/o `environment.development.ts`).
+- **Agregar un nuevo target de build**: edita `angular.json` → `projects.GymControl.architect.build.configurations`.
+- **Agregar un nuevo script npm**: edita `package.json`; mantén el patrón `concurrently` + `wait-on` + `cross-env` usado en `electron:dev` si necesitas correr servidor y shell simultáneamente.

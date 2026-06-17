@@ -22,10 +22,12 @@
 
     <!-- Nav -->
     <nav class="sidebar-nav">
-      <a class="nav-item" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="mobileOpen.set(false)">
-        <ion-icon name="grid-outline"></ion-icon>
-        <span>Dashboard</span>
-      </a>
+      @if (user?.role_id !== 2) {
+        <a class="nav-item" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="mobileOpen.set(false)">
+          <ion-icon name="grid-outline"></ion-icon>
+          <span>Dashboard</span>
+        </a>
+      }
       @for (item of navItems; track item.label) {
         @if (item.route) {
           <a class="nav-item" [routerLink]="item.route" routerLinkActive="active" (click)="mobileOpen.set(false)">

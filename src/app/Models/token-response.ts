@@ -5,4 +5,5 @@ export interface TokenResponse {
   username: string;
   full_name: string;
   role_id: number;
+  maestro_id: number | null;
 }

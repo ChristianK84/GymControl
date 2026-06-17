@@ -45,6 +45,10 @@ export class Asistencias implements OnInit {
   page = signal(1);
   readonly pageSize = 8;
 
+  private readonly user = this.session.getUser();
+  readonly isMaestro = this.user?.role_id === 2;
+  readonly maestroVinculado = this.isMaestro ? this.session.getMaestroId() : null;
+
   scanning = signal(false);
 
   showConfirm = signal(false);
@@ -64,10 +68,20 @@ export class Asistencias implements OnInit {
   }
 
   ngOnInit(): void {
+    if (this.isMaestro && !this.maestroVinculado) {
+      this.asistencias.set([]);
+      this.loading.set(false);
+      return;
+    }
     this.loadAsistencias();
-    this.api.getMaestros().subscribe({
-      next: (data) => this.maestros.set(data),
-    });
+    if (this.maestroVinculado) {
+      this.maestroFilter.set(this.maestroVinculado);
+    }
+    if (!this.isMaestro) {
+      this.api.getMaestros().subscribe({
+        next: (data) => this.maestros.set(data),
+      });
+    }
   }
 
   private loadAsistencias(): void {
@@ -75,6 +89,7 @@ export class Asistencias implements OnInit {
     const filters: Record<string, string | number> = {};
     if (this.filterFechaDesde) filters['fecha_desde'] = this.filterFechaDesde;
     if (this.filterFechaHasta) filters['fecha_hasta'] = this.filterFechaHasta;
+    if (this.maestroVinculado) filters['maestro_id'] = this.maestroVinculado;
 
     this.api.getAsistencias(filters as any).subscribe({
       next: (data) => {
@@ -89,6 +104,11 @@ export class Asistencias implements OnInit {
     const user = this.session.getUser();
     if (!user) {
       this.showScanResult('Sesión expirada. Inicia sesión nuevamente.', false);
+      return;
+    }
+
+    if (this.maestroVinculado) {
+      this.startScan(this.maestroVinculado);
       return;
     }
 
@@ -249,15 +269,14 @@ export class Asistencias implements OnInit {
     });
     modal.onDidDismiss().then(async ({ data, role }) => {
       if (role === 'selected' && data) {
-        const user = this.session.getUser();
-        const maestroVinculado = this.maestros().find(m => m.user_id === user?.user_id);
+        const maestroId = this.maestroVinculado ?? this.maestros().find(m => m.user_id === this.session.getUser()?.user_id)?.id;
 
         const editModal = await this.modalCtrl.create({
           component: AsistenciaEditModal,
           componentProps: {
             selectedAlumno: data,
             maestros: this.maestros(),
-            defaultMaestroId: maestroVinculado?.id,
+            defaultMaestroId: maestroId,
           },
         });
         editModal.onDidDismiss().then(({ role: editRole }) => {
@@ -273,6 +292,7 @@ export class Asistencias implements OnInit {
   }
 
   maestroNombre(id: number): string {
+    if (this.isMaestro) return this.user?.full_name ?? `ID #${id}`;
     const m = this.maestros().find(x => x.id === id);
     return m ? `${m.nombre} ${m.apellido_paterno.charAt(0)}.` : `ID #${id}`;
   }

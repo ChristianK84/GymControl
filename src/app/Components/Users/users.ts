@@ -96,6 +96,7 @@ export class Users implements OnInit {
         this.maestros.set(data);
         this.tryFinishLoading();
       },
+      error: () => this.tryFinishLoading(),
     });
   }
 
@@ -105,6 +106,7 @@ export class Users implements OnInit {
         this.roles.set(data);
         this.tryFinishLoading();
       },
+      error: () => this.tryFinishLoading(),
     });
   }
 
@@ -114,6 +116,7 @@ export class Users implements OnInit {
         this.allUsers.set(data);
         this.tryFinishLoading();
       },
+      error: () => this.tryFinishLoading(),
     });
   }
 

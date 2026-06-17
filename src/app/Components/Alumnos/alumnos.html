@@ -5,10 +5,18 @@
       <h1 class="alumnos-title">Directorio de Alumnos</h1>
       <p class="alumnos-subtitle">Gestiona y filtra el listado completo de estudiantes inscritos en la academia.</p>
     </div>
-    <ion-button class="btn-add" (click)="addAlumno()" fill="solid">
-      <ion-icon name="add-outline" slot="start"></ion-icon>
-      Nuevo Alumno
-    </ion-button>
+    <div class="header-actions">
+      <ion-button class="btn-secondary" (click)="verCumpleanios()" fill="outline">
+        <ion-icon name="gift-outline" slot="start"></ion-icon>
+        Cumpleaños
+      </ion-button>
+      @if (!isMaestro) {
+        <ion-button class="btn-add" (click)="addAlumno()" fill="solid">
+          <ion-icon name="add-outline" slot="start"></ion-icon>
+          Nuevo Alumno
+        </ion-button>
+      }
+    </div>
   </div>
 
   <!-- Filters -->
@@ -36,6 +44,17 @@
           <ion-select-option value="Femenil">Femenil</ion-select-option>
         </ion-select>
       </label>
+      @if (!isMaestro) {
+        <label class="filter-label">
+          Maestro
+          <ion-select class="filter-select" fill="outline" interface="popover" [ngModel]="maestroFilter()" (ngModelChange)="onMaestroChange($event)">
+            <ion-select-option [value]="null">Todos los maestros</ion-select-option>
+            @for (m of maestros(); track m.id) {
+              <ion-select-option [value]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</ion-select-option>
+            }
+          </ion-select>
+        </label>
+      }
       <ion-button class="btn-clear" (click)="clearFilters()" fill="outline">
         <ion-icon name="close-circle-outline" slot="start"></ion-icon>
         Limpiar

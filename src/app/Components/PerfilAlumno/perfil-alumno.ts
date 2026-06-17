@@ -11,7 +11,9 @@ import {
   ModalController,
 } from '@ionic/angular/standalone';
 import QRCode from 'qrcode';
+import { environment } from '../../../environments/environment';
 import { ApiService } from '../../Services/api-service';
+import { SessionService } from '../../Services/session.service';
 import { Alumno } from '../../Models/alumnos';
 import { Maestro } from '../../Models/maestros';
 import { Asistencia } from '../../Models/asistencias';
@@ -40,9 +42,12 @@ export class PerfilAlumno implements OnInit {
   private route = inject(ActivatedRoute);
   router = inject(Router);
   private api = inject(ApiService);
+  private session = inject(SessionService);
   private toastCtrl = inject(ToastController);
   private cdr = inject(ChangeDetectorRef);
   private modalCtrl = inject(ModalController);
+
+  readonly isMaestro = this.session.getUser()?.role_id === 2;
 
   alumno = signal<Alumno | null>(null);
   maestro = signal<Maestro | null>(null);
@@ -317,8 +322,8 @@ export class PerfilAlumno implements OnInit {
   private async uploadToCloudinary(file: File): Promise<string> {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', 'gymcontrol_upload');
-    const res = await fetch('https://api.cloudinary.com/v1_1/dyvqspnz7/image/upload', {
+    formData.append('upload_preset', environment.cloudinary.alumnoPreset);
+    const res = await fetch(environment.cloudinary.uploadUrl, {
       method: 'POST', body: formData,
     });
     if (!res.ok) throw new Error('Error al subir la imagen');

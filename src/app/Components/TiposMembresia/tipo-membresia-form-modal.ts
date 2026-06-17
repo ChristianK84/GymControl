@@ -95,6 +95,9 @@ export class TipoMembresiaFormModal {
     if (this.permite_dias_extra && (this.costo_dia_extra === null || this.costo_dia_extra < 0)) {
       this.errors['costo_dia_extra'] = 'Ingrese el costo por día extra';
     }
+    if (this.color && !/^#[0-9a-fA-F]{6}$/.test(this.color)) {
+      this.errors['color'] = 'Color debe ser un hex válido (ej: #3b82f6)';
+    }
     return Object.keys(this.errors).length === 0;
   }
 

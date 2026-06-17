@@ -5,10 +5,12 @@
       <h1 class="maestros-title">Directorio de Maestros</h1>
       <p class="maestros-subtitle">Gestiona el listado completo de entrenadores registrados en la academia.</p>
     </div>
-    <ion-button class="btn-add" (click)="addMaestro()" fill="solid">
-      <ion-icon name="add-outline" slot="start"></ion-icon>
-      Nuevo Maestro
-    </ion-button>
+    <div class="header-actions">
+      <ion-button class="btn-add" (click)="addMaestro()" fill="solid">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Nuevo Maestro
+      </ion-button>
+    </div>
   </div>
 
   <!-- Filters -->
@@ -27,6 +29,14 @@
             (ngModelChange)="onSearchChange($event)"
           ></ion-input>
         </div>
+      </label>
+      <label class="filter-label">
+        Estado
+        <ion-select class="filter-select" fill="outline" interface="popover" [ngModel]="estadoFilter()" (ngModelChange)="onEstadoChange($event)">
+          <ion-select-option value="activos">Activos</ion-select-option>
+          <ion-select-option value="inactivos">Inactivos</ion-select-option>
+          <ion-select-option value="todos">Todos</ion-select-option>
+        </ion-select>
       </label>
       <ion-button class="btn-clear" (click)="clearFilters()" fill="outline">
         <ion-icon name="close-circle-outline" slot="start"></ion-icon>

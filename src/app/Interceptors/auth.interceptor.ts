@@ -25,6 +25,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           sessionStorage.setItem('session_expired', '1');
         }
         router.navigate(['/login']);
+      } else if (err.status === 403) {
+        if (isPlatformBrowser(platformId)) {
+          sessionStorage.setItem('access_denied', '1');
+        }
+        router.navigate(['/login']);
       }
       return throwError(() => err);
     }),

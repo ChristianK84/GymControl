@@ -114,6 +114,9 @@ export class MembresiaFormModal implements OnInit {
     if (this.porcentaje_beca < 0 || this.porcentaje_beca > 100) this.errors['porcentaje_beca'] = 'La beca debe estar entre 0 y 100';
     if (!this.fecha_inicio) this.errors['fecha_inicio'] = 'Seleccione fecha de inicio';
     if (!this.fecha_vencimiento) this.errors['fecha_vencimiento'] = 'Seleccione fecha de vencimiento';
+    if (this.fecha_inicio && this.fecha_vencimiento && this.fecha_vencimiento < this.fecha_inicio) {
+      this.errors['fecha_vencimiento'] = 'La fecha de vencimiento debe ser posterior a la de inicio';
+    }
     return Object.keys(this.errors).length === 0;
   }
 

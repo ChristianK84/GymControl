@@ -1,59 +1,42 @@
 # GymControl
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.8.
+Aplicación híbrida para gestión de gimnasios: control de alumnos, maestros, usuarios, asistencias y membresías.
 
-## Development server
+## Stack
 
-To start a local development server, run:
+- **Angular 20** + **Ionic 8** — UI responsive y componentes nativos
+- **Capacitor** — despliegue a Android
+- **Electron** — aplicación de escritorio para Windows
+- **SSR** (Angular Universal) — renderizado del lado del servidor
+- **Karma + Jasmine** — tests unitarios
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Comandos principales
 
 ```bash
-ng generate component component-name
+# Servidor de desarrollo (web)
+npm start
+
+# Servidor de desarrollo con Electron
+npm run electron:dev
+
+# Build de producción (web con SSR)
+npm run build
+
+# Build para Capacitor (Android)
+npm run capacitor:build
+
+# Instalador de Electron (Windows)
+npm run electron:build
+
+# Tests unitarios
+npm test
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Enlaces
 
-```bash
-ng generate --help
-```
+- **API backend**: `https://gymcontrol-api-sne4.onrender.com/api/v1/`
+- **Entorno local**: descomentar `http://localhost:5000/api/v1/` en `src/environments/environment.development.ts`
 
-## Building
+## Licencia
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Uso interno — Katiras Gymnastics

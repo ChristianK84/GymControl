@@ -65,15 +65,17 @@
           ></ion-input>
         </div>
       </label>
-      <label class="filter-label">
-        Maestro
-        <ion-select class="filter-select" fill="outline" interface="popover" [ngModel]="maestroFilter()" (ngModelChange)="onMaestroChange($event)">
-          <ion-select-option [value]="null">Todos los maestros</ion-select-option>
-          @for (m of maestros(); track m.id) {
-            <ion-select-option [value]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</ion-select-option>
-          }
-        </ion-select>
-      </label>
+      @if (!isMaestro) {
+        <label class="filter-label">
+          Maestro
+          <ion-select class="filter-select" fill="outline" interface="popover" [ngModel]="maestroFilter()" (ngModelChange)="onMaestroChange($event)">
+            <ion-select-option [value]="null">Todos los maestros</ion-select-option>
+            @for (m of maestros(); track m.id) {
+              <ion-select-option [value]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</ion-select-option>
+            }
+          </ion-select>
+        </label>
+      }
       <label class="filter-label">
         Tipo
         <ion-select class="filter-select" fill="outline" interface="popover" [ngModel]="tipoFilter()" (ngModelChange)="onTipoChange($event)">

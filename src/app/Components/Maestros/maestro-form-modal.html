@@ -98,6 +98,17 @@
       </div>
     </div>
 
+    <!-- Estado -->
+    @if (isEdit) {
+      <div class="section">
+        <h3 class="section-title">Estado</h3>
+        <div class="toggle-row">
+          <span class="toggle-label">Maestro activo</span>
+          <ion-toggle [(ngModel)]="isActive" color="success"></ion-toggle>
+        </div>
+      </div>
+    }
+
     @if (isEdit) {
       <div class="meta-footer">
         <span>Creado el {{ createdAt }}</span>

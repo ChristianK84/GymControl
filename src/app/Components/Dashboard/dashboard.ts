@@ -59,14 +59,19 @@ export class Dashboard implements OnInit, OnDestroy {
   clockDate = signal(this.formatDate());
   clockTime = signal(this.formatTime());
 
-  readonly navItems = [
-    { icon: 'people-outline', label: 'Alumnos', route: '/dashboard/alumnos' as string | null },
-    { icon: 'body-outline', label: 'Maestros', route: '/dashboard/maestros' as string | null },
-    { icon: 'checkmark-circle-outline', label: 'Asistencias', route: '/dashboard/asistencias' as string | null },
-    { icon: 'card-outline', label: 'Membresías', route: '/dashboard/membresias' as string | null },
-    { icon: 'pricetag-outline', label: 'Tipos Membresía', route: '/dashboard/tipos-membresia' as string | null },
-    { icon: 'person-outline', label: 'Usuarios', route: '/dashboard/usuarios' as string | null },
+  readonly fullNavItems = [
+    { icon: 'people-outline', label: 'Alumnos', route: '/dashboard/alumnos' as string | null, roles: [1, 2] },
+    { icon: 'body-outline', label: 'Maestros', route: '/dashboard/maestros' as string | null, roles: [1] },
+    { icon: 'checkmark-circle-outline', label: 'Asistencias', route: '/dashboard/asistencias' as string | null, roles: [1, 2] },
+    { icon: 'card-outline', label: 'Membresías', route: '/dashboard/membresias' as string | null, roles: [1] },
+    { icon: 'pricetag-outline', label: 'Tipos Membresía', route: '/dashboard/tipos-membresia' as string | null, roles: [1] },
+    { icon: 'person-outline', label: 'Usuarios', route: '/dashboard/usuarios' as string | null, roles: [1] },
   ];
+
+  get navItems() {
+    const role = this.user?.role_id ?? 0;
+    return this.fullNavItems.filter(item => item.roles.includes(role));
+  }
 
   constructor() {
     addIcons({

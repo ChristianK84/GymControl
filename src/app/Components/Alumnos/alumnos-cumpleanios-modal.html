@@ -1,0 +1,73 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button class="btn-cancel" (click)="dismiss()">
+        <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="gift-outline" color="danger"></ion-icon>
+      Próximos cumpleaños
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="modal-content">
+  <div class="modal-body">
+
+    @if (loading()) {
+      @for (i of [1,2,3]; track i) {
+        <div class="section">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <ion-skeleton-text [animated]="true" style="width: 3rem; height: 3rem; border-radius: 50%;"></ion-skeleton-text>
+            <div style="flex: 1;">
+              <ion-skeleton-text [animated]="true" style="width: 60%; height: 1rem; display: block;"></ion-skeleton-text>
+              <ion-skeleton-text [animated]="true" style="width: 35%; height: 0.8rem; display: block; margin-top: 4px;"></ion-skeleton-text>
+            </div>
+          </div>
+        </div>
+      }
+    } @else {
+      @for (a of cumpleanios(); track a.id) {
+        <div class="section birthday-card">
+          <div class="card-row">
+            <div class="card-avatar">
+              @if (a.fotografia) {
+                <img class="avatar-img" [src]="a.fotografia" [alt]="a.nombrecompleto" />
+              } @else {
+                <div class="avatar-fallback">{{ iniciales(a.nombrecompleto) }}</div>
+              }
+            </div>
+            <div class="card-info">
+              <div class="card-name">{{ a.nombrecompleto }} {{ a.apellido_paterno }}</div>
+              <div class="card-rama" [class.rama-varonil-small]="a.rama === 'Varonil'" [class.rama-femenil-small]="a.rama === 'Femenil'">{{ a.rama }}</div>
+            </div>
+          </div>
+          <div class="card-details">
+            <div class="detail-item">
+              <ion-icon name="gift-outline" class="detail-icon"></ion-icon>
+              <span>{{ formatDate(a.fecha_nacimiento) }}</span>
+            </div>
+            <div class="detail-item">
+              <ion-icon name="calendar-outline" class="detail-icon"></ion-icon>
+              <span>Cumple {{ edadACumplir(a.fecha_nacimiento) }} años</span>
+            </div>
+          </div>
+          <div class="days-badge" [class.urgent]="diasRestantes(a.fecha_nacimiento) <= 3">
+            <ion-icon name="gift-outline"></ion-icon>
+            {{ diasRestantes(a.fecha_nacimiento) === 0 ? 'Hoy' : diasRestantes(a.fecha_nacimiento) + ' día' + (diasRestantes(a.fecha_nacimiento) !== 1 ? 's' : '') }}
+          </div>
+        </div>
+      } @empty {
+        <div class="section" style="text-align: center; padding: 2rem;">
+          <div class="empty-state">
+            <ion-icon name="gift-outline" style="font-size: 2.5rem; color: #936e69;"></ion-icon>
+            <p style="font-family: 'Inter', sans-serif; font-size: 0.9rem; color: #5e3f3b; margin: 0.5rem 0 0;">
+              No hay cumpleaños en los próximos 30 días
+            </p>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</ion-content>

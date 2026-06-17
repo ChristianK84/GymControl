@@ -8,6 +8,7 @@ import {
   IonButton, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardContent,
   IonBadge,
 } from '@ionic/angular/standalone';
+import { environment } from '../../../environments/environment';
 import { ApiService } from '../../Services/api-service';
 import { Maestro } from '../../Models/maestros';
 import { Alumno } from '../../Models/alumnos';
@@ -23,8 +24,8 @@ import {
   pencilOutline, timeOutline,
 } from 'ionicons/icons';
 
-const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dyvqspnz7/image/upload';
-const UPLOAD_PRESET = 'gymcontrol_upload_maestros';
+const CLOUDINARY_URL = environment.cloudinary.uploadUrl;
+const UPLOAD_PRESET = environment.cloudinary.maestroPreset;
 
 @Component({
   selector: 'app-perfil-maestro',
@@ -110,11 +111,10 @@ export class PerfilMaestro implements OnInit {
   }
 
   private loadAlumnos(): void {
-    this.api.getAlumnos().subscribe({
-      next: (data) => {
-        const m = this.maestro();
-        this.alumnos.set(m ? data.filter(a => a.maestro_id === m.id) : data);
-      },
+    const m = this.maestro();
+    if (!m) return;
+    this.api.getAlumnos(false, m.id).subscribe({
+      next: (data) => this.alumnos.set(data),
     });
   }
 
@@ -142,7 +142,8 @@ export class PerfilMaestro implements OnInit {
   }
 
   fechaFormato(fecha: string): string {
-    return new Date(fecha + 'T00:00:00').toLocaleDateString('es-MX', {
+    const fechaOk = fecha.includes('T') ? fecha : fecha + 'T00:00:00';
+    return new Date(fechaOk).toLocaleDateString('es-MX', {
       day: 'numeric', month: 'long', year: 'numeric',
     });
   }

@@ -97,9 +97,9 @@ export class ApiService {
 
   // ── Maestros ──
 
-  getMaestros(includeDeleted = false): Observable<Maestro[]> {
+  getMaestros(includeDeleted = false, includeInactive = false): Observable<Maestro[]> {
     return this.http.get<Maestro[]>(`${this.baseUrl}maestros/`, {
-      params: { include_deleted: includeDeleted },
+      params: { include_deleted: includeDeleted, include_inactive: includeInactive },
     });
   }
 
@@ -144,10 +144,10 @@ export class ApiService {
 
   // ── Alumnos ──
 
-  getAlumnos(includeDeleted = false): Observable<Alumno[]> {
-    return this.http.get<Alumno[]>(`${this.baseUrl}alumnos/`, {
-      params: { include_deleted: includeDeleted },
-    });
+  getAlumnos(includeDeleted = false, maestroId?: number | null): Observable<Alumno[]> {
+    const params: Record<string, string | number | boolean> = { include_deleted: includeDeleted };
+    if (maestroId) params['maestro_id'] = maestroId;
+    return this.http.get<Alumno[]>(`${this.baseUrl}alumnos/`, { params });
   }
 
   getAlumno(alumnoId: number): Observable<Alumno> {
@@ -225,6 +225,10 @@ export class ApiService {
       `${this.baseUrl}alumnos/${alumnoId}`,
       body,
     );
+  }
+
+  getCumpleanios(): Observable<Alumno[]> {
+    return this.http.get<Alumno[]>(`${this.baseUrl}alumnos/cumplea%C3%B1os`);
   }
 
   deleteAlumno(alumnoId: number): Observable<void> {

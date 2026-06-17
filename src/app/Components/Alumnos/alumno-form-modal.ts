@@ -7,14 +7,15 @@ import {
   IonInput, IonSelect, IonSelectOption, IonItem, IonLabel, IonAvatar,
   ModalController, ToastController,
 } from '@ionic/angular/standalone';
+import { environment } from '../../../environments/environment';
 import { addIcons } from 'ionicons';
 import { closeOutline, cloudUploadOutline, cameraOutline } from 'ionicons/icons';
 import { ApiService } from '../../Services/api-service';
 import { Alumno } from '../../Models/alumnos';
 import { Maestro } from '../../Models/maestros';
 
-const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dyvqspnz7/image/upload';
-const UPLOAD_PRESET = 'gymcontrol_upload';
+const CLOUDINARY_URL = environment.cloudinary.uploadUrl;
+const UPLOAD_PRESET = environment.cloudinary.alumnoPreset;
 
 @Component({
   selector: 'app-alumno-form-modal',
@@ -30,6 +31,7 @@ const UPLOAD_PRESET = 'gymcontrol_upload';
 export class AlumnoFormModal implements OnInit {
   @Input() alumno?: Alumno;
   @Input() maestros: Maestro[] = [];
+  @Input() maestroVinculado: number | null = null;
 
   private modalCtrl = inject(ModalController);
   private api = inject(ApiService);
@@ -84,6 +86,10 @@ export class AlumnoFormModal implements OnInit {
 
   ngOnInit(): void {
     this.fechaInscripcion = new Date().toISOString().split('T')[0];
+
+    if (!this.alumno && this.maestroVinculado) {
+      this.maestroId = this.maestroVinculado;
+    }
 
     if (this.alumno) {
       this.nombrecompleto = this.alumno.nombrecompleto;

@@ -4,16 +4,17 @@ import { FormsModule } from '@angular/forms';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
   IonButton, IonIcon, IonFooter, IonSpinner,
-  IonInput, IonItem, IonLabel, IonAvatar,
+  IonInput, IonItem, IonLabel, IonAvatar, IonToggle,
   ModalController, ToastController,
 } from '@ionic/angular/standalone';
+import { environment } from '../../../environments/environment';
 import { addIcons } from 'ionicons';
 import { closeOutline, cloudUploadOutline, cameraOutline } from 'ionicons/icons';
 import { ApiService } from '../../Services/api-service';
 import { Maestro } from '../../Models/maestros';
 
-const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dyvqspnz7/image/upload';
-const UPLOAD_PRESET = 'gymcontrol_upload_maestros';
+const CLOUDINARY_URL = environment.cloudinary.uploadUrl;
+const UPLOAD_PRESET = environment.cloudinary.maestroPreset;
 
 @Component({
   selector: 'app-maestro-form-modal',
@@ -21,7 +22,7 @@ const UPLOAD_PRESET = 'gymcontrol_upload_maestros';
     FormsModule,
     IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
     IonButton, IonIcon, IonFooter, IonSpinner,
-    IonInput, IonItem, IonLabel, IonAvatar,
+    IonInput, IonItem, IonLabel, IonAvatar, IonToggle,
   ],
   templateUrl: './maestro-form-modal.html',
   styleUrl: './maestro-form-modal.css',

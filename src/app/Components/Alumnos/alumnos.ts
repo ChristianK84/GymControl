@@ -3,13 +3,15 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonIcon, IonButton, IonInput, IonSelect, IonSelectOption, IonSkeletonText, IonBadge, ToastController, ModalController } from '@ionic/angular/standalone';
 import { ApiService } from '../../Services/api-service';
+import { SessionService } from '../../Services/session.service';
 import { Alumno } from '../../Models/alumnos';
 import { Maestro } from '../../Models/maestros';
 import { AlumnoFormModal } from './alumno-form-modal';
+import { AlumnosCumpleaniosModal } from './alumnos-cumpleanios-modal';
 import { addIcons } from 'ionicons';
 import {
   addOutline, searchOutline, closeCircleOutline,
-  chevronBackOutline, chevronForwardOutline,
+  chevronBackOutline, chevronForwardOutline, giftOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -20,9 +22,13 @@ import {
 })
 export class Alumnos implements OnInit {
   private api = inject(ApiService);
+  private session = inject(SessionService);
   private toastCtrl = inject(ToastController);
   private modalCtrl = inject(ModalController);
   private router = inject(Router);
+
+  private readonly user = this.session.getUser();
+  readonly isMaestro = this.user?.role_id === 2;
 
   allAlumnos = signal<Alumno[]>([]);
   maestros = signal<Maestro[]>([]);
@@ -30,22 +36,37 @@ export class Alumnos implements OnInit {
   loading = signal(true);
   searchTerm = signal('');
   ramaFilter = signal('');
+  maestroFilter = signal<number | null>(null);
   page = signal(1);
   readonly pageSize = 8;
 
   constructor() {
-    addIcons({ addOutline, searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline });
+    addIcons({ addOutline, searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline, giftOutline });
   }
 
   ngOnInit(): void {
-    this.api.getAlumnos().subscribe({
+    const miId = this.isMaestro ? this.session.getMaestroId() : null;
+    if (this.isMaestro && !miId) {
+      this.allAlumnos.set([]);
+      this.tryFinishLoading();
+      this.tryFinishLoading();
+      this.loading.set(false);
+      return;
+    }
+    this.api.getAlumnos(false, miId).subscribe({
       next: (data) => this.allAlumnos.set(data),
+      error: () => this.tryFinishLoading(),
       complete: () => this.tryFinishLoading(),
     });
-    this.api.getMaestros().subscribe({
-      next: (data) => this.maestros.set(data),
-      complete: () => this.tryFinishLoading(),
-    });
+    if (!this.isMaestro) {
+      this.api.getMaestros().subscribe({
+        next: (data) => this.maestros.set(data),
+        error: () => this.tryFinishLoading(),
+        complete: () => this.tryFinishLoading(),
+      });
+    } else {
+      this.tryFinishLoading();
+    }
     this.loadAsistencias();
   }
 
@@ -69,17 +90,20 @@ export class Alumnos implements OnInit {
         }
         this.ultimaAsistencia.set(map);
       },
+      error: () => this.tryFinishLoading(),
       complete: () => this.tryFinishLoading(),
     });
   }
 
   maestroNombre(maestroId: number): string {
+    if (this.isMaestro) return this.user?.full_name ?? `ID #${maestroId}`;
     const m = this.maestros().find((x) => x.id === maestroId);
     if (!m) return `ID #${maestroId}`;
     return m.nombre;
   }
 
   maestroApellido(maestroId: number): string {
+    if (this.isMaestro) return '';
     const m = this.maestros().find((x) => x.id === maestroId);
     return m ? m.apellido_paterno : '';
   }
@@ -118,6 +142,9 @@ export class Alumnos implements OnInit {
     if (this.ramaFilter()) {
       list = list.filter((a) => a.rama === this.ramaFilter());
     }
+    if (this.maestroFilter()) {
+      list = list.filter((a) => a.maestro_id === this.maestroFilter());
+    }
     return list;
   });
 
@@ -138,9 +165,15 @@ export class Alumnos implements OnInit {
     this.page.set(1);
   }
 
+  onMaestroChange(value: number | null): void {
+    this.maestroFilter.set(value);
+    this.page.set(1);
+  }
+
   clearFilters(): void {
     this.searchTerm.set('');
     this.ramaFilter.set('');
+    this.maestroFilter.set(null);
     this.page.set(1);
   }
 
@@ -153,18 +186,29 @@ export class Alumnos implements OnInit {
   }
 
   async addAlumno(): Promise<void> {
+    const miId = this.isMaestro ? this.session.getMaestroId() : null;
     const modal = await this.modalCtrl.create({
       component: AlumnoFormModal,
-      componentProps: { maestros: this.maestros() },
+      componentProps: {
+        maestros: this.maestros(),
+        maestroVinculado: miId,
+      },
     });
     await modal.present();
     const { role } = await modal.onDidDismiss();
     if (role === 'saved') {
-      this.api.getAlumnos().subscribe({
+      this.api.getAlumnos(false, miId).subscribe({
         next: (data) => this.allAlumnos.set(data),
       });
       this.showToast('Alumno creado con éxito', 'success');
     }
+  }
+
+  async verCumpleanios(): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: AlumnosCumpleaniosModal,
+    });
+    await modal.present();
   }
 
   private async showToast(message: string, color: 'success' | 'danger' = 'success'): Promise<void> {

@@ -52,6 +52,12 @@ ion-button.btn-add:active {
   transform: scale(0.98);
 }
 
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 /* ---------- Filters ---------- */
 .filter-card {
   background: #ffffff;

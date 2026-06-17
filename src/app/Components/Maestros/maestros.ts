@@ -8,12 +8,12 @@ import { MaestroFormModal } from './maestro-form-modal';
 import { addIcons } from 'ionicons';
 import {
   addOutline, searchOutline, closeCircleOutline,
-  chevronBackOutline, chevronForwardOutline,
+  chevronBackOutline, chevronForwardOutline, giftOutline,
 } from 'ionicons/icons';
 
 @Component({
   selector: 'app-maestros',
-  imports: [FormsModule, IonIcon, IonButton, IonInput, IonSkeletonText, IonBadge],
+  imports: [FormsModule, IonIcon, IonButton, IonInput, IonSelect, IonSelectOption, IonSkeletonText, IonBadge],
   templateUrl: './maestros.html',
   styleUrl: './maestros.css',
 })
@@ -26,11 +26,12 @@ export class Maestros implements OnInit {
   allMaestros = signal<Maestro[]>([]);
   loading = signal(true);
   searchTerm = signal('');
+  estadoFilter = signal<'activos' | 'inactivos' | 'todos'>('activos');
   page = signal(1);
   readonly pageSize = 8;
 
   constructor() {
-    addIcons({ addOutline, searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline });
+    addIcons({ addOutline, searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline, giftOutline });
   }
 
   ngOnInit(): void {
@@ -38,7 +39,7 @@ export class Maestros implements OnInit {
   }
 
   private loadMaestros(): void {
-    this.api.getMaestros().subscribe({
+    this.api.getMaestros(false, true).subscribe({
       next: (data) => {
         this.allMaestros.set(data);
         this.loading.set(false);
@@ -72,6 +73,12 @@ export class Maestros implements OnInit {
           (m.apellido_materno ?? '').toLowerCase().includes(term),
       );
     }
+    const estado = this.estadoFilter();
+    if (estado === 'activos') {
+      list = list.filter(m => m.is_active);
+    } else if (estado === 'inactivos') {
+      list = list.filter(m => !m.is_active);
+    }
     return list;
   });
 
@@ -87,12 +94,18 @@ export class Maestros implements OnInit {
     this.page.set(1);
   }
 
+  onEstadoChange(value: string): void {
+    this.estadoFilter.set(value as 'activos' | 'inactivos' | 'todos');
+    this.page.set(1);
+  }
+
   viewProfile(maestro: Maestro): void {
     this.router.navigate(['/dashboard/maestros', maestro.id]);
   }
 
   clearFilters(): void {
     this.searchTerm.set('');
+    this.estadoFilter.set('activos');
     this.page.set(1);
   }
 

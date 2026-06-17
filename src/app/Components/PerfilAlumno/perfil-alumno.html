@@ -62,7 +62,7 @@
               Guardar Cambios
             </ion-button>
           </div>
-        } @else {
+        } @else if (!isMaestro) {
           <ion-button class="edit-btn" (click)="startEditing()" fill="solid">
             <ion-icon name="create-outline" slot="start"></ion-icon>
             Editar Perfil
@@ -71,21 +71,23 @@
       </div>
     </header>
 
-    <!-- Navigation Tabs -->
-    <ion-segment [(ngModel)]="activeTab" (ionChange)="onTabChange($event.detail.value)" class="profile-segment">
-      <ion-segment-button value="info">
-        <ion-icon name="person-outline"></ion-icon>
-        <ion-label>Información</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="asistencias">
-        <ion-icon name="checkmark-circle-outline"></ion-icon>
-        <ion-label>Asistencias</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="membresia">
-        <ion-icon name="card-outline"></ion-icon>
-        <ion-label>Membresía</ion-label>
-      </ion-segment-button>
-    </ion-segment>
+    @if (!isMaestro) {
+      <!-- Navigation Tabs -->
+      <ion-segment [(ngModel)]="activeTab" (ionChange)="onTabChange($event.detail.value)" class="profile-segment">
+        <ion-segment-button value="info">
+          <ion-icon name="person-outline"></ion-icon>
+          <ion-label>Información</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="asistencias">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          <ion-label>Asistencias</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="membresia">
+          <ion-icon name="card-outline"></ion-icon>
+          <ion-label>Membresía</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    }
 
     @if (activeTab() === 'info') {
     <div class="bento-grid">

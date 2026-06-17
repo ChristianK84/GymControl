@@ -50,8 +50,13 @@ export class SessionService {
       username: response.username,
       full_name: response.full_name,
       role_id: response.role_id,
+      maestro_id: response.maestro_id,
     }));
     this.isAuthenticated.set(true);
+  }
+
+  getMaestroId(): number | null {
+    return this.getUser()?.maestro_id ?? null;
   }
 
   clearSession(): void {
