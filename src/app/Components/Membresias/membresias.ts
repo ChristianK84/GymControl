@@ -7,7 +7,7 @@ import {
   ModalController, ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { createOutline, warningOutline, fileTrayOutline, addOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline, checkmarkCircleOutline, alertCircleOutline, searchOutline } from 'ionicons/icons';
+import { createOutline, warningOutline, fileTrayOutline, addOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline, checkmarkCircleOutline, alertCircleOutline, searchOutline, mailOutline } from 'ionicons/icons';
 import { ApiService } from '../../Services/api-service';
 import { Membresia } from '../../Models/membresias';
 import { MembresiaFormModal } from './membresia-form-modal';
@@ -46,7 +46,7 @@ export class Membresias implements OnInit {
   searchTerm = signal('');
 
   constructor() {
-    addIcons({ createOutline, warningOutline, fileTrayOutline, addOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline, checkmarkCircleOutline, alertCircleOutline, searchOutline });
+    addIcons({ createOutline, warningOutline, fileTrayOutline, addOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline, checkmarkCircleOutline, alertCircleOutline, searchOutline, mailOutline });
   }
 
   ngOnInit(): void {
@@ -162,6 +162,14 @@ export class Membresias implements OnInit {
         this.showToast('Membresía cancelada');
       },
       error: () => this.showToast('Error al cancelar', 'danger'),
+    });
+  }
+
+  reenviarRecibo(membresia: Membresia, event: Event): void {
+    event.stopPropagation();
+    this.api.reenviarReciboMembresia(membresia.id).subscribe({
+      next: (res) => this.showToast(res.message),
+      error: (err) => this.showToast(err.error?.detail ?? 'Error al enviar recibo', 'danger'),
     });
   }
 

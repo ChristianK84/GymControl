@@ -424,6 +424,10 @@ export class ApiService {
     return this.http.delete<void>(`${this.baseUrl}membresias/${id}`);
   }
 
+  reenviarReciboMembresia(id: number): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}membresias/${id}/enviar-recibo`, {});
+  }
+
   getMembresiasImpagas(): Observable<Membresia[]> {
     return this.http.get<Membresia[]>(`${this.baseUrl}membresias/impagas`);
   }

@@ -65,6 +65,7 @@
           <th>Vigencia</th>
           <th>Estado</th>
           <th>Pagado</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -76,6 +77,7 @@
               <td><ion-skeleton-text [animated]="true" class="skeleton-text"></ion-skeleton-text></td>
               <td><ion-skeleton-text [animated]="true" class="skeleton-badge"></ion-skeleton-text></td>
               <td><ion-skeleton-text [animated]="true" class="skeleton-badge"></ion-skeleton-text></td>
+              <td class="td-acciones"><ion-skeleton-text [animated]="true" class="skeleton-icon"></ion-skeleton-text></td>
             </tr>
           }
         } @else {
@@ -108,10 +110,15 @@
                   {{ m.pagado ? 'Sí' : 'No' }}
                 </span>
               </td>
+              <td class="td-acciones">
+                <ion-button fill="clear" size="small" title="Reenviar recibo por email" (click)="reenviarRecibo(m, $event)">
+                  <ion-icon name="mail-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+              </td>
             </tr>
           } @empty {
             <tr>
-              <td colspan="5" class="td-empty">
+              <td colspan="6" class="td-empty">
                 <div class="empty-state">
                   <ion-icon name="file-tray-outline"></ion-icon>
                   <p>No se encontraron membresías</p>
