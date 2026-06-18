@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { AuditLogEntry } from '../Models/audit-logs';
 import { TokenResponse } from '../Models/token-response';
 import { Rol } from '../Models/catalogs';
 import { User } from '../Models/users';
@@ -36,6 +37,10 @@ export class ApiService {
       username,
       password,
     });
+  }
+
+  logout(): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}auth/logout`, {});
   }
 
   // ── Roles ──
@@ -434,6 +439,10 @@ export class ApiService {
 
   getMembresiasImpagas(): Observable<Membresia[]> {
     return this.http.get<Membresia[]>(`${this.baseUrl}membresias/impagas`);
+  }
+
+  getAuditLogs(filters?: Record<string, string>): Observable<AuditLogEntry[]> {
+    return this.http.get<AuditLogEntry[]>(`${this.baseUrl}audit-logs/`, { params: filters });
   }
 
   // ── Transacciones ──

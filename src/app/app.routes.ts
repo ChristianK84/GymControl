@@ -72,6 +72,12 @@ export const routes: Routes = [
           import('./Components/Membresias/membresias').then((m) => m.Membresias),
         data: { roles: [1] },
       },
+      {
+        path: 'auditoria',
+        loadComponent: () =>
+          import('./Components/AuditLogs/audit-logs').then((m) => m.AuditLogs),
+        data: { roles: [1] },
+      },
     ],
   },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },

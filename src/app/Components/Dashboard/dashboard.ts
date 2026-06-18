@@ -8,6 +8,7 @@ import {
   IonButton,
   IonIcon,
 } from '@ionic/angular/standalone';
+import { ApiService } from '../../Services/api-service';
 import { SessionService } from '../../Services/session.service';
 import { addIcons } from 'ionicons';
 import {
@@ -20,6 +21,7 @@ import {
   menuOutline,
   chevronBackOutline,
   chevronForwardOutline,
+  documentTextOutline,
   pricetagOutline,
   cardOutline,
 } from 'ionicons/icons';
@@ -48,6 +50,7 @@ const ROLE_MAP: Record<number, string> = {
 export class Dashboard implements OnInit, OnDestroy {
   private session = inject(SessionService);
   private router = inject(Router);
+  private api = inject(ApiService);
 
   private clockInterval?: ReturnType<typeof setInterval>;
 
@@ -66,6 +69,7 @@ export class Dashboard implements OnInit, OnDestroy {
     { icon: 'card-outline', label: 'Membresías', route: '/dashboard/membresias' as string | null, roles: [1] },
     { icon: 'pricetag-outline', label: 'Tipos Membresía', route: '/dashboard/tipos-membresia' as string | null, roles: [1] },
     { icon: 'person-outline', label: 'Usuarios', route: '/dashboard/usuarios' as string | null, roles: [1] },
+    { icon: 'document-text-outline', label: 'Auditoría', route: '/dashboard/auditoria' as string | null, roles: [1] },
   ];
 
   get navItems() {
@@ -78,6 +82,7 @@ export class Dashboard implements OnInit, OnDestroy {
       gridOutline, peopleOutline, bodyOutline, checkmarkCircleOutline,
       personOutline, logOutOutline, menuOutline,
       chevronBackOutline, chevronForwardOutline,
+      documentTextOutline,
       pricetagOutline, cardOutline,
     });
   }
@@ -138,7 +143,10 @@ export class Dashboard implements OnInit, OnDestroy {
 
   logout(): void {
     (document.activeElement as HTMLElement)?.blur();
-    this.session.clearSession();
+    this.api.logout().subscribe({
+      next: () => this.session.clearSession(),
+      error: () => this.session.clearSession(),
+    });
     this.router.navigate(['/login'], { replaceUrl: true });
   }
 }

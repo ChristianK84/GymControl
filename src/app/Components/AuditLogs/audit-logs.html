@@ -1,0 +1,101 @@
+<div class="audit-container">
+  <div class="audit-header">
+    <div>
+      <h1 class="audit-title">Bitácora de Auditoría</h1>
+      <p class="audit-subtitle">Registro de todas las acciones realizadas en el sistema</p>
+    </div>
+  </div>
+
+  <div class="filter-card">
+    <h3 class="filter-title">Filtros</h3>
+    <div class="filter-grid">
+      <label class="filter-label">
+        Acción
+        <ion-select class="filter-select" fill="outline" [ngModel]="filterAction()" (ngModelChange)="filterAction.set($event); onFilterChange()" interface="popover">
+          <ion-select-option [value]="null">Todas las acciones</ion-select-option>
+          @for (a of actionOptions; track a) {
+            <ion-select-option [value]="a">{{ a }}</ion-select-option>
+          }
+        </ion-select>
+      </label>
+      <label class="filter-label">
+        Entidad
+        <ion-select class="filter-select" fill="outline" [ngModel]="filterEntity()" (ngModelChange)="filterEntity.set($event); onFilterChange()" interface="popover">
+          <ion-select-option [value]="null">Todas las entidades</ion-select-option>
+          @for (e of entityOptions; track e) {
+            <ion-select-option [value]="e">{{ e }}</ion-select-option>
+          }
+        </ion-select>
+      </label>
+      <ion-button class="btn-clear" (click)="clearFilters()" fill="outline">
+        <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+        Limpiar filtros
+      </ion-button>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <table class="audit-table">
+      <thead>
+        <tr>
+          <th>Fecha / Hora</th>
+          <th>Usuario</th>
+          <th>Acción</th>
+          <th>Entidad</th>
+          <th>ID</th>
+          <th>Descripción</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading()) {
+          @for (i of [1,2,3,4,5,6,7,8]; track i) {
+            <tr class="skeleton-row">
+              <td><ion-skeleton-text [animated]="true" class="skeleton-text"></ion-skeleton-text></td>
+              <td><ion-skeleton-text [animated]="true" class="skeleton-text"></ion-skeleton-text></td>
+              <td><ion-skeleton-text [animated]="true" class="skeleton-badge"></ion-skeleton-text></td>
+              <td><ion-skeleton-text [animated]="true" class="skeleton-badge"></ion-skeleton-text></td>
+              <td><ion-skeleton-text [animated]="true" class="skeleton-text-sm"></ion-skeleton-text></td>
+              <td><ion-skeleton-text [animated]="true" class="skeleton-text-lg"></ion-skeleton-text></td>
+            </tr>
+          }
+        } @else {
+          @for (log of pagedLogs(); track log.id) {
+            <tr>
+              <td class="td-muted">{{ fechaHora(log.created_at) }}</td>
+              <td>{{ log.user_nombre ?? '—' }}</td>
+              <td><span class="badge badge-{{ log.action.toLowerCase() }}">{{ log.action }}</span></td>
+              <td class="td-muted">{{ log.entity }}</td>
+              <td class="td-muted">{{ log.entity_id ?? '—' }}</td>
+              <td class="td-desc">{{ log.descripcion }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="td-empty">
+                <p>No se encontraron registros</p>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-footer">
+    <span class="total-count">{{ allLogs().length }} registro(s)</span>
+    <div class="pagination">
+      <ion-button fill="clear" size="small" [disabled]="page() === 1" (click)="goToPage(page() - 1)">
+        <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+      @if (page() > 1) {
+        <ion-button fill="clear" size="small" (click)="goToPage(1)">1</ion-button>
+      }
+      <ion-button fill="solid" size="small">{{ page() }}</ion-button>
+      @if (page() < totalPages()) {
+        <ion-button fill="clear" size="small" (click)="goToPage(totalPages())">{{ totalPages() }}</ion-button>
+      }
+      <ion-button fill="clear" size="small" [disabled]="page() >= totalPages()" (click)="goToPage(page() + 1)">
+        <ion-icon name="chevron-forward-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+</div>
