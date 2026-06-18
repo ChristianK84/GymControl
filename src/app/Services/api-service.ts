@@ -235,6 +235,10 @@ export class ApiService {
     return this.http.delete<void>(`${this.baseUrl}alumnos/${alumnoId}`);
   }
 
+  enviarQrAlumno(alumnoId: number): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}alumnos/${alumnoId}/enviar-qr`, {});
+  }
+
   // ── Asistencias ──
 
   getAsistencias(filters?: {

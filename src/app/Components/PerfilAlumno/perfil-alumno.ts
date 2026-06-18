@@ -157,6 +157,15 @@ export class PerfilAlumno implements OnInit {
     }
   }
 
+  enviarQr(): void {
+    const a = this.alumno();
+    if (!a) return;
+    this.api.enviarQrAlumno(a.id).subscribe({
+      next: (res) => this.showToast(res.message, 'success'),
+      error: (err) => this.showToast(err.error?.detail ?? 'Error al enviar QR', 'danger'),
+    });
+  }
+
   edad(fecha: string): number {
     const hoy = new Date();
     const nac = new Date(fecha);
