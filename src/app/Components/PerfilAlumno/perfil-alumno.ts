@@ -23,10 +23,10 @@ import { addIcons } from 'ionicons';
 import {
   checkmarkCircleOutline, personOutline, medicalOutline,
   warningOutline, starOutline, callOutline, mailOutline,
-  createOutline, checkmarkOutline, closeOutline, cameraOutline,
-  cloudUploadOutline, receiptOutline, documentTextOutline,
+  createOutline, checkmarkOutline, closeOutline,
+  cloudUploadOutline, documentTextOutline,
   idCardOutline, peopleOutline, shieldCheckmarkOutline,
-  pencilOutline, trashOutline, calendarOutline, timeOutline,
+  pencilOutline, calendarOutline, timeOutline,
   searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline,
   arrowBackOutline, cardOutline, qrCodeOutline, addOutline,
   schoolOutline, cashOutline, downloadOutline, alertCircleOutline,
@@ -59,6 +59,7 @@ export class PerfilAlumno implements OnInit {
 
   // QR
   qrCanvas = viewChild<ElementRef<HTMLCanvasElement>>('qrCanvas');
+  sendingQr = signal(false);
 
   // Membresias
   membresias = signal<Membresia[]>([]);
@@ -94,10 +95,10 @@ export class PerfilAlumno implements OnInit {
     addIcons({
       checkmarkCircleOutline, personOutline, medicalOutline,
       warningOutline, starOutline, callOutline, mailOutline,
-      createOutline, checkmarkOutline, closeOutline, cameraOutline,
-      cloudUploadOutline, receiptOutline, documentTextOutline,
+      createOutline, checkmarkOutline, closeOutline,
+      cloudUploadOutline, documentTextOutline,
       idCardOutline, peopleOutline, shieldCheckmarkOutline,
-      pencilOutline, trashOutline, calendarOutline, timeOutline,
+      pencilOutline, calendarOutline, timeOutline,
       searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline,
       arrowBackOutline, cardOutline, qrCodeOutline, addOutline,
       schoolOutline, cashOutline, downloadOutline, alertCircleOutline,
@@ -160,9 +161,10 @@ export class PerfilAlumno implements OnInit {
   enviarQr(): void {
     const a = this.alumno();
     if (!a) return;
+    this.sendingQr.set(true);
     this.api.enviarQrAlumno(a.id).subscribe({
-      next: (res) => this.showToast(res.message, 'success'),
-      error: (err) => this.showToast(err.error?.detail ?? 'Error al enviar QR', 'danger'),
+      next: (res) => { this.sendingQr.set(false); this.showToast(res.message, 'success'); },
+      error: (err) => { this.sendingQr.set(false); this.showToast(err.error?.detail ?? 'Error al enviar QR', 'danger'); },
     });
   }
 

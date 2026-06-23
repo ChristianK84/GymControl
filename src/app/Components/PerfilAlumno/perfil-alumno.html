@@ -183,8 +183,12 @@
               <ion-icon name="download-outline" slot="start"></ion-icon>
               Descargar QR
             </ion-button>
-            <ion-button class="btn-download-qr" fill="outline" (click)="enviarQr()">
-              <ion-icon name="mail-outline" slot="start"></ion-icon>
+            <ion-button class="btn-download-qr" fill="outline" [disabled]="sendingQr()" (click)="enviarQr()">
+              @if (sendingQr()) {
+                <ion-spinner name="lines-small" slot="start"></ion-spinner>
+              } @else {
+                <ion-icon name="mail-outline" slot="start"></ion-icon>
+              }
               Enviar QR
             </ion-button>
           </div>

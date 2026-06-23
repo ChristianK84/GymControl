@@ -146,7 +146,7 @@ export class Dashboard implements OnInit, OnDestroy {
     this.api.logout().subscribe({
       next: () => this.session.clearSession(),
       error: () => this.session.clearSession(),
+      complete: () => this.router.navigate(['/login'], { replaceUrl: true }),
     });
-    this.router.navigate(['/login'], { replaceUrl: true });
   }
 }

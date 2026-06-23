@@ -10,17 +10,7 @@ import {
   checkmarkCircleOutline, alertCircleOutline,
 } from 'ionicons/icons';
 import { ApiService } from '../../Services/api-service';
-
-interface AuditLog {
-  id: number;
-  user_id: number;
-  action: string;
-  entity: string;
-  entity_id: number | null;
-  descripcion: string;
-  created_at: string;
-  user_nombre: string | null;
-}
+import { AuditLogEntry } from '../../Models/audit-logs';
 
 @Component({
   selector: 'app-audit-logs',
@@ -35,7 +25,7 @@ export class AuditLogs implements OnInit {
   private api = inject(ApiService);
   private toastCtrl = inject(ToastController);
 
-  allLogs = signal<AuditLog[]>([]);
+  allLogs = signal<AuditLogEntry[]>([]);
   loading = signal(true);
   page = signal(1);
   readonly pageSize = 50;
@@ -65,7 +55,7 @@ export class AuditLogs implements OnInit {
         this.allLogs.set(data);
         this.loading.set(false);
       },
-      error: () => this.loading.set(false),
+      error: () => { this.loading.set(false); this.showToast('Error al cargar la bitácora', 'danger'); },
     });
   }
 

@@ -1,9 +1,8 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import {
   IonButton, IonIcon, IonSkeletonText, IonSelect, IonSelectOption,
-  IonInput,
+  IonInput, IonSpinner,
   ModalController, ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -24,19 +23,19 @@ const ESTADO_LABELS: Record<number, { label: string; css: string }> = {
   imports: [
     FormsModule,
     IonButton, IonIcon, IonSkeletonText, IonSelect, IonSelectOption,
-    IonInput,
+    IonInput, IonSpinner,
   ],
   templateUrl: './membresias.html',
   styleUrl: './membresias.css',
 })
 export class Membresias implements OnInit {
   private api = inject(ApiService);
-  private router = inject(Router);
   private modalCtrl = inject(ModalController);
   private toastCtrl = inject(ToastController);
 
   allMembresias = signal<Membresia[]>([]);
   loading = signal(true);
+  sendingReciboId = signal<number | null>(null);
   page = signal(1);
   readonly pageSize = 8;
 
@@ -167,9 +166,10 @@ export class Membresias implements OnInit {
 
   reenviarRecibo(membresia: Membresia, event: Event): void {
     event.stopPropagation();
+    this.sendingReciboId.set(membresia.id);
     this.api.reenviarReciboMembresia(membresia.id).subscribe({
-      next: (res) => this.showToast(res.message),
-      error: (err) => this.showToast(err.error?.detail ?? 'Error al enviar recibo', 'danger'),
+      next: (res) => { this.sendingReciboId.set(null); this.showToast(res.message); },
+      error: (err) => { this.sendingReciboId.set(null); this.showToast(err.error?.detail ?? 'Error al enviar recibo', 'danger'); },
     });
   }
 
