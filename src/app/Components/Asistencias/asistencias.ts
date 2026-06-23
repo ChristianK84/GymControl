@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { timeout, throwError } from 'rxjs';
 import {
@@ -27,7 +27,7 @@ import { AsistenciaRegisterModal } from './asistencia-register-modal';
   templateUrl: './asistencias.html',
   styleUrl: './asistencias.css',
 })
-export class Asistencias implements OnInit {
+export class Asistencias implements OnInit, OnDestroy {
   private api = inject(ApiService);
   private session = inject(SessionService);
   private toastCtrl = inject(ToastController);
@@ -182,6 +182,10 @@ export class Asistencias implements OnInit {
     }
   }
 
+  ngOnDestroy(): void {
+    BarcodeScanner.removeAllListeners();
+  }
+
   private async handleScan(decodedText: string, maestroId: number): Promise<void> {
     const alumnoId = parseInt(decodedText, 10);
     if (isNaN(alumnoId)) {
@@ -269,7 +273,7 @@ export class Asistencias implements OnInit {
     });
     modal.onDidDismiss().then(async ({ data, role }) => {
       if (role === 'selected' && data) {
-        const maestroId = this.maestroVinculado ?? this.maestros().find(m => m.user_id === this.session.getUser()?.user_id)?.id;
+        const maestroId = (data as import('../../Models/alumnos').Alumno).maestro_id;
 
         const editModal = await this.modalCtrl.create({
           component: AsistenciaEditModal,

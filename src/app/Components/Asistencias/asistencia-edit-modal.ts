@@ -123,7 +123,7 @@ export class AsistenciaEditModal implements OnInit {
     } else {
       this.api.createAsistencia({
         alumno_id: this.selectedAlumno!.id,
-        maestro_id: this.editMaestroId ?? 0,
+        maestro_id: this.editMaestroId ?? undefined,
         fecha: new Date().toISOString(),
         asistio: this.editAsistio,
         notas: this.editNotas || null,

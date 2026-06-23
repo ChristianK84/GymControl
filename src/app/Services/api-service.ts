@@ -7,8 +7,9 @@ import { TokenResponse } from '../Models/token-response';
 import { Rol } from '../Models/catalogs';
 import { User } from '../Models/users';
 import { Alumno } from '../Models/alumnos';
-import { Maestro } from '../Models/maestros';
 import { Asistencia, ScanResult } from '../Models/asistencias';
+import { DashboardData } from '../Models/dashboard';
+import { Maestro } from '../Models/maestros';
 import { Membresia, TipoMembresia } from '../Models/membresias';
 import { Transaccion, ProfitMensual } from '../Models/transacciones';
 import { EstadoMembresia } from '../Models/catalogs';
@@ -265,7 +266,7 @@ export class ApiService {
 
   createAsistencia(body: {
     alumno_id: number;
-    maestro_id: number;
+    maestro_id?: number | null;
     fecha: string;
     asistio: boolean;
     notas?: string | null;
@@ -510,5 +511,9 @@ export class ApiService {
       `${this.baseUrl}transacciones/reportes/profit`,
       { params: { anio } },
     );
+  }
+
+  getDashboardData(): Observable<DashboardData> {
+    return this.http.get<DashboardData>(`${this.baseUrl}reportes/dashboard`);
   }
 }

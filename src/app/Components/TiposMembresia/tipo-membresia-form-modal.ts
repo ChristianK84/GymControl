@@ -1,4 +1,4 @@
-import { Component, inject, Input, signal, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, Input, signal, ChangeDetectorRef, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import {
@@ -32,7 +32,7 @@ const DIAS_OPTIONS = [
   templateUrl: './tipo-membresia-form-modal.html',
   styleUrl: './tipo-membresia-form-modal.css',
 })
-export class TipoMembresiaFormModal {
+export class TipoMembresiaFormModal implements OnInit {
   @Input() tipo?: TipoMembresia;
 
   private api = inject(ApiService);
@@ -67,7 +67,7 @@ export class TipoMembresiaFormModal {
     return !!this.tipo;
   }
 
-  ionViewWillEnter(): void {
+  ngOnInit(): void {
     if (this.tipo) {
       this.nombre = this.tipo.nombre;
       this.descripcion = this.tipo.descripcion ?? '';

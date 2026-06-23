@@ -38,7 +38,7 @@
         <div class="metric-card-bottom">
           <p class="metric-label">{{ card.label }}</p>
           <h3 class="metric-value">
-            {{ card.value }}
+            {{ card.value() }}
             @if (card.suffix) {
               <span class="metric-suffix">{{ card.suffix }}</span>
             }
@@ -72,7 +72,7 @@
         <span>0%</span>
       </div>
       <div class="chart-bars">
-        @for (bar of barData; track bar.week; let last = $last) {
+        @for (bar of barData(); track bar.week; let last = $last) {
           <div class="bar-wrapper">
             <div class="bar" [class.bar-highlight]="last" [style.height.%]="bar.value">
               <span class="bar-tooltip">{{ bar.value }}%</span>

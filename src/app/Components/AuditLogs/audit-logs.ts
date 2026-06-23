@@ -1,7 +1,7 @@
 import { Component, inject, signal, OnInit, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  IonButton, IonIcon, IonSelect, IonSelectOption, IonSkeletonText,
+  IonButton, IonIcon, IonSelect, IonSelectOption, IonSkeletonText, IonBadge, IonInput,
   ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -16,7 +16,7 @@ import { AuditLogEntry } from '../../Models/audit-logs';
   selector: 'app-audit-logs',
   imports: [
     FormsModule,
-    IonButton, IonIcon, IonSelect, IonSelectOption, IonSkeletonText,
+    IonButton, IonIcon, IonSelect, IonSelectOption, IonSkeletonText, IonBadge, IonInput,
   ],
   templateUrl: './audit-logs.html',
   styleUrl: './audit-logs.css',
@@ -28,8 +28,9 @@ export class AuditLogs implements OnInit {
   allLogs = signal<AuditLogEntry[]>([]);
   loading = signal(true);
   page = signal(1);
-  readonly pageSize = 50;
+  readonly pageSize = 7;
 
+  searchTerm = signal('');
   filterAction = signal<string | null>(null);
   filterEntity = signal<string | null>(null);
 
@@ -64,28 +65,43 @@ export class AuditLogs implements OnInit {
   }
 
   clearFilters(): void {
+    this.searchTerm.set('');
     this.filterAction.set(null);
     this.filterEntity.set(null);
     this.loadLogs();
   }
 
-  totalPages = computed(() => Math.max(1, Math.ceil(this.allLogs().length / this.pageSize)));
+  filtered = computed(() => {
+    const term = this.searchTerm().toLowerCase().trim();
+    if (!term) return this.allLogs();
+    return this.allLogs().filter(
+      (l) =>
+        (l.user_nombre?.toLowerCase() ?? '').includes(term) ||
+        l.descripcion.toLowerCase().includes(term) ||
+        l.action.toLowerCase().includes(term) ||
+        l.entity.toLowerCase().includes(term),
+    );
+  });
+
+  totalPages = computed(() => Math.max(1, Math.ceil(this.filtered().length / this.pageSize)));
 
   pagedLogs = computed(() => {
     const start = (this.page() - 1) * this.pageSize;
-    return this.allLogs().slice(start, start + this.pageSize);
+    return this.filtered().slice(start, start + this.pageSize);
   });
 
   goToPage(p: number): void {
     if (p >= 1 && p <= this.totalPages()) this.page.set(p);
   }
 
-  fechaHora(fecha: string): string {
+  fechaCorta(fecha: string): string {
     const d = new Date(fecha);
-    return d.toLocaleDateString('es-MX', {
-      day: '2-digit', month: '2-digit', year: 'numeric',
-      hour: '2-digit', minute: '2-digit',
-    });
+    return d.toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+
+  horaCorta(fecha: string): string {
+    const d = new Date(fecha);
+    return d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
   }
 
   private async showToast(message: string, color: 'success' | 'danger' = 'success'): Promise<void> {
