@@ -78,6 +78,14 @@ export const routes: Routes = [
           import('./Components/AuditLogs/audit-logs').then((m) => m.AuditLogs),
         data: { roles: [1] },
       },
+      {
+        path: 'publicar-version',
+        loadComponent: () =>
+          import('./Components/PublishVersion/publish-version').then(
+            (m) => m.PublishVersion,
+          ),
+        data: { roles: [1] },
+      },
     ],
   },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },

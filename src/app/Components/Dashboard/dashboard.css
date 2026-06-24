@@ -137,6 +137,14 @@
   border-top: 1px solid #e5e2e1;
 }
 
+.sidebar-version {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.65rem;
+  color: #936e69;
+  text-align: center;
+  margin: 0.35rem 0 0;
+}
+
 .nav-item {
   display: flex;
   align-items: center;

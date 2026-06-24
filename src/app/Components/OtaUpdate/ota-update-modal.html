@@ -1,0 +1,88 @@
+<div class="ota-overlay">
+  <div class="ota-card">
+
+    @if (state() === 'idle') {
+      <div class="ota-status">
+        <h2 class="ota-title">Actualización disponible</h2>
+
+        <div class="ota-versions">
+          <div class="ota-version-block">
+            <span class="ota-version-label">Versión local</span>
+            <span class="ota-version-value">{{ currentVersion }}</span>
+            <span class="ota-version-source">({{ currentVersion === 'builtin' ? 'APK' : 'OTA' }})</span>
+          </div>
+          <div class="ota-vs">vs</div>
+          <div class="ota-version-block">
+            <span class="ota-version-label">Última versión</span>
+            <span class="ota-version-value ota-latest">{{ latestVersion.version }}</span>
+            <span class="ota-version-source">(servidor)</span>
+          </div>
+        </div>
+
+        <p class="ota-subtitle" [class.ota-needed]="updateNeeded()" [class.ota-uptodate]="!updateNeeded()">
+          @if (updateNeeded()) {
+            ⚠ Se recomienda instalar la actualización
+          } @else {
+            ✅ La app ya está en la versión más reciente
+          }
+        </p>
+
+        <div class="ota-buttons">
+          @if (updateNeeded()) {
+            <ion-button class="ota-btn-download" (click)="doUpdate()" fill="solid">
+              <ion-icon name="cloud-download-outline" slot="start"></ion-icon>
+              Descargar e Instalar
+            </ion-button>
+          }
+          <ion-button class="ota-btn-close" (click)="dismiss()" fill="outline">
+            Cerrar
+          </ion-button>
+        </div>
+      </div>
+    }
+
+    @if (state() === 'downloading') {
+      <div class="ota-status">
+        <div class="ota-spinner-wrapper">
+          <ion-spinner name="lines" class="ota-spinner"></ion-spinner>
+        </div>
+        <h2 class="ota-title">Descargando v{{ version() }}...</h2>
+        <p class="ota-subtitle">No cierres la aplicación durante la descarga</p>
+      </div>
+    }
+
+    @if (state() === 'installing') {
+      <div class="ota-status">
+        <div class="ota-spinner-wrapper">
+          <ion-spinner name="lines" class="ota-spinner"></ion-spinner>
+        </div>
+        <h2 class="ota-title">Instalando...</h2>
+        <p class="ota-subtitle">Aplicando los cambios, la app se reiniciará automáticamente</p>
+      </div>
+    }
+
+    @if (state() === 'done') {
+      <div class="ota-status">
+        <div class="ota-icon-success">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+        </div>
+        <h2 class="ota-title">¡Actualización completada!</h2>
+        <p class="ota-subtitle">Reiniciando aplicación...</p>
+      </div>
+    }
+
+    @if (state() === 'error') {
+      <div class="ota-status">
+        <div class="ota-icon-error">
+          <ion-icon name="close-circle-outline"></ion-icon>
+        </div>
+        <h2 class="ota-title">Error de actualización</h2>
+        <p class="ota-subtitle">{{ errorMsg() }}</p>
+        <ion-button class="ota-btn-close" (click)="dismiss()" fill="outline">
+          Cerrar
+        </ion-button>
+      </div>
+    }
+
+  </div>
+</div>

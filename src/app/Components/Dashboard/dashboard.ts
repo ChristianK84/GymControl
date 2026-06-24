@@ -10,6 +10,7 @@ import {
 } from '@ionic/angular/standalone';
 import { ApiService } from '../../Services/api-service';
 import { SessionService } from '../../Services/session.service';
+import { APP_VERSION } from '../../version';
 import { addIcons } from 'ionicons';
 import {
   gridOutline,
@@ -24,6 +25,7 @@ import {
   documentTextOutline,
   pricetagOutline,
   cardOutline,
+  cloudUploadOutline,
 } from 'ionicons/icons';
 
 const ROLE_MAP: Record<number, string> = {
@@ -48,6 +50,7 @@ const ROLE_MAP: Record<number, string> = {
   styleUrl: './dashboard.css',
 })
 export class Dashboard implements OnInit, OnDestroy {
+  readonly appVersion = APP_VERSION;
   private session = inject(SessionService);
   private router = inject(Router);
   private api = inject(ApiService);
@@ -70,11 +73,16 @@ export class Dashboard implements OnInit, OnDestroy {
     { icon: 'pricetag-outline', label: 'Tipos Membresía', route: '/dashboard/tipos-membresia' as string | null, roles: [1] },
     { icon: 'person-outline', label: 'Usuarios', route: '/dashboard/usuarios' as string | null, roles: [1] },
     { icon: 'document-text-outline', label: 'Auditoría', route: '/dashboard/auditoria' as string | null, roles: [1] },
+    { icon: 'cloud-upload-outline', label: 'Publicar Versión', route: '/dashboard/publicar-version' as string | null, roles: [1] },
   ];
 
   get navItems() {
     const role = this.user?.role_id ?? 0;
-    return this.fullNavItems.filter(item => item.roles.includes(role));
+    const username = this.user?.username ?? '';
+    return this.fullNavItems.filter(item => {
+      if (item.route === '/dashboard/publicar-version' && username !== 'Admin') return false;
+      return item.roles.includes(role) && item.route;
+    });
   }
 
   constructor() {
@@ -84,6 +92,7 @@ export class Dashboard implements OnInit, OnDestroy {
       chevronBackOutline, chevronForwardOutline,
       documentTextOutline,
       pricetagOutline, cardOutline,
+      cloudUploadOutline,
     });
   }
 

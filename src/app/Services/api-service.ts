@@ -516,4 +516,19 @@ export class ApiService {
   getDashboardData(): Observable<DashboardData> {
     return this.http.get<DashboardData>(`${this.baseUrl}reportes/dashboard`);
   }
+
+  publishAppVersion(
+    platform: string,
+    body: {
+      version: string;
+      version_code: number;
+      bundle_url: string;
+      release_notes?: string | null;
+    },
+  ): Observable<{ version: string; version_code: number; bundle_url: string; release_notes: string | null }> {
+    return this.http.put<{ version: string; version_code: number; bundle_url: string; release_notes: string | null }>(
+      `${this.baseUrl}app/version/${platform}`,
+      body,
+    );
+  }
 }

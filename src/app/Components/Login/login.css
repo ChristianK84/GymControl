@@ -262,6 +262,13 @@ input[type="text"].form-input:focus {
   margin: 0;
 }
 
+.footer-version {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(0.6rem, 1.5vw, 0.7rem);
+  color: #936e69;
+  margin: 0.25rem 0 0;
+}
+
 /* ================================================================= */
 /*  RESPONSIVE BREAKPOINTS                                           */
 /* ================================================================= */

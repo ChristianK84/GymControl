@@ -5,6 +5,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { IonContent, IonIcon, IonSpinner, ToastController } from '@ionic/angular/standalone';
 import { ApiService } from '../../Services/api-service';
 import { SessionService } from '../../Services/session.service';
+import { APP_VERSION } from '../../version';
 import { addIcons } from 'ionicons';
 import { personOutline, lockClosedOutline, eyeOutline, eyeOffOutline, logInOutline } from 'ionicons/icons';
 
@@ -15,6 +16,7 @@ import { personOutline, lockClosedOutline, eyeOutline, eyeOffOutline, logInOutli
   styleUrl: './login.css',
 })
 export class Login implements OnInit {
+  readonly appVersion = APP_VERSION;
   loginForm: FormGroup;
   hidePassword = signal(true);
   loggingIn = signal(false);

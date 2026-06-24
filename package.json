@@ -14,7 +14,7 @@
     "electron:dist": "electron-builder",
     "capacitor:build": "ng build --configuration capacitor && npx cap sync",
     "capacitor:open": "npx cap open android",
-    "ota:bundle": "ng build --configuration capacitor && powershell Compress-Archive -Path \"dist/GymControl/browser/*\" -DestinationPath \"bundle.zip\" -Force"
+    "ota:bundle": "ng build --configuration capacitor && node scripts/build-ota-bundle.js"
   },
   "prettier": {
     "printWidth": 100,
@@ -89,6 +89,7 @@
     "@types/jasmine": "~5.1.0",
     "@types/node": "^20.17.19",
     "@types/qrcode": "^1.5.6",
+    "archiver": "^8.0.0",
     "concurrently": "^10.0.3",
     "cross-env": "^10.1.0",
     "electron": "^42.0.1",
