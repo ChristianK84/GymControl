@@ -6,6 +6,14 @@ const config: CapacitorConfig = {
   webDir: 'dist/GymControl/browser',
   server: {
     androidScheme: 'https'
+  },
+  plugins: {
+    CapacitorUpdater: {
+      autoUpdate: false,
+      autoDeletePrevious: true,
+      autoDeleteFailed: true,
+      appReadyTimeout: 10000,
+    }
   }
 };
 
