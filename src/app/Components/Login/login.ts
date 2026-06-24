@@ -5,6 +5,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { IonContent, IonIcon, IonSpinner, ToastController } from '@ionic/angular/standalone';
 import { ApiService } from '../../Services/api-service';
 import { SessionService } from '../../Services/session.service';
+import { UpdateService } from '../../Services/update.service';
 import { APP_VERSION } from '../../version';
 import { addIcons } from 'ionicons';
 import { personOutline, lockClosedOutline, eyeOutline, eyeOffOutline, logInOutline } from 'ionicons/icons';
@@ -25,6 +26,7 @@ export class Login implements OnInit {
   private apiService = inject(ApiService);
   private session = inject(SessionService);
   private toastController = inject(ToastController);
+  private updateService = inject(UpdateService);
   private router = inject(Router);
   private platformId = inject(PLATFORM_ID);
 
@@ -43,6 +45,13 @@ export class Login implements OnInit {
     if (isPlatformBrowser(this.platformId) && sessionStorage.getItem('session_expired')) {
       sessionStorage.removeItem('session_expired');
       setTimeout(() => this.showToast('Su sesión ha expirado', 'warning'), 300);
+    }
+      }
+
+  async ionViewDidEnter(): Promise<void> {
+    const result = await this.updateService.checkForUpdate();
+    if (result?.needsUpdate) {
+      await this.updateService.presentUpdateModal(result.currentVersion, result.latestVersion);
     }
   }
 

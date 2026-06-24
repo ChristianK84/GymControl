@@ -11,7 +11,7 @@ export class UpdateService {
   private http = inject(HttpClient);
   private modalCtrl = inject(ModalController);
 
-  async checkForUpdate(): Promise<void> {
+  async checkForUpdate(): Promise<{ needsUpdate: boolean; currentVersion: string; latestVersion: { version: string; version_code: number; bundle_url: string } } | null> {
     try {
       const { CapacitorUpdater } = await import('@capgo/capacitor-updater');
       await CapacitorUpdater.notifyAppReady();
@@ -19,7 +19,7 @@ export class UpdateService {
     }
 
     if (!Capacitor.isNativePlatform()) {
-      return;
+      return null;
     }
 
     try {
@@ -34,12 +34,21 @@ export class UpdateService {
       const current = await CapacitorUpdater.current();
       const currentVersion = current.bundle?.version?.trim() || 'builtin';
 
-      const modal = await this.modalCtrl.create({
-        component: OtaUpdateModal,
-        componentProps: { currentVersion, latestVersion: latest },
-      });
-      await modal.present();
+      const installed = typeof localStorage !== 'undefined' ? localStorage.getItem('ota_installed') : null;
+      const isSame = currentVersion === latest.version ||
+        (currentVersion === 'builtin' && installed === latest.version);
+
+      return { needsUpdate: !isSame, currentVersion, latestVersion: latest };
     } catch {
+      return null;
     }
+  }
+
+  async presentUpdateModal(currentVersion: string, latestVersion: { version: string; version_code: number; bundle_url: string }): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: OtaUpdateModal,
+      componentProps: { currentVersion, latestVersion },
+    });
+    await modal.present();
   }
 }
