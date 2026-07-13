@@ -111,3 +111,115 @@ La app sube directamente a Cloudinary vía `fetch` (sin SDK). Busca `cloudinary`
 - **Cambiar la URL base de la API**: edita `environment.ts` (y/o `environment.development.ts`).
 - **Agregar un nuevo target de build**: edita `angular.json` → `projects.GymControl.architect.build.configurations`.
 - **Agregar un nuevo script npm**: edita `package.json`; mantén el patrón `concurrently` + `wait-on` + `cross-env` usado en `electron:dev` si necesitas correr servidor y shell simultáneamente.
+
+---
+
+## Módulo: Firma Digital de Reglamentos (última sesión — pendiente implementar)
+
+### Visión general — solo admin app
+
+El tutor NO usa esta app. Todo el flujo del tutor es vía página web estática servida por el backend. Esta app solo tiene:
+
+1. **Admin sube reglamento PDF** → subido a Cloudinary (nuevo bucket)
+2. **Admin selecciona alumnos** → genera links JWT por alumno → envía emails a los tutores
+3. **Admin ve estado de firmas** (quién firmó, quién no, fecha, PDF firmado)
+
+### Archivos a crear
+
+| Archivo | Propósito |
+|---------|-----------|
+| `src/app/Components/Reglamentos/reglamentos.ts` | Página admin: listar reglamentos subidos |
+| `src/app/Components/Reglamentos/reglamentos.html` | Template |
+| `src/app/Components/Reglamentos/reglamentos.css` | Estilos |
+| `src/app/Components/Reglamentos/upload-reglamento-modal.ts` | Modal para subir nuevo reglamento PDF |
+| `src/app/Components/Reglamentos/upload-reglamento-modal.html` | Template |
+| `src/app/Components/Reglamentos/upload-reglamento-modal.css` | Estilos |
+| `src/app/Components/Reglamentos/reglamento-firmas.ts` | Página admin: estado de firmas por alumno |
+| `src/app/Components/Reglamentos/reglamento-firmas.html` | Template |
+| `src/app/Components/Reglamentos/reglamento-firmas.css` | Estilos |
+| `src/app/Models/reglamentos.ts` | Interfaces TypeScript |
+
+### Modelos TypeScript a crear (`src/app/Models/reglamentos.ts`)
+
+```typescript
+export interface Reglamento {
+  id: number;
+  titulo: string;
+  descripcion?: string;
+  version: string;
+  url_pdf_cloudinary: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface FirmaReglamento {
+  id: number;
+  reglamento_id: number;
+  alumno_id: number;
+  tutor_id: number;
+  alumno_nombre: string;
+  tutor_nombre: string;
+  url_pdf_firmado_cloudinary?: string;
+  fecha_firma?: string;
+  expira_en: string;
+  estado: 'pendiente' | 'firmado' | 'expirado';
+}
+
+export interface GenerarLinksPayload {
+  reglamento_id: number;
+  alumno_ids: number[];
+}
+```
+
+### Métodos a agregar en `ApiService`
+
+```typescript
+getReglamentos(): Observable<Reglamento[]>
+uploadReglamento(body: FormData): Observable<Reglamento>
+deleteReglamento(id: number): Observable<void>
+generarLinks(body: GenerarLinksPayload): Observable<{ enviados: number }>
+getFirmasReglamento(reglamentoId?: number, alumnoId?: number, estado?: string): Observable<FirmaReglamento[]>
+getFirmaByAlumno(alumnoId: number): Observable<FirmaReglamento | null>
+```
+
+### Rutas a agregar en `app.routes.ts`
+
+```typescript
+{
+  path: 'reglamentos',
+  loadComponent: () => import('./Components/Reglamentos/reglamentos').then(m => m.Reglamentos),
+  data: { roles: [1] },
+},
+{
+  path: 'reglamentos/firmas',
+  loadComponent: () => import('./Components/Reglamentos/reglamento-firmas').then(m => m.ReglamentoFirmas),
+  data: { roles: [1] },
+},
+```
+
+### Navegación (sidebar del Dashboard)
+
+Agregar al arreglo `fullNavItems` (o `maestroNavItems` según el caso) en `dashboard-home.ts`:
+
+```typescript
+{ icon: 'document-text', label: 'Reglamentos', route: '/dashboard/reglamentos', roles: [1] },
+{ icon: 'checkmark-done', label: 'Firmas', route: '/dashboard/reglamentos/firmas', roles: [1] },
+```
+
+Registrar iconos: `import { documentText, checkmarkDone } from 'ionicons/icons';`
+
+### Cloudinary upload pattern (ya existente en formularios de alumno/maestro)
+
+Replicar el patrón usado en `alumno-form-modal.ts`:
+- Subir vía POST a `https://api.cloudinary.com/v1_1/dyvqspnz7/auto/upload` con upload preset
+- El nuevo bucket/preset para PDFs de reglamentos se definirá durante implementación
+- Respuesta incluye `secure_url` y `public_id`
+
+### Flujo de implementación sugerido
+
+1. Backend: modelos + schemas + ruta upload → probar subida PDF a Cloudinary
+2. Backend: ruta generar-links + JWT + email → probar envío
+3. Backend: página HTML estática + ruta firmar → probar flujo completo
+4. Frontend: páginas admin (reglamentos list + upload modal + firmas status)
+5. Integrar navegación y probar end-to-end
