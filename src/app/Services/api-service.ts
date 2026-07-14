@@ -13,6 +13,7 @@ import { Maestro } from '../Models/maestros';
 import { Membresia, TipoMembresia } from '../Models/membresias';
 import { Transaccion, ProfitMensual } from '../Models/transacciones';
 import { EstadoMembresia } from '../Models/catalogs';
+import { Reglamento, FirmaReglamento, GenerarLinksPayload } from '../Models/reglamentos';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -530,5 +531,61 @@ export class ApiService {
       `${this.baseUrl}app/version/${platform}`,
       body,
     );
+  }
+
+  // ── Reglamentos ──
+
+  getReglamentos(includeDeleted = false): Observable<Reglamento[]> {
+    return this.http.get<Reglamento[]>(`${this.baseUrl}reglamentos/`, {
+      params: { include_deleted: includeDeleted },
+    });
+  }
+
+  createReglamento(body: {
+    titulo: string;
+    descripcion?: string;
+    version: string;
+    url_pdf_cloudinary: string;
+    cloudinary_public_id: string;
+  }): Observable<Reglamento> {
+    return this.http.post<Reglamento>(`${this.baseUrl}reglamentos/`, body);
+  }
+
+  deleteReglamento(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}reglamentos/${id}`);
+  }
+
+  updateReglamento(id: number, body: {
+    titulo?: string;
+    descripcion?: string;
+    version?: string;
+    is_active?: boolean;
+    url_pdf_cloudinary?: string;
+    cloudinary_public_id?: string;
+  }): Observable<Reglamento> {
+    return this.http.put<Reglamento>(`${this.baseUrl}reglamentos/${id}`, body);
+  }
+
+  generarLinks(body: GenerarLinksPayload): Observable<{ enviados: number; total: number }> {
+    return this.http.post<{ enviados: number; total: number }>(
+      `${this.baseUrl}reglamentos/generar-links`,
+      body,
+    );
+  }
+
+  getFirmas(
+    reglamentoId?: number,
+    alumnoId?: number,
+    estado?: string,
+  ): Observable<FirmaReglamento[]> {
+    const params: Record<string, string | number | boolean> = {};
+    if (reglamentoId != null) params['reglamento_id'] = reglamentoId;
+    if (alumnoId != null) params['alumno_id'] = alumnoId;
+    if (estado) params['estado'] = estado;
+    return this.http.get<FirmaReglamento[]>(`${this.baseUrl}reglamentos/firmas`, { params });
+  }
+
+  getFirmasByAlumno(alumnoId: number): Observable<FirmaReglamento[]> {
+    return this.http.get<FirmaReglamento[]>(`${this.baseUrl}reglamentos/firmas/${alumnoId}`);
   }
 }

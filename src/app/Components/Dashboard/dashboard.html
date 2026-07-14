@@ -30,7 +30,7 @@
       }
       @for (item of navItems; track item.label) {
         @if (item.route) {
-          <a class="nav-item" [routerLink]="item.route" routerLinkActive="active" (click)="mobileOpen.set(false)">
+          <a class="nav-item" [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: !!item.exact }" (click)="mobileOpen.set(false)">
             <ion-icon [name]="item.icon"></ion-icon>
             <span>{{ item.label }}</span>
           </a>

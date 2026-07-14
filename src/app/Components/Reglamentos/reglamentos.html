@@ -1,0 +1,123 @@
+<div class="reglamentos-container">
+  <div class="reglamentos-header">
+    <div>
+      <h1 class="reglamentos-title">Reglamentos</h1>
+      <p class="reglamentos-subtitle">Gestiona los reglamentos y documentos firmables de la academia.</p>
+    </div>
+    <div class="header-actions">
+      <ion-button class="btn-add" (click)="openUploadModal()" fill="solid">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Nuevo Reglamento
+      </ion-button>
+    </div>
+  </div>
+
+  <div class="filter-card">
+    <h3 class="filter-title">Filtros de búsqueda</h3>
+    <div class="filter-grid">
+      <label class="filter-label">
+        Buscar reglamento
+        <div class="search-box">
+          <ion-icon name="search-outline" class="search-icon"></ion-icon>
+          <ion-input
+            class="search-input"
+            placeholder="Buscar por título o versión..."
+            fill="outline"
+            [ngModel]="searchTerm()"
+            (ngModelChange)="onSearchChange($event)"
+          ></ion-input>
+          @if (searchTerm()) {
+            <ion-icon name="close-circle-outline" class="clear-icon" (click)="searchTerm.set(''); page.set(1)"></ion-icon>
+          }
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <table class="reglamentos-table">
+      <thead>
+        <tr>
+          <th>Documento</th>
+          <th>Versión</th>
+          <th>Estado</th>
+          <th>Subido</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading()) {
+          @for (row of [1,2,3,4,5,6,7,8]; track row) {
+            <tr class="skeleton-row">
+              <td><div class="skeleton-cell"><ion-skeleton-text class="skeleton-text-lg" [animated]="true"></ion-skeleton-text></div></td>
+              <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="skeleton-badge" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
+            </tr>
+          }
+        } @else {
+          @for (reg of pagedReglamentos(); track reg.id) {
+            <tr>
+              <td class="td-clickable" (click)="editarReglamento(reg)">
+                <div class="doc-info">
+                  <span class="doc-name">{{ reg.titulo }}</span>
+                  <span class="doc-version">{{ reg.version }}</span>
+                </div>
+              </td>
+              <td>{{ reg.version }}</td>
+              <td>
+                <ion-badge class="status-badge" [class.status-inactive]="!reg.is_active">
+                  {{ reg.is_active ? 'Activo' : 'Inactivo' }}
+                </ion-badge>
+              </td>
+              <td class="td-muted">{{ reg.created_at | date:'dd/MM/yyyy' }}</td>
+              <td class="cell-actions">
+                <ion-button fill="clear" size="small" (click)="generarLinks(reg)">
+                  <ion-icon slot="icon-only" name="link-outline"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" size="small" (click)="verPdf(reg)">
+                  <ion-icon slot="icon-only" name="eye-outline"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" size="small" color="danger" (click)="deleteReglamento(reg)">
+                  <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                </ion-button>
+              </td>
+            </tr>
+          }
+          @empty {
+            <tr>
+              <td colspan="5" class="td-empty">
+                <div class="empty-state">
+                  <ion-icon name="file-tray-outline"></ion-icon>
+                  <p>No se encontraron reglamentos</p>
+                </div>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-footer">
+    <span class="footer-count">
+      {{ filteredReglamentos().length }} reglamento{{ filteredReglamentos().length !== 1 ? 's' : '' }}
+    </span>
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <ion-button class="page-btn" [disabled]="page() === 1" (click)="goToPage(page() - 1)" fill="outline">
+          <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        @for (p of [].constructor(totalPages()); track $index; let i = $index) {
+          <ion-button class="page-btn" [class.page-active]="i + 1 === page()" (click)="goToPage(i + 1)" fill="outline">
+            {{ i + 1 }}
+          </ion-button>
+        }
+        <ion-button class="page-btn" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)" fill="outline">
+          <ion-icon name="chevron-forward-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+    }
+  </div>
+</div>

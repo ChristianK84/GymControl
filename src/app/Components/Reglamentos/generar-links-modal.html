@@ -1,0 +1,61 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Generar Links - Reglamento #{{ reglamentoId }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="modal-content">
+  @if (loading()) {
+    <div class="loading-state">
+      <ion-spinner name="lines"></ion-spinner>
+      <p>Cargando alumnos...</p>
+    </div>
+  } @else {
+    <div class="modal-body">
+      <div class="section">
+        <h3 class="section-title">Seleccionar alumnos</h3>
+        <p class="section-desc">Selecciona los alumnos para generar los links de firma. Solo se muestran alumnos activos con tutor asignado.</p>
+
+        <ion-item class="field-row select-all-row" (click)="toggleAll()">
+          <ion-label>Seleccionar todos ({{ alumnos().length }})</ion-label>
+          <ion-checkbox slot="end" [checked]="allSelected()" (click)="$event.stopPropagation(); toggleAll()"></ion-checkbox>
+        </ion-item>
+
+        <div class="alumnos-list">
+          @for (alumno of alumnos(); track alumno.id) {
+            <div class="alumno-row" (click)="toggleAlumno(alumno.id)">
+              <div class="alumno-info">
+                <span class="alumno-name">{{ alumno.nombrecompleto }}</span>
+                @if (alumno.tutor) {
+                  <span class="tutor-name">Tutor: {{ alumno.tutor.nombre }} {{ alumno.tutor.apellido_paterno }}</span>
+                }
+              </div>
+              <ion-checkbox [checked]="selectedIds().has(alumno.id)" (click)="$event.stopPropagation(); toggleAlumno(alumno.id)"></ion-checkbox>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button class="btn-cancel" (click)="dismiss()">Cancelar</ion-button>
+      <ion-button class="btn-save" (click)="generar()" [disabled]="enviando() || selectedIds().size === 0">
+        @if (enviando()) {
+          <ion-spinner name="lines-small"></ion-spinner>
+        } @else {
+          <ion-icon slot="start" name="link-outline"></ion-icon>
+          Generar Links ({{ selectedIds().size }})
+        }
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

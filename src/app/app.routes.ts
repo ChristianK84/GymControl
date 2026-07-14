@@ -86,6 +86,20 @@ export const routes: Routes = [
           ),
         data: { roles: [1] },
       },
+      {
+        path: 'reglamentos',
+        loadComponent: () =>
+          import('./Components/Reglamentos/reglamentos').then((m) => m.Reglamentos),
+        data: { roles: [1] },
+      },
+      {
+        path: 'reglamentos/firmas',
+        loadComponent: () =>
+          import('./Components/Reglamentos/reglamento-firmas').then(
+            (m) => m.ReglamentoFirmas,
+          ),
+        data: { roles: [1] },
+      },
     ],
   },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },

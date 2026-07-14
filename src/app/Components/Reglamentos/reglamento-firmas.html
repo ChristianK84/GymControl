@@ -1,0 +1,104 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Firmas de Reglamentos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="page-container">
+    <div class="toolbar-row">
+      <div class="filter-group">
+        <ion-item class="filter-item">
+          <ion-label>Reglamento</ion-label>
+          <ion-select
+            placeholder="Todos"
+            (ionChange)="onReglamentoChange($event)"
+          >
+            <ion-select-option [value]="null">Todos</ion-select-option>
+            @for (reg of reglamentos(); track reg.id) {
+              <ion-select-option [value]="reg.id">
+                {{ reg.titulo }} (v{{ reg.version }})
+              </ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+        <ion-item class="filter-item">
+          <ion-label>Estado</ion-label>
+          <ion-select
+            placeholder="Todos"
+            (ionChange)="onEstadoChange($event)"
+          >
+            <ion-select-option value="">Todos</ion-select-option>
+            <ion-select-option value="pendiente">Pendiente</ion-select-option>
+            <ion-select-option value="firmado">Firmado</ion-select-option>
+            <ion-select-option value="expirado">Expirado</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="skeleton-list">
+        @for (item of [1,2,3,4,5]; track item) {
+          <div class="skeleton-row">
+            <ion-skeleton-text animated style="width: 40%"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 30%"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 15%"></ion-skeleton-text>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Alumno</th>
+              <th>Tutor</th>
+              <th>Estado</th>
+              <th>Enviado</th>
+              <th>Firmado</th>
+              <th>PDF</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (f of filteredFirmas(); track f.id) {
+              <tr>
+                <td>{{ f.alumno_nombre || '—' }}</td>
+                <td>{{ f.tutor_nombre || '—' }}</td>
+                <td>
+                  <ion-badge [color]="estadoColor(f.estado)">
+                    <ion-icon slot="start" [name]="estadoIcon(f.estado)"></ion-icon>
+                    {{ f.estado | titlecase }}
+                  </ion-badge>
+                </td>
+                <td>{{ f.created_at | date:'dd/MM/yyyy' }}</td>
+                <td>{{ (f.fecha_firma | date:'dd/MM/yyyy HH:mm') || '—' }}</td>
+                <td>
+                  @if (f.url_pdf_firmado_cloudinary) {
+                    <ion-button
+                      fill="clear"
+                      size="small"
+                      color="primary"
+                      (click)="abrirPdf(f.url_pdf_firmado_cloudinary!)"
+                    >
+                      <ion-icon slot="icon-only" name="document-text-outline"></ion-icon>
+                    </ion-button>
+                  } @else {
+                    <span class="text-muted">—</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (filteredFirmas().length === 0) {
+        <div class="empty-state">
+          <ion-icon name="document-text-outline" class="empty-icon"></ion-icon>
+          <p>No se encontraron firmas</p>
+        </div>
+      }
+    }
+  </div>
+</ion-content>

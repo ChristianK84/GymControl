@@ -26,6 +26,7 @@ import {
   pricetagOutline,
   cardOutline,
   cloudUploadOutline,
+  checkmarkDoneOutline,
 } from 'ionicons/icons';
 
 const ROLE_MAP: Record<number, string> = {
@@ -74,6 +75,8 @@ export class Dashboard implements OnInit, OnDestroy {
     { icon: 'person-outline', label: 'Usuarios', route: '/dashboard/usuarios' as string | null, roles: [1] },
     { icon: 'document-text-outline', label: 'Auditoría', route: '/dashboard/auditoria' as string | null, roles: [1] },
     { icon: 'cloud-upload-outline', label: 'Publicar Versión', route: '/dashboard/publicar-version' as string | null, roles: [1] },
+    { icon: 'document-text-outline', label: 'Reglamentos', route: '/dashboard/reglamentos' as string | null, roles: [1] },
+    { icon: 'checkmark-done-outline', label: 'Firmas', route: '/dashboard/reglamentos/firmas' as string | null, roles: [1], exact: true },
   ];
 
   get navItems() {
@@ -90,7 +93,7 @@ export class Dashboard implements OnInit, OnDestroy {
       gridOutline, peopleOutline, bodyOutline, checkmarkCircleOutline,
       personOutline, logOutOutline, menuOutline,
       chevronBackOutline, chevronForwardOutline,
-      documentTextOutline,
+      documentTextOutline, checkmarkDoneOutline,
       pricetagOutline, cardOutline,
       cloudUploadOutline,
     });

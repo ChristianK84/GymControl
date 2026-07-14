@@ -1,0 +1,92 @@
+@if (reglamento) {
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Editar Reglamento #{{ reglamento.id }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="modal-content">
+  <div class="modal-body">
+    <div class="section">
+      <h3 class="section-title">Información del documento</h3>
+
+      <ion-item class="field-row">
+        <ion-label position="stacked">Título del documento</ion-label>
+        <ion-input
+          class="field-input"
+          type="text"
+          placeholder="Ej: Reglamento Interno 2026"
+          [(ngModel)]="titulo"
+          fill="outline"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item class="field-row">
+        <ion-label position="stacked">Descripción (opcional)</ion-label>
+        <ion-input
+          class="field-input"
+          type="text"
+          placeholder="Breve descripción del documento"
+          [(ngModel)]="descripcion"
+          fill="outline"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item class="field-row">
+        <ion-label position="stacked">Versión</ion-label>
+        <ion-input
+          class="field-input"
+          type="text"
+          placeholder="Ej: 2026-1"
+          [(ngModel)]="version"
+          fill="outline"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item class="field-row">
+        <ion-label position="stacked">Estado</ion-label>
+        <ion-toggle [(ngModel)]="isActive" color="success">
+          {{ isActive ? 'Activo' : 'Inactivo' }}
+        </ion-toggle>
+      </ion-item>
+
+      <ion-item class="field-row">
+        <ion-label position="stacked">Reemplazar PDF (opcional)</ion-label>
+        <div class="file-input-wrapper">
+          <input
+            type="file"
+            accept=".pdf"
+            (change)="onFileSelected($event)"
+            id="pdf-file-input-edit"
+          />
+          <label for="pdf-file-input-edit" class="file-label">
+            <ion-icon name="cloud-upload-outline"></ion-icon>
+            {{ selectedFile ? selectedFile.name : 'Seleccionar PDF' }}
+          </label>
+        </div>
+      </ion-item>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button class="btn-cancel" (click)="dismiss()">Cancelar</ion-button>
+      <ion-button class="btn-save" (click)="save()" [disabled]="uploading()">
+        @if (uploading()) {
+          <ion-spinner name="lines-small"></ion-spinner>
+        } @else {
+          <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
+          Guardar Cambios
+        }
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>
+}
