@@ -1,7 +1,7 @@
 @if (reglamento) {
 <ion-header>
   <ion-toolbar>
-    <ion-title>Editar Reglamento #{{ reglamento.id }}</ion-title>
+    <ion-title>Editar Documento #{{ reglamento.id }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="dismiss()">
         <ion-icon slot="icon-only" name="close-outline"></ion-icon>
@@ -20,7 +20,7 @@
         <ion-input
           class="field-input"
           type="text"
-          placeholder="Ej: Reglamento Interno 2026"
+          placeholder="Ej: Documento Interno 2026"
           [(ngModel)]="titulo"
           fill="outline"
         ></ion-input>

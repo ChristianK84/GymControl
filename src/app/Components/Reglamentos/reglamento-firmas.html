@@ -1,104 +1,128 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Firmas de Reglamentos</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-  <div class="page-container">
-    <div class="toolbar-row">
-      <div class="filter-group">
-        <ion-item class="filter-item">
-          <ion-label>Reglamento</ion-label>
-          <ion-select
-            placeholder="Todos"
-            (ionChange)="onReglamentoChange($event)"
-          >
-            <ion-select-option [value]="null">Todos</ion-select-option>
-            @for (reg of reglamentos(); track reg.id) {
-              <ion-select-option [value]="reg.id">
-                {{ reg.titulo }} (v{{ reg.version }})
-              </ion-select-option>
-            }
-          </ion-select>
-        </ion-item>
-        <ion-item class="filter-item">
-          <ion-label>Estado</ion-label>
-          <ion-select
-            placeholder="Todos"
-            (ionChange)="onEstadoChange($event)"
-          >
-            <ion-select-option value="">Todos</ion-select-option>
-            <ion-select-option value="pendiente">Pendiente</ion-select-option>
-            <ion-select-option value="firmado">Firmado</ion-select-option>
-            <ion-select-option value="expirado">Expirado</ion-select-option>
-          </ion-select>
-        </ion-item>
-      </div>
+<div class="firmas-container">
+  <div class="firmas-header">
+    <div>
+      <h1 class="firmas-title">Firmas</h1>
+      <p class="firmas-subtitle">Consulta el estado de firma de los documentos enviados a los tutores.</p>
     </div>
+  </div>
 
-    @if (loading()) {
-      <div class="skeleton-list">
-        @for (item of [1,2,3,4,5]; track item) {
-          <div class="skeleton-row">
-            <ion-skeleton-text animated style="width: 40%"></ion-skeleton-text>
-            <ion-skeleton-text animated style="width: 30%"></ion-skeleton-text>
-            <ion-skeleton-text animated style="width: 15%"></ion-skeleton-text>
-          </div>
-        }
-      </div>
-    } @else {
-      <div class="table-responsive">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Alumno</th>
-              <th>Tutor</th>
-              <th>Estado</th>
-              <th>Enviado</th>
-              <th>Firmado</th>
-              <th>PDF</th>
+  <div class="filter-card">
+    <h3 class="filter-title">Filtros</h3>
+    <div class="filter-grid">
+      <label class="filter-label">
+        Documento
+        <ion-select
+          class="filter-select"
+          placeholder="Todos"
+          (ionChange)="onReglamentoChange($event)"
+          interface="popover"
+        >
+          <ion-select-option [value]="null">Todos</ion-select-option>
+          @for (reg of reglamentos(); track reg.id) {
+            <ion-select-option [value]="reg.id">
+              {{ reg.titulo }} (v{{ reg.version }})
+            </ion-select-option>
+          }
+        </ion-select>
+      </label>
+      <label class="filter-label">
+        Estado
+        <ion-select
+          class="filter-select"
+          placeholder="Todos"
+          (ionChange)="onEstadoChange($event)"
+          interface="popover"
+        >
+          <ion-select-option value="">Todos</ion-select-option>
+          <ion-select-option value="pendiente">Pendiente</ion-select-option>
+          <ion-select-option value="firmado">Firmado</ion-select-option>
+          <ion-select-option value="expirado">Expirado</ion-select-option>
+        </ion-select>
+      </label>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <table class="firmas-table">
+      <thead>
+        <tr>
+          <th>Alumno</th>
+          <th>Tutor</th>
+          <th>Estado</th>
+          <th>Enviado</th>
+          <th>Firmado</th>
+          <th>PDF</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading()) {
+          @for (row of [1,2,3,4,5,6,7,8]; track row) {
+            <tr class="skeleton-row">
+              <td><ion-skeleton-text class="skeleton-text-lg" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="skeleton-badge" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
             </tr>
-          </thead>
-          <tbody>
-            @for (f of filteredFirmas(); track f.id) {
-              <tr>
-                <td>{{ f.alumno_nombre || '—' }}</td>
-                <td>{{ f.tutor_nombre || '—' }}</td>
-                <td>
-                  <ion-badge [color]="estadoColor(f.estado)">
-                    <ion-icon slot="start" [name]="estadoIcon(f.estado)"></ion-icon>
-                    {{ f.estado | titlecase }}
-                  </ion-badge>
-                </td>
-                <td>{{ f.created_at | date:'dd/MM/yyyy' }}</td>
-                <td>{{ (f.fecha_firma | date:'dd/MM/yyyy HH:mm') || '—' }}</td>
-                <td>
-                  @if (f.url_pdf_firmado_cloudinary) {
-                    <ion-button
-                      fill="clear"
-                      size="small"
-                      color="primary"
-                      (click)="abrirPdf(f.url_pdf_firmado_cloudinary!)"
-                    >
-                      <ion-icon slot="icon-only" name="document-text-outline"></ion-icon>
-                    </ion-button>
-                  } @else {
-                    <span class="text-muted">—</span>
-                  }
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+          }
+        } @else {
+          @for (f of pagedFirmas(); track f.id) {
+            <tr>
+              <td>{{ f.alumno_nombre || '—' }}</td>
+              <td>{{ f.tutor_nombre || '—' }}</td>
+              <td>
+                <span class="status-badge" [class.firmado]="f.estado === 'firmado'" [class.pendiente]="f.estado === 'pendiente'" [class.expirado]="f.estado === 'expirado'">
+                  <ion-icon [name]="estadoIcon(f.estado)"></ion-icon>
+                  {{ f.estado | titlecase }}
+                </span>
+              </td>
+              <td class="td-muted">{{ f.created_at | date:'dd/MM/yyyy' }}</td>
+              <td class="td-muted">{{ (f.fecha_firma | date:'dd/MM/yyyy HH:mm') || '—' }}</td>
+              <td class="cell-actions">
+                @if (f.url_pdf_firmado_cloudinary) {
+                  <ion-button fill="clear" size="small" (click)="abrirPdf(f.url_pdf_firmado_cloudinary!)">
+                    <ion-icon slot="icon-only" name="document-text-outline"></ion-icon>
+                  </ion-button>
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+            </tr>
+          }
+          @empty {
+            <tr>
+              <td colspan="6" class="td-empty">
+                <div class="empty-state">
+                  <ion-icon name="document-text-outline"></ion-icon>
+                  <p>No se encontraron firmas</p>
+                </div>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
 
-      @if (filteredFirmas().length === 0) {
-        <div class="empty-state">
-          <ion-icon name="document-text-outline" class="empty-icon"></ion-icon>
-          <p>No se encontraron firmas</p>
-        </div>
-      }
+  <div class="table-footer">
+    <span class="footer-count">
+      {{ filteredFirmas().length }} firma{{ filteredFirmas().length !== 1 ? 's' : '' }}
+    </span>
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <ion-button class="page-btn" [disabled]="page() === 1" (click)="goToPage(page() - 1)" fill="outline">
+          <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        @for (p of [].constructor(totalPages()); track $index; let i = $index) {
+          <ion-button class="page-btn" [class.page-active]="i + 1 === page()" (click)="goToPage(i + 1)" fill="outline">
+            {{ i + 1 }}
+          </ion-button>
+        }
+        <ion-button class="page-btn" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)" fill="outline">
+          <ion-icon name="chevron-forward-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
     }
   </div>
-</ion-content>
+</div>

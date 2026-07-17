@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Generar Links - Reglamento #{{ reglamentoId }}</ion-title>
+    <ion-title>Generar Links - Documento #{{ reglamentoId }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="dismiss()">
         <ion-icon slot="icon-only" name="close-outline"></ion-icon>
@@ -21,13 +21,26 @@
         <h3 class="section-title">Seleccionar alumnos</h3>
         <p class="section-desc">Selecciona los alumnos para generar los links de firma. Solo se muestran alumnos activos con tutor asignado.</p>
 
+        <div class="search-box-modal">
+          <ion-icon name="search-outline" class="search-icon-modal"></ion-icon>
+          <ion-input
+            class="search-input-modal"
+            placeholder="Buscar por nombre..."
+            fill="outline"
+            [(ngModel)]="searchTerm"
+          ></ion-input>
+          @if (searchTerm()) {
+            <ion-icon name="close-circle-outline" class="clear-icon-modal" (click)="clearSearch()"></ion-icon>
+          }
+        </div>
+
         <ion-item class="field-row select-all-row" (click)="toggleAll()">
-          <ion-label>Seleccionar todos ({{ alumnos().length }})</ion-label>
+          <ion-label>Seleccionar todos ({{ filteredAlumnos().length }})</ion-label>
           <ion-checkbox slot="end" [checked]="allSelected()" (click)="$event.stopPropagation(); toggleAll()"></ion-checkbox>
         </ion-item>
 
         <div class="alumnos-list">
-          @for (alumno of alumnos(); track alumno.id) {
+          @for (alumno of filteredAlumnos(); track alumno.id) {
             <div class="alumno-row" (click)="toggleAlumno(alumno.id)">
               <div class="alumno-info">
                 <span class="alumno-name">{{ alumno.nombrecompleto }}</span>
@@ -36,6 +49,11 @@
                 }
               </div>
               <ion-checkbox [checked]="selectedIds().has(alumno.id)" (click)="$event.stopPropagation(); toggleAlumno(alumno.id)"></ion-checkbox>
+            </div>
+          }
+          @empty {
+            <div class="empty-search">
+              <p>No se encontraron alumnos con ese nombre.</p>
             </div>
           }
         </div>

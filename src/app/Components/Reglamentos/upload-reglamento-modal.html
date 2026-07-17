@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Subir Reglamento</ion-title>
+    <ion-title>Subir Documento</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="dismiss()">
         <ion-icon slot="icon-only" name="close-outline"></ion-icon>
@@ -19,7 +19,7 @@
         <ion-input
           class="field-input"
           type="text"
-          placeholder="Ej: Reglamento Interno 2026"
+          placeholder="Ej: Documento Interno 2026"
           [(ngModel)]="titulo"
           fill="outline"
         ></ion-input>
@@ -75,7 +75,7 @@
           <ion-spinner name="lines-small"></ion-spinner>
         } @else {
           <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
-          Subir Reglamento
+          Subir Documento
         }
       </ion-button>
     </ion-buttons>

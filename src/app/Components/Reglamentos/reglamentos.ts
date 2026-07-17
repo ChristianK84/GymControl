@@ -56,7 +56,7 @@ export class Reglamentos implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.showToast('Error al cargar reglamentos', 'danger');
+        this.showToast('Error al cargar documentos', 'danger');
       },
     });
   }
@@ -94,7 +94,7 @@ export class Reglamentos implements OnInit {
     modal.onDidDismiss().then(({ data, role }) => {
       if (role === 'saved') {
         this.loadReglamentos();
-        this.showToast('Reglamento subido exitosamente', 'success');
+        this.showToast('Documento subido exitosamente', 'success');
       }
     });
     await modal.present();
@@ -104,9 +104,9 @@ export class Reglamentos implements OnInit {
     this.api.deleteReglamento(reg.id).subscribe({
       next: () => {
         this.loadReglamentos();
-        this.showToast('Reglamento eliminado', 'success');
+        this.showToast('Documento eliminado', 'success');
       },
-      error: () => this.showToast('Error al eliminar reglamento', 'danger'),
+      error: () => this.showToast('Error al eliminar documento', 'danger'),
     });
   }
 
@@ -126,7 +126,7 @@ export class Reglamentos implements OnInit {
     modal.onDidDismiss().then(({ data, role }) => {
       if (role === 'saved') {
         this.loadReglamentos();
-        this.showToast('Reglamento actualizado', 'success');
+        this.showToast('Documento actualizado', 'success');
       }
     });
     await modal.present();

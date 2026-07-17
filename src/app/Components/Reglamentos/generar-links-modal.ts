@@ -3,11 +3,11 @@ import { FormsModule } from '@angular/forms';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
   IonButton, IonIcon, IonFooter, IonSpinner, IonItem, IonLabel,
-  IonCheckbox,
+  IonCheckbox, IonInput,
   ModalController, ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { closeOutline, linkOutline, peopleOutline } from 'ionicons/icons';
+import { closeOutline, linkOutline, searchOutline, closeCircleOutline } from 'ionicons/icons';
 import { ApiService } from '../../Services/api-service';
 import { Alumno } from '../../Models/alumnos';
 
@@ -17,7 +17,7 @@ import { Alumno } from '../../Models/alumnos';
     FormsModule,
     IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
     IonButton, IonIcon, IonFooter, IonSpinner, IonItem, IonLabel,
-    IonCheckbox,
+    IonCheckbox, IonInput,
   ],
   templateUrl: './generar-links-modal.html',
   styleUrl: './generar-links-modal.css',
@@ -32,9 +32,10 @@ export class GenerarLinksModal {
   loading = signal(true);
   selectedIds = signal<Set<number>>(new Set());
   enviando = signal(false);
+  searchTerm = signal('');
 
   constructor() {
-    addIcons({ closeOutline, linkOutline, peopleOutline });
+    addIcons({ closeOutline, linkOutline, searchOutline, closeCircleOutline });
   }
 
   ionViewWillEnter(): void {
@@ -51,16 +52,30 @@ export class GenerarLinksModal {
     });
   }
 
+  filteredAlumnos = computed(() => {
+    const term = this.searchTerm().toLowerCase().trim();
+    if (!term) return this.alumnos();
+    return this.alumnos().filter(
+      (a) =>
+        a.nombrecompleto.toLowerCase().includes(term) ||
+        a.apellido_paterno.toLowerCase().includes(term),
+    );
+  });
+
   allSelected = computed(() => {
-    return this.selectedIds().size === this.alumnos().length;
+    return this.selectedIds().size === this.filteredAlumnos().length && this.filteredAlumnos().length > 0;
   });
 
   toggleAll(): void {
-    if (this.allSelected()) {
-      this.selectedIds.set(new Set());
+    const filtered = this.filteredAlumnos();
+    const allCurrentlySelected = this.filteredAlumnos().every((a) => this.selectedIds().has(a.id));
+    const set = new Set(this.selectedIds());
+    if (allCurrentlySelected) {
+      for (const a of filtered) set.delete(a.id);
     } else {
-      this.selectedIds.set(new Set(this.alumnos().map((a) => a.id)));
+      for (const a of filtered) set.add(a.id);
     }
+    this.selectedIds.set(set);
   }
 
   toggleAlumno(id: number): void {
@@ -71,6 +86,10 @@ export class GenerarLinksModal {
       set.add(id);
     }
     this.selectedIds.set(set);
+  }
+
+  clearSearch(): void {
+    this.searchTerm.set('');
   }
 
   dismiss(): void {

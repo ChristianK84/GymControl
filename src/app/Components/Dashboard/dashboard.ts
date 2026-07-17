@@ -75,7 +75,7 @@ export class Dashboard implements OnInit, OnDestroy {
     { icon: 'person-outline', label: 'Usuarios', route: '/dashboard/usuarios' as string | null, roles: [1] },
     { icon: 'document-text-outline', label: 'Auditoría', route: '/dashboard/auditoria' as string | null, roles: [1] },
     { icon: 'cloud-upload-outline', label: 'Publicar Versión', route: '/dashboard/publicar-version' as string | null, roles: [1] },
-    { icon: 'document-text-outline', label: 'Reglamentos', route: '/dashboard/reglamentos' as string | null, roles: [1] },
+    { icon: 'document-text-outline', label: 'Documentos', route: '/dashboard/reglamentos' as string | null, roles: [1], exact: true },
     { icon: 'checkmark-done-outline', label: 'Firmas', route: '/dashboard/reglamentos/firmas' as string | null, roles: [1], exact: true },
   ];
 

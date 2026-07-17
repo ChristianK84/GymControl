@@ -41,6 +41,53 @@
   line-height: 1.4;
 }
 
+.search-box-modal {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon-modal {
+  position: absolute;
+  left: 0.75rem;
+  color: #936e69;
+  font-size: 1.15rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.clear-icon-modal {
+  position: absolute;
+  right: 0.75rem;
+  color: #936e69;
+  font-size: 1.15rem;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.clear-icon-modal:hover {
+  color: #2a1714;
+}
+
+ion-input.search-input-modal {
+  --border-color: #e5e2e1;
+  --border-radius: 0.5rem;
+  --border-style: solid;
+  --border-width: 1px;
+  --background: transparent;
+  --color: #2a1714;
+  --padding-start: 2.5rem;
+  --padding-end: 2.5rem;
+  --padding-top: 0.65rem;
+  --padding-bottom: 0.65rem;
+  --placeholder-color: #936e69;
+  --highlight-color-focused: #2a1714;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  min-height: 42px;
+  width: 100%;
+}
+
 ion-item.field-row {
   --padding-start: 0;
   --padding-end: 0;
@@ -118,6 +165,14 @@ ion-checkbox {
   --border-color-checked: #e30613;
   --checkmark-color: #ffffff;
   flex-shrink: 0;
+}
+
+.empty-search {
+  text-align: center;
+  padding: 1.5rem 0.5rem;
+  color: #936e69;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
 }
 
 .btn-cancel {
