@@ -29,24 +29,6 @@
     </div>
   }
 
-  <!-- Day Confirm -->
-  @if (showConfirm()) {
-    <div class="confirm-overlay">
-      <div class="confirm-card">
-        <h3 class="confirm-title">Día fuera de plan</h3>
-        <p class="confirm-message">{{ confirmMensaje() }}</p>
-        <div class="confirm-actions">
-          <ion-button class="btn-confirm-cancel" (click)="dismissConfirm()" fill="outline">
-            Cancelar
-          </ion-button>
-          <ion-button class="btn-confirm-action" (click)="acceptConfirm()" fill="solid">
-            {{ confirmBtnText() }}
-          </ion-button>
-        </div>
-      </div>
-    </div>
-  }
-
   <!-- Filters Card -->
   <div class="filter-card">
     <h3 class="filter-title">Filtros de búsqueda</h3>

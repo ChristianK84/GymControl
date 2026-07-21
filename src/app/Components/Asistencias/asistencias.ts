@@ -51,13 +51,6 @@ export class Asistencias implements OnInit, OnDestroy {
 
   scanning = signal(false);
 
-  showConfirm = signal(false);
-  confirmMensaje = signal('');
-  confirmBtnText = signal('');
-  private confirmAlumnoId = 0;
-  private confirmMaestroId = 0;
-  private confirmCostoExtra = 0;
-
   constructor() {
     addIcons({
       addOutline, searchOutline, closeCircleOutline,
@@ -152,6 +145,10 @@ export class Asistencias implements OnInit, OnDestroy {
 
   private async startScan(maestroId: number): Promise<void> {
     this.scanning.set(true);
+    try {
+      await BarcodeScanner.requestPermissions();
+    } catch {}
+    await BarcodeScanner.stopScan().catch(() => {});
 
     try {
       const { available } = await BarcodeScanner.isGoogleBarcodeScannerModuleAvailable();
@@ -165,7 +162,9 @@ export class Asistencias implements OnInit, OnDestroy {
         this.showScanResult('No se detectó ningún código QR.', false);
         return;
       }
-    } catch {}
+    } catch (e) {
+      console.warn('Google Barcode Scanner no disponible:', e);
+    }
 
     BarcodeScanner.addListener('barcodesScanned', async (event) => {
       await BarcodeScanner.stopScan().catch(() => {});
@@ -200,7 +199,8 @@ export class Asistencias implements OnInit, OnDestroy {
       next: (result) => {
         this.scanning.set(false);
         if (result.motivo === 'fuera_de_plan') {
-          this.showExtraDayConfirm(result.mensaje, result.costo_extra ?? 0, alumnoId, maestroId);
+          this.loadAsistencias();
+          this.showScanResult(result.mensaje, true);
         } else if (result.permitido) {
           this.loadAsistencias();
           this.showScanResult(result.mensaje, true);
@@ -208,44 +208,12 @@ export class Asistencias implements OnInit, OnDestroy {
           this.showScanResult(result.mensaje, false);
         }
       },
-      error: () => {
+      error: (err) => {
         this.scanning.set(false);
-        this.showScanResult('Error al procesar el escaneo.', false);
+        this.showScanResult(
+          err.error?.detail ?? 'Error al procesar el escaneo.', false,
+        );
       },
-    });
-  }
-
-  private async showExtraDayConfirm(mensaje: string, costoExtra: number, alumnoId: number, maestroId: number): Promise<void> {
-    const costo = Number(costoExtra) || 0;
-    const pagado = costo <= 0;
-    this.confirmMensaje.set(mensaje);
-    this.confirmBtnText.set(pagado ? 'Ya pagó' : `Cobrar $${costo.toFixed(2)}`);
-    this.confirmAlumnoId = alumnoId;
-    this.confirmMaestroId = maestroId;
-    this.confirmCostoExtra = costo;
-    this.showConfirm.set(true);
-  }
-
-  dismissConfirm(): void {
-    this.showConfirm.set(false);
-  }
-
-  acceptConfirm(): void {
-    this.showConfirm.set(false);
-    const body = {
-      alumno_id: this.confirmAlumnoId,
-      maestro_id: this.confirmMaestroId,
-      fecha: new Date().toISOString(),
-      asistio: true,
-      es_dia_extra: true,
-      costo_extra: this.confirmCostoExtra,
-    };
-    this.api.createAsistencia(body).subscribe({
-      next: () => {
-        this.loadAsistencias();
-        this.showScanResult('Asistencia registrada con costo extra.', true);
-      },
-      error: () => this.showScanResult('Error al registrar asistencia.', false),
     });
   }
 

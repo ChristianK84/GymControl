@@ -45,6 +45,10 @@ export class ApiService {
     return this.http.post<{ message: string }>(`${this.baseUrl}auth/logout`, {});
   }
 
+  refreshToken(): Observable<TokenResponse> {
+    return this.http.post<TokenResponse>(`${this.baseUrl}auth/refresh`, {});
+  }
+
   // ── Roles ──
 
   getRoles(): Observable<Rol[]> {
@@ -272,6 +276,8 @@ export class ApiService {
     asistio: boolean;
     notas?: string | null;
     registrado_por?: number | null;
+    es_dia_extra?: boolean;
+    costo_extra?: number;
   }): Observable<Asistencia> {
     return this.http.post<Asistencia>(`${this.baseUrl}asistencias/`, body);
   }
