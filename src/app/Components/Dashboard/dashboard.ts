@@ -27,6 +27,7 @@ import {
   cardOutline,
   cloudUploadOutline,
   checkmarkDoneOutline,
+  ribbonOutline,
 } from 'ionicons/icons';
 
 const ROLE_MAP: Record<number, string> = {
@@ -71,6 +72,7 @@ export class Dashboard implements OnInit, OnDestroy {
     { icon: 'body-outline', label: 'Maestros', route: '/dashboard/maestros' as string | null, roles: [1] },
     { icon: 'checkmark-circle-outline', label: 'Asistencias', route: '/dashboard/asistencias' as string | null, roles: [1, 2] },
     { icon: 'card-outline', label: 'Membresías', route: '/dashboard/membresias' as string | null, roles: [1] },
+    { icon: 'ribbon-outline', label: 'Inscripciones', route: '/dashboard/inscripciones' as string | null, roles: [1] },
     { icon: 'pricetag-outline', label: 'Tipos Membresía', route: '/dashboard/tipos-membresia' as string | null, roles: [1] },
     { icon: 'person-outline', label: 'Usuarios', route: '/dashboard/usuarios' as string | null, roles: [1] },
     { icon: 'document-text-outline', label: 'Auditoría', route: '/dashboard/auditoria' as string | null, roles: [1] },
@@ -95,7 +97,7 @@ export class Dashboard implements OnInit, OnDestroy {
       chevronBackOutline, chevronForwardOutline,
       documentTextOutline, checkmarkDoneOutline,
       pricetagOutline, cardOutline,
-      cloudUploadOutline,
+      cloudUploadOutline, ribbonOutline,
     });
   }
 
@@ -157,7 +159,10 @@ export class Dashboard implements OnInit, OnDestroy {
     (document.activeElement as HTMLElement)?.blur();
     this.api.logout().subscribe({
       next: () => this.session.clearSession(),
-      error: () => this.session.clearSession(),
+      error: () => {
+        this.session.clearSession();
+        this.router.navigate(['/login'], { replaceUrl: true });
+      },
       complete: () => this.router.navigate(['/login'], { replaceUrl: true }),
     });
   }

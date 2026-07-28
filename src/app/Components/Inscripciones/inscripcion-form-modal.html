@@ -1,0 +1,151 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ isEdit ? 'Editar inscripción' : 'Nueva inscripción' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="modal-content">
+  <div class="modal-body">
+
+    @if (isEdit) {
+      <div class="identity-card">
+        <div class="identity-info">
+          <span class="identity-name">{{ inscripcion?.alumno?.nombrecompleto }} {{ inscripcion?.alumno?.apellido_paterno }}</span>
+          <span class="identity-id">ID Inscripción: {{ inscripcion!.id }}</span>
+        </div>
+      </div>
+    }
+
+    <!-- Alumno -->
+    <div class="section">
+      <h3 class="section-title">Alumno</h3>
+      <div class="search-container">
+        <ion-item class="field-row">
+          <ion-label position="stacked">Buscar alumno</ion-label>
+          <ion-input
+            class="field-input"
+            [class.field-error]="errors['alumno_id']"
+            [(ngModel)]="searchText"
+            (ionInput)="filterAlumnos()"
+            (ionFocus)="showDropdown.set(true)"
+            (ionBlur)="onSearchBlur()"
+            placeholder="Escriba el nombre del alumno..."
+            [disabled]="isEdit"
+          ></ion-input>
+        </ion-item>
+        @if (errors['alumno_id']) { <span class="error-msg">{{ errors['alumno_id'] }}</span> }
+        @if (showDropdown() && filteredAlumnos().length > 0) {
+          <div class="search-dropdown">
+            @for (a of filteredAlumnos(); track a.id) {
+              <div class="search-item" (mousedown)="selectAlumno(a)">
+                <span class="search-item-avatar">{{ a.nombrecompleto.charAt(0).toUpperCase() }}</span>
+                <span>{{ a.nombrecompleto }} {{ a.apellido_paterno }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Monto y beca -->
+    <div class="section">
+      <h3 class="section-title">Monto y beca</h3>
+      <div class="inline-fields">
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Monto ($)</ion-label>
+            <ion-input class="field-input" [class.field-error]="errors['monto']" type="number" [(ngModel)]="monto" placeholder="0.00"></ion-input>
+          </ion-item>
+          @if (errors['monto']) { <span class="error-msg">{{ errors['monto'] }}</span> }
+        </div>
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Beca (%)</ion-label>
+            <ion-input class="field-input" [class.field-error]="errors['porcentaje_beca']" type="number" [(ngModel)]="porcentaje_beca" placeholder="0"></ion-input>
+          </ion-item>
+          @if (errors['porcentaje_beca']) { <span class="error-msg">{{ errors['porcentaje_beca'] }}</span> }
+        </div>
+      </div>
+      @if (porcentaje_beca > 0 || monto !== null) {
+        <div class="becca-info">
+          <span>Monto final: <strong>${{ monto_final | number:'1.2-2' }}</strong></span>
+        </div>
+      }
+    </div>
+
+    <!-- Año y fechas -->
+    <div class="section">
+      <h3 class="section-title">Año y fechas</h3>
+      <ion-item class="field-row">
+        <ion-label position="stacked">Año</ion-label>
+        <ion-input class="field-input" [class.field-error]="errors['anio']" type="number" [(ngModel)]="anio" placeholder="2026"></ion-input>
+      </ion-item>
+      @if (errors['anio']) { <span class="error-msg">{{ errors['anio'] }}</span> }
+      <div class="inline-fields">
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Fecha de pago</ion-label>
+            <ion-input class="field-input" [class.field-error]="errors['fecha_pago']" type="date" [(ngModel)]="fecha_pago"></ion-input>
+          </ion-item>
+          @if (errors['fecha_pago']) { <span class="error-msg">{{ errors['fecha_pago'] }}</span> }
+        </div>
+      </div>
+      <div class="inline-fields">
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Inicio</ion-label>
+            <ion-input class="field-input" [class.field-error]="errors['fecha_inicio']" type="date" [(ngModel)]="fecha_inicio"></ion-input>
+          </ion-item>
+          @if (errors['fecha_inicio']) { <span class="error-msg">{{ errors['fecha_inicio'] }}</span> }
+        </div>
+        <div class="flex-1">
+          <ion-item class="field-row">
+            <ion-label position="stacked">Fin</ion-label>
+            <ion-input class="field-input" [class.field-error]="errors['fecha_fin']" type="date" [(ngModel)]="fecha_fin"></ion-input>
+          </ion-item>
+          @if (errors['fecha_fin']) { <span class="error-msg">{{ errors['fecha_fin'] }}</span> }
+        </div>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Pagado</span>
+        <ion-toggle [(ngModel)]="pagado"></ion-toggle>
+      </div>
+    </div>
+
+    <!-- Notas -->
+    <div class="section">
+      <h3 class="section-title">Notas</h3>
+      <ion-item class="field-row">
+        <ion-label position="stacked">Notas adicionales</ion-label>
+        <ion-textarea class="field-input" [(ngModel)]="notas" placeholder="Notas..." rows="3"></ion-textarea>
+      </ion-item>
+    </div>
+
+    @if (isEdit) {
+      <div class="meta-footer">
+        <span>Creado: {{ inscripcion!.created_at | date:'mediumDate' }}</span>
+      </div>
+    }
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button class="btn-cancel" (click)="dismiss()" fill="clear">Cancelar</ion-button>
+      <ion-button class="btn-save" (click)="save()" [disabled]="saving()" fill="solid">
+        @if (saving()) {
+          <ion-icon name="sync-outline" class="spin"></ion-icon>
+        } @else {
+          <ion-icon name="save-outline" slot="start"></ion-icon>
+          Guardar
+        }
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

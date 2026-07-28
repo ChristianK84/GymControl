@@ -28,16 +28,31 @@
     <div class="section">
       <h3 class="section-title">Asignación</h3>
 
-      <div>
+      <div class="search-container">
         <ion-item class="field-row">
           <ion-label position="stacked">Alumno</ion-label>
-          <ion-select id="memb-alumno" class="field-input" [class.field-error]="errors['alumno_id']" [(ngModel)]="alumno_id" interface="popover" placeholder="Buscar alumno..." [disabled]="isEdit">
-            @for (alumno of alumnos(); track alumno.id) {
-              <ion-select-option [value]="alumno.id">{{ getAlumnoLabel(alumno) }}</ion-select-option>
-            }
-          </ion-select>
+          <ion-input
+            class="field-input"
+            [class.field-error]="errors['alumno_id']"
+            [(ngModel)]="alumnoSearchText"
+            (ionInput)="filterAlumnos()"
+            (ionFocus)="onAlumnoFocus()"
+            (ionBlur)="onSearchBlur()"
+            placeholder="Buscar alumno..."
+            [disabled]="isEdit"
+          ></ion-input>
         </ion-item>
         @if (errors['alumno_id']) { <span class="error-msg">{{ errors['alumno_id'] }}</span> }
+        @if (showAlumnoDropdown() && filteredAlumnos().length > 0) {
+          <div class="search-dropdown">
+            @for (a of filteredAlumnos(); track a.id) {
+              <div class="search-item" (mousedown)="selectAlumno(a)">
+                <span class="search-item-avatar">{{ a.nombrecompleto.charAt(0).toUpperCase() }}</span>
+                <span>{{ a.nombrecompleto }} {{ a.apellido_paterno }}</span>
+              </div>
+            }
+          </div>
+        }
       </div>
 
       <div>

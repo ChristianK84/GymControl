@@ -26,6 +26,7 @@ import { Alumno } from '../../Models/alumnos';
 })
 export class MembresiaFormModal implements OnInit {
   @Input() membresia?: Membresia;
+  @Input() alumnoId?: number;
 
   private api = inject(ApiService);
   private modalCtrl = inject(ModalController);
@@ -33,8 +34,12 @@ export class MembresiaFormModal implements OnInit {
   private cdr = inject(ChangeDetectorRef);
 
   alumnos = signal<Alumno[]>([]);
+  filteredAlumnos = signal<Alumno[]>([]);
   tipos = signal<TipoMembresia[]>([]);
 
+  alumnoSearchText = '';
+  selectedAlumno: Alumno | null = null;
+  showAlumnoDropdown = signal(false);
   alumno_id: number | null = null;
   tipo_membresia_id: number | null = null;
   costo_real: number | null = null;
@@ -56,10 +61,23 @@ export class MembresiaFormModal implements OnInit {
     return !!this.membresia;
   }
 
+  private selectAlumnoById(id: number): void {
+    const a = this.alumnos().find(x => x.id === id);
+    if (a) {
+      this.selectedAlumno = a;
+      this.alumnoSearchText = `${a.nombrecompleto} ${a.apellido_paterno}`;
+      this.alumno_id = a.id;
+    }
+  }
+
   private tryInitForm(): void {
-    if (!this.membresia) return;
     if (!this.alumnos().length || !this.tipos().length) return;
+    if (this.alumnoId && !this.membresia) {
+      this.selectAlumnoById(this.alumnoId);
+    }
+    if (!this.membresia) return;
     this.alumno_id = this.membresia.alumno_id;
+    this.selectAlumnoById(this.membresia.alumno_id);
     this.tipo_membresia_id = this.membresia.tipo_membresia_id;
     this.costo_real = this.membresia.costo_real;
     this.porcentaje_beca = this.membresia.porcentaje_beca;
@@ -74,9 +92,11 @@ export class MembresiaFormModal implements OnInit {
   ngOnInit(): void {
     this.api.getAlumnos().subscribe({
       next: (data) => { this.alumnos.set(data); this.tryInitForm(); },
+      error: () => this.showToast('Error al cargar alumnos', 'danger'),
     });
     this.api.getTiposMembresia().subscribe({
       next: (data) => { this.tipos.set(data); this.tryInitForm(); },
+      error: () => this.showToast('Error al cargar tipos de membresía', 'danger'),
     });
     this.cdr.detectChanges();
   }
@@ -106,6 +126,39 @@ export class MembresiaFormModal implements OnInit {
     }
   }
 
+  filterAlumnos(): void {
+    const q = this.alumnoSearchText.toLowerCase().trim();
+    if (!q) {
+      this.filteredAlumnos.set(this.alumnos());
+    } else {
+      this.filteredAlumnos.set(
+        this.alumnos().filter(a =>
+          `${a.nombrecompleto} ${a.apellido_paterno}`.toLowerCase().includes(q)
+        )
+      );
+    }
+    this.showAlumnoDropdown.set(true);
+  }
+
+  onAlumnoFocus(): void {
+    if (!this.isEdit) {
+      this.filteredAlumnos.set(this.alumnos());
+      this.showAlumnoDropdown.set(true);
+    }
+  }
+
+  onSearchBlur(): void {
+    setTimeout(() => this.showAlumnoDropdown.set(false), 150);
+  }
+
+  selectAlumno(alumno: Alumno): void {
+    this.selectedAlumno = alumno;
+    this.alumnoSearchText = `${alumno.nombrecompleto} ${alumno.apellido_paterno}`;
+    this.alumno_id = alumno.id;
+    this.showAlumnoDropdown.set(false);
+    this.errors['alumno_id'] = '';
+  }
+
   validate(): boolean {
     this.errors = {};
     if (!this.alumno_id) this.errors['alumno_id'] = 'Seleccione un alumno';
@@ -124,8 +177,7 @@ export class MembresiaFormModal implements OnInit {
     if (!this.validate()) return;
 
     this.saving.set(true);
-    const body = {
-      alumno_id: this.alumno_id!,
+    const base = {
       tipo_membresia_id: this.tipo_membresia_id!,
       costo_real: this.costo_real!,
       porcentaje_beca: this.porcentaje_beca,
@@ -137,8 +189,8 @@ export class MembresiaFormModal implements OnInit {
     };
 
     const request = this.isEdit
-      ? this.api.updateMembresia(this.membresia!.id, body)
-      : this.api.createMembresia(body);
+      ? this.api.updateMembresia(this.membresia!.id, base)
+      : this.api.createMembresia({ ...base, alumno_id: this.alumno_id! });
 
     request.subscribe({
       next: () => {
@@ -155,10 +207,6 @@ export class MembresiaFormModal implements OnInit {
 
   dismiss(): void {
     this.modalCtrl.dismiss(null, 'cancel');
-  }
-
-  getAlumnoLabel(alumno: Alumno): string {
-    return `${alumno.nombrecompleto} ${alumno.apellido_paterno}`;
   }
 
   private async showToast(message: string, color: 'success' | 'danger' = 'danger'): Promise<void> {

@@ -468,6 +468,7 @@ export class PerfilAlumno implements OnInit {
     if (!a) return;
     const modal = await this.modalCtrl.create({
       component: MembresiaFormModal,
+      componentProps: { alumnoId: a.id },
     });
     await modal.present();
     const { role } = await modal.onDidDismiss();

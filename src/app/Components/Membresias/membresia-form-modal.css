@@ -1,3 +1,28 @@
+.search-container { position: relative; }
+
+.search-dropdown {
+  position: absolute; top: 100%; left: 0; right: 0;
+  background: #ffffff; border: 1px solid #e5e2e1;
+  border-radius: 0.5rem; max-height: 200px; overflow-y: auto;
+  z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.search-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px; cursor: pointer;
+  font-family: 'Inter', sans-serif; font-size: 0.85rem; color: #2a1714;
+  transition: background 0.15s;
+}
+
+.search-item:hover { background: rgba(227, 6, 19, 0.06); }
+
+.search-item-avatar {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: #1a2744; color: #c5d5f7;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; font-weight: 700; flex-shrink: 0;
+}
+
 .modal-content { --background: #f5f2f0; }
 .modal-body { padding: 1rem 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
 
@@ -62,3 +87,10 @@ ion-textarea.field-input {
 .btn-save { --color: #ffffff; --background: #e30613; --background-hover: #b5000b; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.85rem; border-radius: 0.5rem; }
 
 @media (max-width: 500px) { .inline-fields { flex-direction: column; gap: 0.85rem; } }
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin { animation: spin 1s linear infinite; }
