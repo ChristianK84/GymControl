@@ -13,7 +13,6 @@ import { Maestro } from '../Models/maestros';
 import { Membresia, TipoMembresia } from '../Models/membresias';
 import { Transaccion, ProfitMensual } from '../Models/transacciones';
 import { EstadoMembresia } from '../Models/catalogs';
-import { Inscripcion } from '../Models/inscripciones';
 import { Reglamento, FirmaReglamento, GenerarLinksPayload } from '../Models/reglamentos';
 
 @Injectable({ providedIn: 'root' })
@@ -594,46 +593,5 @@ export class ApiService {
 
   getFirmasByAlumno(alumnoId: number): Observable<FirmaReglamento[]> {
     return this.http.get<FirmaReglamento[]>(`${this.baseUrl}reglamentos/firmas/${alumnoId}`);
-  }
-
-  // ── Inscripciones ──
-
-  getInscripciones(filters?: Record<string, string | number | boolean>): Observable<Inscripcion[]> {
-    return this.http.get<Inscripcion[]>(`${this.baseUrl}inscripciones/`, { params: { ...filters } });
-  }
-
-  getInscripcion(id: number): Observable<Inscripcion> {
-    return this.http.get<Inscripcion>(`${this.baseUrl}inscripciones/${id}`);
-  }
-
-  createInscripcion(body: {
-    alumno_id: number;
-    monto: number;
-    porcentaje_beca?: number;
-    anio: number;
-    fecha_pago: string;
-    fecha_inicio: string;
-    fecha_fin: string;
-    pagado?: boolean;
-    notas?: string | null;
-  }): Observable<Inscripcion> {
-    return this.http.post<Inscripcion>(`${this.baseUrl}inscripciones/`, body);
-  }
-
-  updateInscripcion(id: number, body: {
-    monto?: number;
-    porcentaje_beca?: number;
-    anio?: number;
-    fecha_pago?: string;
-    fecha_inicio?: string;
-    fecha_fin?: string;
-    pagado?: boolean;
-    notas?: string | null;
-  }): Observable<Inscripcion> {
-    return this.http.put<Inscripcion>(`${this.baseUrl}inscripciones/${id}`, body);
-  }
-
-  deleteInscripcion(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}inscripciones/${id}`);
   }
 }

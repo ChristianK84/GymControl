@@ -27,6 +27,7 @@ import { Alumno } from '../../Models/alumnos';
 export class MembresiaFormModal implements OnInit {
   @Input() membresia?: Membresia;
   @Input() alumnoId?: number;
+  @Input() tipoMembresiaId?: number;
 
   private api = inject(ApiService);
   private modalCtrl = inject(ModalController);
@@ -70,10 +71,18 @@ export class MembresiaFormModal implements OnInit {
     }
   }
 
+  get isTipoInscripcion(): boolean {
+    return !this.membresia && this.tipo_membresia_id === 1;
+  }
+
   private tryInitForm(): void {
     if (!this.alumnos().length || !this.tipos().length) return;
     if (this.alumnoId && !this.membresia) {
       this.selectAlumnoById(this.alumnoId);
+    }
+    if (this.tipoMembresiaId && !this.membresia) {
+      this.tipo_membresia_id = this.tipoMembresiaId;
+      this.onTipoChange();
     }
     if (!this.membresia) return;
     this.alumno_id = this.membresia.alumno_id;

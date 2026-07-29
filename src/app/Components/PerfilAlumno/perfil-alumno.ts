@@ -5,7 +5,7 @@ import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import {
   IonIcon, IonSpinner, IonSegment, IonSegmentButton, IonLabel,
-  IonSelect, IonSelectOption, ToastController,
+  IonSelect, IonSelectOption, ToastController, AlertController,
   IonButton, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonBadge,
   IonSkeletonText, IonAvatar, IonItem,
   ModalController,
@@ -44,6 +44,7 @@ export class PerfilAlumno implements OnInit {
   private api = inject(ApiService);
   private session = inject(SessionService);
   private toastCtrl = inject(ToastController);
+  private alertCtrl = inject(AlertController);
   private cdr = inject(ChangeDetectorRef);
   private modalCtrl = inject(ModalController);
 
@@ -466,13 +467,29 @@ export class PerfilAlumno implements OnInit {
   async addMembresia(): Promise<void> {
     const a = this.alumno();
     if (!a) return;
+
+    const activaInscripcion = this.membresias().find(m => m.tipo_membresia_id === 1 && m.estado_id === 1);
+    if (activaInscripcion) {
+      const alert = await this.alertCtrl.create({
+        header: 'Inscripción activa',
+        message: `El alumno ya tiene una inscripción activa vigente hasta ${this.fechaCorta(activaInscripcion.fecha_vencimiento)}. ¿Desea continuar?`,
+        buttons: [
+          { text: 'Cancelar', role: 'cancel' },
+          { text: 'Continuar', role: 'continue' },
+        ],
+      });
+      await alert.present();
+      const { role } = await alert.onDidDismiss();
+      if (role !== 'continue') return;
+    }
+
     const modal = await this.modalCtrl.create({
       component: MembresiaFormModal,
       componentProps: { alumnoId: a.id },
     });
     await modal.present();
-    const { role } = await modal.onDidDismiss();
-    if (role === 'saved') {
+    const { role: modalRole } = await modal.onDidDismiss();
+    if (modalRole === 'saved') {
       this.loadMembresias();
       this.showToast('Membresía creada', 'success');
     }

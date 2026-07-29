@@ -55,10 +55,17 @@
         }
       </div>
 
+      @if (isTipoInscripcion) {
+        <div class="info-note">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          <span>Inscripción — esta membresía se registrará como inscripción del alumno.</span>
+        </div>
+      }
+
       <div>
         <ion-item class="field-row">
           <ion-label position="stacked">Tipo de membresía</ion-label>
-          <ion-select id="memb-tipo" class="field-input" [class.field-error]="errors['tipo_membresia_id']" [(ngModel)]="tipo_membresia_id" (ngModelChange)="onTipoChange()" interface="popover" placeholder="Seleccionar tipo...">
+          <ion-select id="memb-tipo" class="field-input" [class.field-error]="errors['tipo_membresia_id']" [(ngModel)]="tipo_membresia_id" (ngModelChange)="onTipoChange()" interface="popover" placeholder="Seleccionar tipo..." [disabled]="isTipoInscripcion">
             @for (tipo of tipos(); track tipo.id) {
               <ion-select-option [value]="tipo.id">{{ tipo.nombre }} — ${{ tipo.costo_base }}</ion-select-option>
             }

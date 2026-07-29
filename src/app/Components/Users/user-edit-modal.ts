@@ -155,8 +155,11 @@ export class UserFormModal implements OnInit {
     if (this.roleId == null) {
       this.errors['roleId'] = 'Seleccione un rol';
     }
+    const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
     if (!this.isEdit && !this.password) {
       this.errors['password'] = 'La contraseña es requerida';
+    } else if (this.password && !PASSWORD_PATTERN.test(this.password)) {
+      this.errors['password'] = 'Debe tener al menos 8 caracteres, incluir 1 mayúscula, 1 minúscula y 1 número';
     }
 
     return Object.keys(this.errors).length === 0;
@@ -185,7 +188,12 @@ export class UserFormModal implements OnInit {
         const userId = (result as User).id;
         this.linkMaestro(userId).subscribe({
           next: () => this.modalCtrl.dismiss(result, 'saved'),
+          error: () => this.modalCtrl.dismiss(result, 'saved'),
         });
+      },
+      error: (err) => {
+        const msg = err?.error?.detail || 'Error al guardar';
+        this.showToast(msg, 'danger');
       },
     });
   }
@@ -221,7 +229,11 @@ export class UserFormModal implements OnInit {
         this.unlocking.set(false);
         this.modalCtrl.dismiss(null, 'unlocked');
       },
-      error: () => this.unlocking.set(false),
+      error: (err) => {
+        this.unlocking.set(false);
+        const msg = err?.error?.detail || 'Error al desbloquear';
+        this.showToast(msg, 'danger');
+      },
     });
   }
 
@@ -246,6 +258,13 @@ export class UserFormModal implements OnInit {
       },
       error: () => this.resettingPassword.set(false),
     });
+  }
+
+  private async showToast(message: string, color: 'success' | 'danger'): Promise<void> {
+    const toast = await this.toastCtrl.create({
+      message, duration: 2500, color, position: 'bottom',
+    });
+    await toast.present();
   }
 
   private linkMaestro(userId: number): Observable<any> {

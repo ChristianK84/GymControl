@@ -8,6 +8,7 @@ import { Alumno } from '../../Models/alumnos';
 import { Maestro } from '../../Models/maestros';
 import { AlumnoFormModal } from './alumno-form-modal';
 import { AlumnosCumpleaniosModal } from './alumnos-cumpleanios-modal';
+import { MembresiaFormModal } from '../Membresias/membresia-form-modal';
 import { addIcons } from 'ionicons';
 import {
   addOutline, searchOutline, closeCircleOutline,
@@ -195,12 +196,21 @@ export class Alumnos implements OnInit {
       },
     });
     await modal.present();
-    const { role } = await modal.onDidDismiss();
+    const { data, role } = await modal.onDidDismiss();
     if (role === 'saved') {
       this.api.getAlumnos(false, miId).subscribe({
-        next: (data) => this.allAlumnos.set(data),
+        next: (alumnosData) => this.allAlumnos.set(alumnosData),
       });
       this.showToast('Alumno creado con éxito', 'success');
+
+      const alumno = data as any;
+      if (alumno?.id) {
+        const membresiaModal = await this.modalCtrl.create({
+          component: MembresiaFormModal,
+          componentProps: { alumnoId: alumno.id, tipoMembresiaId: 1 },
+        });
+        await membresiaModal.present();
+      }
     }
   }
 

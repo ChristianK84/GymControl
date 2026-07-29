@@ -93,12 +93,6 @@ export const routes: Routes = [
         data: { roles: [1] },
       },
       {
-        path: 'inscripciones',
-        loadComponent: () =>
-          import('./Components/Inscripciones/inscripciones').then((m) => m.Inscripciones),
-        data: { roles: [1] },
-      },
-      {
         path: 'reglamentos/firmas',
         loadComponent: () =>
           import('./Components/Reglamentos/reglamento-firmas').then(
