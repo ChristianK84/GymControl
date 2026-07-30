@@ -85,10 +85,11 @@
             [class.field-error]="errors['password']"
             [(ngModel)]="password"
             [placeholder]="isEdit ? 'Dejar vacío para conservar la actual' : 'Contraseña del usuario'"
-          ></ion-input>
-          <ion-button class="pass-toggle" (click)="togglePassword()" fill="clear" [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'">
-            <ion-icon [name]="showPassword() ? 'eye-off-outline' : 'eye-outline'" slot="icon-only"></ion-icon>
-          </ion-button>
+          >
+            <ion-button slot="end" class="pass-toggle" (click)="togglePassword()" fill="clear" [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+              <ion-icon [name]="showPassword() ? 'eye-off-outline' : 'eye-outline'" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-input>
         </div>
       </ion-item>
       @if (errors['password']) {
