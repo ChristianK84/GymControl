@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guía de Usuario — GymControl (Admin)</title>
+  <link rel="stylesheet" href="guia-styles.css">
+</head>
+<body>
+
+<!-- =============================================
+     PORTADA
+     ============================================= -->
+<div class="cover">
+  <h1>GymControl</h1>
+  <div class="subtitle">Guía de Usuario — Panel de Administración</div>
+  <div class="meta">Versión 1.0 &middot; Julio 2026</div>
+</div>
+
+<!-- =============================================
+     ÍNDICE
+     ============================================= -->
+<div class="toc">
+  <h2>Índice</h2>
+  <ol>
+    <li><a href="#primeros-pasos">Primeros Pasos</a></li>
+    <li><a href="#dashboard">Dashboard</a></li>
+    <li><a href="#alumnos">Alumnos</a></li>
+    <li><a href="#maestros">Maestros</a></li>
+    <li><a href="#asistencias">Asistencias</a></li>
+    <li><a href="#membresias">Membresías</a></li>
+    <li><a href="#tipos-membresia">Tipos de Membresía</a></li>
+    <li><a href="#usuarios">Usuarios</a></li>
+    <li><a href="#auditoria">Auditoría</a></li>
+    <li><a href="#reglamentos">Reglamentos y Firmas</a></li>
+    <li><a href="#publicar-version">Publicar Versión</a></li>
+  </ol>
+</div>
+
+<!-- =============================================
+     1. PRIMEROS PASOS
+     ============================================= -->
+<div class="section" id="primeros-pasos">
+  <h2 class="section-title">1. Primeros Pasos</h2>
+
+  <h3>1.1 Iniciar sesión</h3>
+  <ol class="step-list">
+    <li>Abra la aplicación o navegue a la URL del sistema.</li>
+    <li>Ingrese su <strong>usuario</strong> y <strong>contraseña</strong>.</li>
+    <li>Haga clic en <strong>"Iniciar Sesión"</strong>.</li>
+    <li>Será redirigido al <strong>Dashboard</strong> principal.</li>
+  </ol>
+
+  <div class="callout callout-note">
+    <strong>Nota:</strong>
+    La contraseña debe tener al menos 8 caracteres, incluir 1 mayúscula, 1 minúscula y 1 número.
+  </div>
+
+  <h3>1.2 Navegación general</h3>
+
+  <div class="screenshot-placeholder">
+    <span class="icon">📸</span>
+    <span class="label">Captura: Sidebar con menú de navegación</span>
+  </div>
+
+  <table>
+    <tr><th>Elemento</th><th>Descripción</th></tr>
+    <tr><td><strong>Sidebar</strong></td><td>Menú lateral izquierdo con todas las secciones del sistema</td></tr>
+    <tr><td><strong>Reloj</strong></td><td>Muestra la hora y fecha actual en la barra superior</td></tr>
+    <tr><td><strong>Cerrar Sesión</strong></td><td>Botón en la parte inferior del sidebar para salir del sistema</td></tr>
+    <tr><td><strong>Colapsar</strong></td><td>Flecha en el sidebar para contraer o expandir el menú</td></tr>
+  </table>
+</div>
+
+<!-- =============================================
+     2. DASHBOARD
+     ============================================= -->
+<div class="section" id="dashboard">
+  <h2 class="section-title">2. Dashboard</h2>
+
+  <p>El Dashboard muestra un resumen general del estado del gimnasio.</p>
+
+  <div class="screenshot-placeholder">
+    <span class="icon">📸</span>
+    <span class="label">Captura: Dashboard con KPIs y gráficas</span>
+  </div>
+
+  <h3>2.1 KPIs principales</h3>
+  <table>
+    <tr><th>KPI</th><th>Descripción</th></tr>
+    <tr><td><strong>Total Alumnos</strong></td><td>Número total de alumnos activos en el sistema</td></tr>
+    <tr><td><strong>Ingreso Mensual</strong></td><td>Suma de membresías cobradas en el mes actual</td></tr>
+    <tr><td><strong>Tasa de Asistencia</strong></td><td>Porcentaje de alumnos que asistieron hoy vs. los esperados</td></tr>
+    <tr><td><strong>Ausentismo</strong></td><td>Alumnos que no asistieron hoy</td></tr>
+  </table>
+
+  <h3>2.2 Gráficas</h3>
+  <ul>
+    <li><strong>Asistencia semanal:</strong> Gráfica de barras con asistencias por día de la semana</li>
+    <li><strong>Ingresos mensuales:</strong> Gráfica de línea con ingresos de los últimos meses</li>
+  </ul>
+
+  <div class="callout callout-note">
+    <strong>Nota:</strong>
+    El Dashboard solo es visible para usuarios con rol de Administrador.
+  </div>
+</div>
+
+<!-- =============================================
+     3. ALUMNOS
+     ============================================= -->
+<div class="section" id="alumnos">
+  <h2 class="section-title">3. Alumnos</h2>
+
+  <h3>3.1 Directorio de Alumnos</h3>
+  <p>Acceda a la sección <strong>Alumnos</strong> desde el sidebar.</p>
+
+  <div class="screenshot-placeholder">
+    <span class="icon">📸</span>
+    <span class="label">Captura: Lista de alumnos con filtros y tabla</span>
+  </div>
+
+  <h4>Filtros disponibles</h4>
+  <table>
+    <tr><th>Filtro</th><th>Descripción</th></tr>
+    <tr><td><strong>Buscar</strong></td><td>Buscar por nombre o apellido del alumno</td></tr>
+    <tr><td><strong>Rama</strong></td><td>Filtrar por Varonil o Femenil</td></tr>
+    <tr><td><strong>Maestro</strong></td><td>Filtrar por maestro asignado</td></tr>
+  </table>
+
+  <h4>Columnas de la tabla</h4>
+  <table>
+    <tr><th>Columna</th><th>Descripción</th></tr>
+    <tr><td>Alumno</td><td>Foto (o iniciales), nombre completo y edad</td></tr>
+    <tr><td>Entrenador</td><td>Nombre del maestro asignado</td></tr>
+    <tr><td>Última Asistencia</td><td>Fecha de la última vez que asistió</td></tr>
+    <tr><td>Estado</td><td>Activo o Inactivo</td></tr>
+  </table>
+
+  <p>Haga clic en una fila para abrir el <strong>perfil del alumno</strong>.</p>
+
+  <h3>3.2 Crear Alumno</h3>
+  <ol class="step-list">
+    <li>Haga clic en el botón <strong>"Nuevo Alumno"</strong> (esquina superior derecha).</li>
+    <li>Complete los campos obligatorios del formulario.</li>
+    <li>Opcionalmente, agregue una fotografía.</li>
+    <li>Ingrese los datos del tutor y contacto de emergencia.</li>
+    <li>Complete la ficha médica si se cuenta con ella.</li>
+    <li>Haga clic en <strong>"Crear Alumno"</strong>.</li>
+  </ol>
+
+  <div class="screenshot-placeholder">
+    <span class="icon">📸</span>
+    <span class="label">Captura: Formulario de nuevo alumno</span>
+  </div>
+
+  <h4>Campos del formulario</h4>
+  <table>
+    <tr><th>Sección</th><th>Campo</th><th>Tipo</th><th>Requerido</th></tr>
+    <tr><td rowspan="5">Datos Personales</td><td>Nombre Completo</td><td>Texto</td><td>Sí</td></tr>
+    <tr><td>Apellido Paterno</td><td>Texto</td><td>Sí</td></tr>
+    <tr><td>Apellido Materno</td><td>Texto</td><td>No</td></tr>
+    <tr><td>Fecha Nacimiento</td><td>Fecha</td><td>Sí</td></tr>
+    <tr><td>Rama</td><td>Selección (Varonil/Femenil)</td><td>Sí</td></tr>
+    <tr><td rowspan="2">Foto</td><td>Fotografía</td><td>Imagen</td><td>No</td></tr>
+    <tr><td></td><td><em>Se puede agregar después</em></td><td></td></tr>
+    <tr><td rowspan="4">Tutor</td><td>Nombre</td><td>Texto</td><td>Sí</td></tr>
+    <tr><td>Apellido</td><td>Texto</td><td>Sí</td></tr>
+    <tr><td>Teléfono</td><td>Teléfono</td><td>Sí</td></tr>
+    <tr><td>Email</td><td>Email</td><td>No</td></tr>
+    <tr><td rowspan="3">Emergencia</td><td>Nombre</td><td>Texto</td><td>Sí</td></tr>
+    <tr><td>Relación</td><td>Texto</td><td>Sí</td></tr>
+    <tr><td>Teléfono</td><td>Teléfono</td><td>Sí</td></tr>
+    <tr><td rowspan="4">Ficha Médica</td><td>Tipo Sangre</td><td>Selección</td><td>No</td></tr>
+    <tr><td>NSS</td><td>Texto</td><td>No</td></tr>
+    <tr><td>Alergias</td><td>Texto</td><td>No</td></tr>
+    <tr><td>Condiciones Médicas</td><td>Texto</td><td>No</td></tr>
+  </table>
+
+  <h3>3.3 Editar Alumno</h3>
+  <ol class="step-list">
+    <li>Abra el perfil del alumno (clic en la fila de la tabla).</li>
+    <li>Haga clic en <strong>"Editar Perfil"</strong>.</li>
+    <li>Modifique los campos necesarios.</li>
+    <li>Haga clic en <strong>"Guardar Cambios"</strong>.</li>
+  </ol>
+
+  <h3>3.4 Perfil del Alumno</h3>
+  <p>El perfil del alumno tiene 3 pestañas:</p>
+
+  <div class="screenshot-placeholder">
+    <span class="icon">📸</span>
+    <span class="label">Captura: Perfil del alumno con pestañas</span>
+  </div>
+
+  <h4>Pestaña: Información</h4>
+  <ul>
+    <li>Datos personales completos del alumno</li>
+    <li>Información médica</li>
+    <li>Datos de contacto del tutor</li>
+    <li>Contacto de emergencia</li>
+    <li><strong>Código QR:</strong> Botones para descargar o enviar por email</li>
+  </ul>
+
+  <h4>Pestaña: Asistencias</h4>
+  <ul>
+    <li>Historial de asistencias del alumno</li>
+    <li>Filtros por fecha y tipo (asistencia/falta)</li>
+    <li>Edición inline de registros</li>
+  </ul>
+
+  <h4>Pestaña: Membresía</h4>
+  <ul>
+    <li>Historial de membresías</li>
+    <li>Crear nueva membresía</li>
+    <li>Ver estado (activa, vencida, cancelada)</li>
+  </ul>
+
+  <h3>3.5 Código QR</h3>
+  <ol class="step-list">
+    <li>En el perfil del alumno, vaya a la pestaña <strong>Información</strong>.</li>
+    <li>Desplácese hasta la sección <strong>Código QR</strong>.</li>
+    <li><strong>Descargar QR:</strong> Guarda la imagen del código en su dispositivo.</li>
+    <li><strong>Enviar QR:</strong> Envía el código por email al tutor registrado.</li>
+  </ol>
+
+  <div class="callout callout-success">
+    <strong>Consejo:</strong>
+    El código QR se puede escanear desde la sección de Asistencias para registrar la asistencia del alumno de forma rápida.
+  </div>
+
+  <h3>3.6 Lista de Cumpleaños</h3>
+  <ol class="step-list">
+    <li>En la página de Alumnos, haga clic en el botón <strong>"Cumpleaños"</strong>.</li>
+    <li>Se mostrará la lista de alumnos que cumplen años en el mes actual.</li>
+  </ol>
+</div>
+
+<!-- =============================================
+     4. MAESTROS
+     ============================================= -->
+<div class="section" id="maestros">
+  <h2 class="section-title">4. Maestros</h2>
+
+  <h3>4.1 Directorio de Maestros</h3>
+
+  <div class="screenshot-placeholder">
+    <span class="icon">📸</span>
+    <span class="label">Captura: Lista de maestros</span>
+  </div>
+
+  <h4>Filtros disponibles</h4>
+  <table>
+    <tr><th>Filtro</th><th>Descripción</th></tr>
+    <tr><td><strong>Buscar</strong></td><td>Buscar por nombre o apellido</td></tr>
+    <tr><td><strong>Estado</strong></td><td>Activos, Inactivos o Todos</td></tr>
+  </table>
+
+  <h4>Columnas de la tabla</h4>
+  <table>
+    <tr><th>Columna</th><th>Descripción</th></tr>
+    <tr><td>Maestro</td><td>Foto (o iniciales) y nombre completo</td></tr>
+    <tr><td>Teléfono</td><td>Número de teléfono</td></tr>
+    <tr><td>Estado</td><td>Activo o Inactivo</td></tr>
+  </table>
+
+  <h3>4.2 Crear Maestro</h3>
+  <ol class="step-list">
+    <li>Haga clic en <strong>"Nuevo Maestro"</strong>.</li>
+    <li>Complete los datos personales (nombre, apellido, teléfono, email).</li>
+    <li>Asigne un <strong>usuario</strong> del sistema al maestro (se creará automáticamente si no existe).</li>
+    <li>Haga clic en <strong>"Guardar"</strong>.</li>
+  </ol>
+
+  <div class="callout callout-note">
+    <strong>Nota:</strong>
+    Al crear un maestro, se crea automáticamente un usuario con rol "Maestro" en el sistema.
+  </div>
+
+  <h3>4.3 Perfil del Maestro</h3>
+  <ul>
+    <li>Información personal del maestro</li>
+    <li>Alumnos asignados</li>
+    <li>Historial de asistencias registradas</li>
+  </ul>
+</div>
+
+<!-- =============================================
+     5. ASISTENCIAS
+     ============================================= -->
+<div class="section" id="asistencias">
+  <h2 class="section-title">5. Asistencias</h2>
+
+  <h3>5.1 Escaneo de QR</h3>
+  <ol class="step-list">
+    <li>Acceda a <strong>Asistencias</strong> desde el sidebar.</li>
+    <li>Haga clic en el botón del <strong>escáner QR</strong> (ícono de código).</li>
+    <li>Apunte la cámara del dispositivo al código QR del alumno.</li>
+    <li>El sistema registrará la asistencia automáticamente.</li>
+  </ol>
+
+  <div class="screenshot-placeholder">
+    <span class="icon">📸</span>
+    <span class="label">Captura: Escáner QR activo</span>
+  </div>
+
+  <div class="callout callout-warning">
+    <strong>Importante:</strong>
+    Si el alumno no tiene una membresía activa, el sistema mostrará un mensaje de error. Verifique la membresía antes de escanear.
+  </div>
+
+  <h3>5.2 Registro Manual</h3>
+  <ol class="step-list">
+    <li>Haga clic en <strong>"Registrar Asistencia"</strong>.</li>
+    <li>Busque al alumno por nombre.</li>
+    <li>Seleccione el alumno de la lista.</li>
+    <li>Opcionalmente, agregue una nota.</li>
+    <li>Haga clic en <strong>"Registrar"</strong>.</li>
+  </ol>
+
+  <h3>5.3 Lista de Asistencias</h3>
+
+  <div class="screenshot-placeholder">
+    <span class="icon">📸</span>
+    <span class="label">Captura: Lista de asistencias con filtros</span>
+  </div>
+
+  <h4>Filtros disponibles</h4>
+  <table>
+    <tr><th>Filtro</th><th>Descripción</th></tr>
+    <tr><td><strong>Buscar</strong></td><td>Buscar por nombre del alumno o nota</td></tr>
+    <tr><td><strong>Maestro</strong></td><td>Filtrar por maestro que registró la asistencia</td></tr>
+    <tr><td><strong>Tipo</strong></td><td>Todas, Asistencia o Falta</td></tr>
+    <tr><td><strong>Desde / Hasta</strong></td><td>Rango de fechas</td></tr>
+  </table>
+
+  <h4>Columnas de la tabla</h4>
+  <table>
+    <tr><th>Columna</th><th>Descripción</th></tr>
+    <tr><td>Alumno</td><td>Nombre del alumno (borde rojo si es falta)</td></tr>
+    <tr><td>Fecha y Hora</td><td>Fecha y hora del registro</td></tr>
+    <tr><td>Maestro</td><td>Maestro que registró la asistencia</td></tr>
+    <tr><td>Notas</td><td>Notas adicionales y alerta de impago si aplica</td></tr>
+  </table>
+
+  <h3>5.4 Editar Asistencia</h3>
+  <ol class="step-list">
+    <li>Haga clic en la fila de la asistencia que desea editar.</li>
+    <li>Modifique el estado (Asistencia / Falta), maestro o notas.</li>
+    <li>Haga clic en el ícono de <strong>guardar</strong> (checkmark).</li>
+  </ol>
+
+  <div class="callout callout-danger">
+    <strong>Advertencia:</strong>
+    Solo puede registrar asistencia como su propio usuario maestro. No es posible registrar asistencia a nombre de otro maestro.
+  </div>
+</div>
+
+<!-- =============================================
+     6. MEMBRESÍAS
+     ============================================= -->
+<div class="section" id="membresias">
+  <h2 class="section-title">6. Membresías</h2>
+
+  <h3>6.1 Lista de Membresías</h3>
+
+  <div class="screenshot-placeholder">
+    <span class="icon">📸</span>
+    <span class="label">Captura: Lista de membresías</span>
+  </div>
+
+  <h4>Filtros disponibles</h4>
+  <table>
+    <tr><th>Filtro</th><th>Descripción</th></tr>
+    <tr><td><strong>Buscar</strong></td><td>Buscar por nombre del alumno</td></tr>
+    <tr><td><strong>Estado</strong></td><td>Todos, Activa, Vencida, Cancelada</td></tr>
+    <tr><td><strong>Pago</strong></td><td>Todos, Pagado, No pagado</td></tr>
+  </table>
+
+  <h4>Columnas de la tabla</h4>
+  <table>
+    <tr><th>Columna</th><th>Descripción</th></tr>
+    <tr><td>Alumno</td><td>Foto y nombre del alumno</td></tr>
+    <tr><td>Tipo</td><td>Nombre del tipo de membresía</td></tr>
+    <tr><td>Vigencia</td><td>Rango de fechas con color según estado</td></tr>
+    <tr><td>Estado</td><td>Activa, Vencida o Cancelada</td></tr>
+    <tr><td>Pagado</td><td>Sí o No</td></tr>
+    <tr><td>Acciones</td><td>Botón para reenviar recibo</td></tr>
+  </table>
+
+  <h3>6.2 Crear Membresía</h3>
+  <ol class="step-list">
+    <li>Haga clic en <strong>"Nueva membresía"</strong>.</li>
+    <li>Busque al alumno escribiendo su nombre en el campo <strong>Alumno</strong>.</li>
+    <li>Seleccione el alumno de la lista desplegable.</li>
+    <li>Seleccione el <strong>Tipo de membresía</strong> (el costo se auto-complete).</li>
+    <li>Ajuste el <strong>Costo real</strong> si aplica descuento por beca.</li>
+    <li>Ingrese el <strong>Porcentaje de beca</strong> (0-100) si aplica.</li>
+    <li>Verifique las <strong>fechas</strong> (inicio y vencimiento).</li>
+    <li>Active o desactive el toggle <strong>Pagado</strong>.</li>
+    <li>Agregue notas si es necesario.</li>
+    <li>Haga clic en <strong>"Guardar"</strong>.</li>
+  </ol>
+
+  <div class="screenshot-placeholder">
+    <span class="icon">📸</span>
+    <span class="label">Captura: Formulario de nueva membresía</span>
+  </div>
+
+  <div class="callout callout-note">
+    <strong>Nota — Inscripción:</strong>
+    Si selecciona el tipo "Inscripción", el sistema validará que el alumno no tenga ya una inscripción activa. La inscripción es un cargo anual único.
+  </div>
+
+  <h3>6.3 Reenviar Recibo</h3>
+  <ol class="step-list">
+    <li>En la lista de membresías, haga clic en el ícono de <strong>correo</strong> (✉️) en la columna Acciones.</li>
+    <li>El recibo se enviará por email al tutor registrado del alumno.</li>
+  </ol>
+
+  <h3>6.4 Membresías Impagas</h3>
+  <ol class="step-list">
+    <li>Haga clic en el botón <strong>"Impagas"</strong> (ícono de advertencia).</li>
+    <li>Se mostrarán todas las membresías con pago pendiente.</li>
+    <li>Puede hacer clic en una membresía para editar y marcar como pagada.</li>
+  </ol>
+
+  <div class="callout callout-warning">
+    <strong>Importante:</strong>
+    Si un tipo de membresía tiene activada la opción "Bloquear asistencia por impago", los alumnos con membresía impaga no podrán registrar asistencia.
+  </div>
+</div>
+
+<!-- =============================================
+     7. TIPOS DE MEMBRESÍA
+     ============================================= -->
+<div class="section" id="tipos-membresia">
+  <h2 class="section-title">7. Tipos de Membresía</h2>
+
+  <h3>7.1 Catálogo de Tipos</h3>
+
+  <div class="screenshot-placeholder">
+    <span class="icon">📸</span>
+    <span class="label">Captura: Lista de tipos de membresía</span>
+  </div>
+
+  <h4>Columnas de la tabla</h4>
+  <table>
+    <tr><th>Columna</th><th>Descripción</th></tr>
+    <tr><td>Nombre</td><td>Nombre del tipo con indicador de color</td></tr>
+    <tr><td>Costo base</td><td>Precio mensual del plan</td></tr>
+    <tr><td>Duración</td><td>Días de vigencia (30 = mensual, 365 = anual)</td></tr>
+    <tr><td>Días</td><td>Número de días incluidos por semana</td></tr>
+    <tr><td>Nivel</td><td>Competitivo o Estándar</td></tr>
+    <tr><td>Estado</td><td>Activo o Inactivo</td></tr>
+  </table>
+
+  <h3>7.2 Crear Tipo de Membresía</h3>
+  <ol class="step-list">
+    <li>Haga clic en <strong>"Nuevo tipo"</strong>.</li>
+    <li>Ingrese el <strong>Nombre</strong> (ej: "Basico — Mensual").</li>
+    <li>Agregue una <strong>Descripción</strong>.</li>
+    <li>Defina el <strong>Costo base</strong> y la <strong>Duración</strong> en días.</li>
+    <li>Seleccione los <strong>Días incluidos</strong> del dropdown.</li>
+    <li>Defina el <strong>Límite de días por semana</strong> (vacío = sin límite).</li>
+    <li>Opcionalmente, configure <strong>Días extra</strong> y su costo.</li>
+    <li>Haga clic en <strong>"Guardar"</strong>.</li>
+  </ol>
+
+  <div class="screenshot-placeholder">
+    <span class="icon">📸</span>
+    <span class="label">Captura: Formulario de tipo de membresía</span>
+  </div>
+
+  <h4>Campos del formulario</h4>
+  <table>
+    <tr><th>Sección</th><th>Campo</th><th>Descripción</th></tr>
+    <tr><td rowspan="4">Datos principales</td><td>Nombre</td><td>Nombre del plan (requerido)</td></tr>
+    <tr><td>Descripción</td><td>Descripción del plan</td></tr>
+    <tr><td>Costo base ($)</td><td>Precio mensual</td></tr>
+    <tr><td>Duración (días)</td><td>30 = mensual, 365 = anual</td></tr>
+    <tr><td rowspan="4">Detalles</td><td>Días incluidos</td><td>Dropdown: Lun-Vie, Lun-Jue, Sábado, Libre, etc.</td></tr>
+    <tr><td>Días por semana</td><td>Informativo (ej: 2, 4)</td></tr>
+    <tr><td>Horas por clase</td><td>Informativo</td></tr>
+    <tr><td>Límite días/semana</td><td>Máximo de días gratis por semana (vacío = sin límite)</td></tr>
+    <tr><td rowspan="3">Opciones avanzadas</td><td>Permitir días extra</td><td>Toggle para permitir asistencia fuera del plan</td></tr>
+    <tr><td>Costo día extra ($)</td><td>Cargo por día extra entre semana</td></tr>
+    <tr><td>Costo sábado extra ($)</td><td>Cargo por asistencia el sábado</td></tr>
+  </table>
+
+  <div class="callout callout-note">
+    <strong>Nota — Límite de días por semana:</strong>
+    Si define un límite (ej: 2 para el plan Básico), el alumno podrá asistir hasta ese número de días gratis por semana. Los días adicionales se cobran como extra. Vacío = sin límite.
+  </div>
+
+  <h3>7.3 Editar Tipo</h3>
+  <ol class="step-list">
+    <li>Haga clic en la fila del tipo que desea editar.</li>
+    <li>Modifique los campos necesarios.</li>
+    <li>Haga clic en <strong>"Guardar"</strong>.</li>
+  </ol>
+</div>
+
+<!-- =============================================
+     8. USUARIOS
+     ============================================= -->
+<div class="section" id="usuarios">
+  <h2 class="section-title">8. Usuarios</h2>
+
+  <h3>8.1 Lista de Usuarios</h3>
+
+  <div class="screenshot-placeholder">
+    <span class="icon">📸</span>
+    <span class="label">Captura: Lista de usuarios</span>
+  </div>
+
+  <h4>Columnas de la tabla</h4>
+  <table>
+    <tr><th>Columna</th><th>Descripción</th></tr>
+    <tr><td>Usuario</td><td>Nombre de usuario para iniciar sesión</td></tr>
+    <tr><td>Nombre Completo</td><td>Nombre y apellidos</td></tr>
+    <tr><td>Rol</td><td>Administrador o Maestro</td></tr>
+    <tr><td>Estado</td><td>Activo o Inactivo</td></tr>
+  </table>
+
+  <h3>8.2 Crear Usuario</h3>
+  <ol class="step-list">
+    <li>Haga clic en <strong>"Agregar Usuario"</strong>.</li>
+    <li>Ingrese el <strong>nombre de usuario</strong> (mínimo 3 caracteres).</li>
+    <li>Ingrese la <strong>contraseña</strong> (mínimo 8 caracteres, 1 mayúscula, 1 minúscula, 1 número).</li>
+    <li>Ingrese el <strong>nombre completo</strong>.</li>
+    <li>Seleccione el <strong>rol</strong> (Administrador o Maestro).</li>
+    <li>Haga clic en <strong>"Guardar"</strong>.</li>
+  </ol>
+
+  <div class="callout callout-warning">
+    <strong>Advertencia:</strong>
+    La contraseña no se puede recuperar. Asegúrese de comunicarla al usuario de forma segura.
+  </div>
+
+  <h3>8.3 Editar Usuario</h3>
+  <ol class="step-list">
+    <li>Haga clic en la fila del usuario.</li>
+    <li>Modifique los campos necesarios (nombre, rol, estado).</li>
+    <li>Haga clic en <strong>"Guardar"</strong>.</li>
+  </ol>
+
+  <h3>8.4 Restablecer Contraseña</h3>
+  <ol class="step-list">
+    <li>Abra el modal de edición del usuario.</li>
+    <li>Haga clic en <strong>"Restablecer Contraseña"</strong>.</li>
+    <li>Se generará una contraseña temporal.</li>
+    <li>Comuníquela al usuario de forma segura.</li>
+  </ol>
+</div>
+
+<!-- =============================================
+     9. AUDITORÍA
+     ============================================= -->
+<div class="section" id="auditoria">
+  <h2 class="section-title">9. Auditoría</h2>
+
+  <p>La sección de Auditoría muestra un registro de todas las acciones realizadas en el sistema durante los últimos 60 días.</p>
+
+  <div class="screenshot-placeholder">
+    <span class="icon">📸</span>
+    <span class="label">Captura: Registro de auditoría</span>
+  </div>
+
+  <h4>Información registrada</h4>
+  <table>
+    <tr><th>Campo</th><th>Descripción</th></tr>
+    <tr><td>Fecha y Hora</td><td>Cuándo se realizó la acción</td></tr>
+    <tr><td>Usuario</td><td>Quién realizó la acción</td></tr>
+    <tr><td>Acción</td><td>CREAR, EDITAR, ELIMINAR, SCAN, etc.</td></tr>
+    <tr><td>Módulo</td><td>Alumno, Asistencia, Membresía, etc.</td></tr>
+    <tr><td>Detalle</td><td>Descripción de la acción realizada</td></tr>
+  </table>
+
+  <div class="callout callout-note">
+    <strong>Nota:</strong>
+    La auditoría es de solo lectura. No se pueden editar ni eliminar registros.
+  </div>
+</div>
+
+<!-- =============================================
+     10. REGLAMENTOS Y FIRMAS
+     ============================================= -->
+<div class="section" id="reglamentos">
+  <h2 class="section-title">10. Reglamentos y Firmas</h2>
+
+  <h3>10.1 Documentos</h3>
+  <ol class="step-list">
+    <li>Acceda a <strong>Documentos</strong> desde el sidebar.</li>
+    <li><strong>Crear reglamento:</strong> Haga clic en "Nuevo documento", suba el PDF y defina el nombre.</li>
+    <li><strong>Generar links:</strong> Haga clic en "Generar links" para crear enlaces únicos de firma para cada tutor.</li>
+    <li>Los links se enviarán por email a los tutores registrados.</li>
+  </ol>
+
+  <h3>10.2 Firmas</h3>
+  <ol class="step-list">
+    <li>Acceda a <strong>Firmas</strong> desde el sidebar.</li>
+    <li>Visualice el estado de firma de cada alumno/tutor.</li>
+    <li>Filtrar por alumno específico si es necesario.</li>
+  </ol>
+
+  <div class="callout callout-note">
+    <strong>Nota:</strong>
+    Los tutores firman el reglamento desde un link público que se les envía por email. No requieren tener cuenta en el sistema.
+  </div>
+</div>
+
+<!-- =============================================
+     11. PUBLICAR VERSIÓN
+     ============================================= -->
+<div class="section" id="publicar-version">
+  <h2 class="section-title">11. Publicar Versión</h2>
+
+  <p>Esta sección permite actualizar la versión de la aplicación móvil.</p>
+
+  <div class="callout callout-danger">
+    <strong>Advertencia:</strong>
+    Solo el usuario con nombre <strong>"Admin"</strong> puede publicar nuevas versiones. Esta función está restringida por seguridad.
+  </div>
+
+  <ol class="step-list">
+    <li>Acceda a <strong>Publicar Versión</strong> desde el sidebar.</li>
+    <li>Seleccione la plataforma (Android / iOS).</li>
+    <li>Ingrese el número de versión.</li>
+    <li>Agregue las notas de la versión.</li>
+    <li>Haga clic en <strong>"Publicar"</strong>.</li>
+  </ol>
+</div>
+
+<!-- =============================================
+     FOOTER
+     ============================================= -->
+<div class="page-footer">
+  GymControl — Guía de Usuario del Administrador &middot; Versión 1.0 &middot; Julio 2026
+</div>
+
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guía de Usuario — GymControl (Maestro)</title>
+  <link rel="stylesheet" href="guia-styles.css">
+</head>
+<body>
+
+<!-- =============================================
+     PORTADA
+     ============================================= -->
+<div class="cover">
+  <h1>GymControl</h1>
+  <div class="subtitle">Guía de Usuario — Panel del Maestro</div>
+  <div class="meta">Versión 1.0 &middot; Julio 2026</div>
+</div>
+
+<!-- =============================================
+     ÍNDICE
+     ============================================= -->
+<div class="toc">
+  <h2>Índice</h2>
+  <ol>
+    <li><a href="#primeros-pasos">Primeros Pasos</a></li>
+    <li><a href="#alumnos">Alumnos</a></li>
+    <li><a href="#asistencias">Asistencias</a></li>
+    <li><a href="#notas">Notas Importantes</a></li>
+  </ol>
+</div>
+
+<!-- =============================================
+     1. PRIMEROS PASOS
+     ============================================= -->
+<div class="section" id="primeros-pasos">
+  <h2 class="section-title">1. Primeros Pasos</h2>
+
+  <h3>1.1 Iniciar sesión</h3>
+  <ol class="step-list">
+    <li>Abra la aplicación o navegue a la URL del sistema.</li>
+    <li>Ingrese su <strong>usuario</strong> y <strong>contraseña</strong> (proporcionados por el administrador).</li>
+    <li>Haga clic en <strong>"Iniciar Sesión"</strong>.</li>
+    <li>Será redirigido a la sección de <strong>Alumnos</strong>.</li>
+  </ol>
+
+  <div class="callout callout-note">
+    <strong>Nota:</strong>
+    Al iniciar sesión como Maestro, verá automáticamente la lista de sus alumnos asignados.
+  </div>
+
+  <h3>1.2 Navegación general</h3>
+
+  <div class="screenshot-placeholder">
+    <span class="icon">📸</span>
+    <span class="label">Captura: Sidebar del Maestro</span>
+  </div>
+
+  <table>
+    <tr><th>Elemento</th><th>Descripción</th></tr>
+    <tr><td><strong>Sidebar</strong></td><td>Menú lateral con las secciones disponibles: Alumnos y Asistencias</td></tr>
+    <tr><td><strong>Reloj</strong></td><td>Muestra la hora y fecha actual en la barra superior</td></tr>
+    <tr><td><strong>Cerrar Sesión</strong></td><td>Botón en la parte inferior del sidebar para salir</td></tr>
+  </table>
+
+  <div class="callout callout-warning">
+    <strong>Importante:</strong>
+    Como Maestro, solo tiene acceso a las secciones de <strong>Alumnos</strong> y <strong>Asistencias</strong>. Las demás secciones son exclusivas del Administrador.
+  </div>
+</div>
+
+<!-- =============================================
+     2. ALUMNOS
+     ============================================= -->
+<div class="section" id="alumnos">
+  <h2 class="section-title">2. Alumnos</h2>
+
+  <h3>2.1 Ver lista de alumnos</h3>
+  <p>Al iniciar sesión, verá la lista de alumnos asignados a usted.</p>
+
+  <div class="screenshot-placeholder">
+    <span class="icon">📸</span>
+    <span class="label">Captura: Lista de alumnos del maestro</span>
+  </div>
+
+  <h4>Filtros disponibles</h4>
+  <table>
+    <tr><th>Filtro</th><th>Descripción</th></tr>
+    <tr><td><strong>Buscar</strong></td><td>Buscar por nombre o apellido del alumno</td></tr>
+    <tr><td><strong>Rama</strong></td><td>Filtrar por Varonil o Femenil</td></tr>
+  </table>
+
+  <h4>Columnas de la tabla</h4>
+  <table>
+    <tr><th>Columna</th><th>Descripción</th></tr>
+    <tr><td>Alumno</td><td>Foto (o iniciales), nombre completo y edad</td></tr>
+    <tr><td>Entrenador</td><td>Su nombre (como maestro asignado)</td></tr>
+    <tr><td>Última Asistencia</td><td>Fecha de la última vez que asistió</td></tr>
+    <tr><td>Estado</td><td>Activo o Inactivo</td></tr>
+  </table>
+
+  <p>Haga clic en una fila para ver el <strong>perfil del alumno</strong>.</p>
+
+  <div class="callout callout-note">
+    <strong>Nota:</strong>
+    Solo puede ver a sus propios alumnos asignados. No tiene acceso a alumnos de otros maestros.
+  </div>
+
+  <h3>2.2 Ver perfil del alumno</h3>
+
+  <div class="screenshot-placeholder">
+    <span class="icon">📸</span>
+    <span class="label">Captura: Perfil del alumno</span>
+  </div>
+
+  <p>El perfil muestra la información completa del alumno:</p>
+  <ul>
+    <li><strong>Datos personales:</strong> Nombre, fecha de nacimiento, edad, rama, estado</li>
+    <li><strong>Información médica:</strong> Tipo de sangre, alergias, condiciones médicas</li>
+    <li><strong>Contacto:</strong> Datos del tutor y contacto de emergencia</li>
+    <li><strong>Código QR:</strong> Código único del alumno para registrar asistencia</li>
+  </ul>
+
+  <h4>Código QR</h4>
+  <ul>
+    <li><strong>Descargar QR:</strong> Guarda la imagen del código en su dispositivo</li>
+    <li><strong>Enviar QR:</strong> Envía el código por email al tutor registrado</li>
+  </ul>
+
+  <h3>2.3 Ver cumpleaños</h3>
+  <ol class="step-list">
+    <li>En la página de Alumnos, haga clic en el botón <strong>"Cumpleaños"</strong>.</li>
+    <li>Se mostrará la lista de alumnos que cumplen años en el mes actual.</li>
+  </ol>
+</div>
+
+<!-- =============================================
+     3. ASISTENCIAS
+     ============================================= -->
+<div class="section" id="asistencias">
+  <h2 class="section-title">3. Asistencias</h2>
+
+  <h3>3.1 Escaneo de QR</h3>
+  <p>La forma más rápida de registrar asistencia.</p>
+
+  <ol class="step-list">
+    <li>Acceda a <strong>Asistencias</strong> desde el sidebar.</li>
+    <li>Haga clic en el botón del <strong>escáner QR</strong> (ícono de código).</li>
+    <li>Apunte la cámara del dispositivo al código QR del alumno.</li>
+    <li>El sistema registrará la asistencia automáticamente.</li>
+  </ol>
+
+  <div class="screenshot-placeholder">
+    <span class="icon">📸</span>
+    <span class="label">Captura: Escáner QR activo</span>
+  </div>
+
+  <div class="callout callout-warning">
+    <strong>Importante — Membresía:</strong>
+    Si el alumno no tiene una membresía activa, el sistema bloqueará el registro. Verifique que el alumno tenga membresía vigente antes de escanear.
+  </div>
+
+  <div class="callout callout-danger">
+    <strong>Advertencia — Día extra:</strong>
+    Si el alumno asiste en un día que no está incluido en su membresía (ej: un alumno de Sábado va un Lunes), se le cobrará un cargo extra. El sistema mostrará el monto a cobrar.
+  </div>
+
+  <h3>3.2 Registro manual</h3>
+  <p>Si el código QR no está disponible, puede registrar la asistencia manualmente.</p>
+
+  <ol class="step-list">
+    <li>Haga clic en <strong>"Registrar Asistencia"</strong> (ícono +).</li>
+    <li>Busque al alumno escribiendo su nombre.</li>
+    <li>Seleccione el alumno de la lista.</li>
+    <li>Opcionalmente, agregue una nota.</li>
+    <li>Haga clic en <strong>"Registrar"</strong>.</li>
+  </ol>
+
+  <h3>3.3 Ver historial de asistencias</h3>
+
+  <div class="screenshot-placeholder">
+    <span class="icon">📸</span>
+    <span class="label">Captura: Lista de asistencias</span>
+  </div>
+
+  <h4>Filtros disponibles</h4>
+  <table>
+    <tr><th>Filtro</th><th>Descripción</th></tr>
+    <tr><td><strong>Buscar</strong></td><td>Buscar por nombre del alumno o nota</td></tr>
+    <tr><td><strong>Tipo</strong></td><td>Todas, Asistencia o Falta</td></tr>
+    <tr><td><strong>Desde / Hasta</strong></td><td>Rango de fechas</td></tr>
+  </table>
+
+  <h4>Columnas de la tabla</h4>
+  <table>
+    <tr><th>Columna</th><th>Descripción</th></tr>
+    <tr><td>Alumno</td><td>Nombre del alumno (borde rojo si es falta)</td></tr>
+    <tr><td>Fecha y Hora</td><td>Fecha y hora del registro</td></tr>
+    <tr><td>Maestro</td><td>Su nombre</td></tr>
+    <tr><td>Notas</td><td>Notas adicionales y alerta de impago si aplica</td></tr>
+  </table>
+
+  <h3>3.4 Editar asistencia</h3>
+  <ol class="step-list">
+    <li>Haga clic en la fila de la asistencia que desea editar.</li>
+    <li>Modifique el estado (Asistencia / Falta) o las notas.</li>
+    <li>Haga clic en el ícono de <strong>guardar</strong> (checkmark).</li>
+  </ol>
+
+  <div class="callout callout-note">
+    <strong>Nota:</strong>
+    Solo puede editar asistencias que usted mismo haya registrado.
+  </div>
+</div>
+
+<!-- =============================================
+     4. NOTAS IMPORTANTES
+     ============================================= -->
+<div class="section" id="notas">
+  <h2 class="section-title">4. Notas Importantes</h2>
+
+  <h3>Alcance de sus permisos</h3>
+  <table>
+    <tr><th>Funcionalidad</th><th>¿Puede hacerlo?</th></tr>
+    <tr><td>Ver sus alumnos asignados</td><td>✅ Sí</td></tr>
+    <tr><td>Ver perfil de alumno</td><td>✅ Sí</td></tr>
+    <tr><td>Registrar asistencia (QR)</td><td>✅ Sí</td></tr>
+    <tr><td>Registrar asistencia (manual)</td><td>✅ Sí</td></tr>
+    <tr><td>Ver historial de asistencias</td><td>✅ Sí</td></tr>
+    <tr><td>Enviar QR por email</td><td>✅ Sí</td></tr>
+    <tr><td>Ver cumpleaños</td><td>✅ Sí</td></tr>
+    <tr><td>Crear o editar alumnos</td><td>❌ No</td></tr>
+    <tr><td>Gestionar membresías</td><td>❌ No</td></tr>
+    <tr><td>Gestionar maestros</td><td>❌ No</td></tr>
+    <tr><td>Gestionar usuarios</td><td>❌ No</td></tr>
+    <tr><td>Ver dashboard / reportes</td><td>❌ No</td></tr>
+    <tr><td>Ver auditoría</td><td>❌ No</td></tr>
+  </table>
+
+  <h3>Tipos de membresía y días extra</h3>
+  <p>El sistema valida automáticamente si un alumno puede asistir según su membresía:</p>
+
+  <table>
+    <tr><th>Membresía</th><th>Días incluidos</th><th>Límite/semana</th><th>Costo extra weekday</th><th>Costo extra sábado</th></tr>
+    <tr><td>Básica</td><td>Lunes a Viernes</td><td>2</td><td>$150</td><td>$200</td></tr>
+    <tr><td>Competitiva</td><td>Lunes a Jueves</td><td>Sin límite</td><td>$150</td><td>$200</td></tr>
+    <tr><td>Sábados</td><td>Sábado</td><td>1</td><td>$150</td><td>—</td></tr>
+    <tr><td>Bebés</td><td>Lunes a Viernes</td><td>2</td><td>$150</td><td>$200</td></tr>
+    <tr><td>Inscripción</td><td>—</td><td>—</td><td>No aplica</td><td>No aplica</td></tr>
+  </table>
+
+  <div class="callout callout-warning">
+    <strong>Recordatorio:</strong>
+    Si un alumno de la Básica ya usó sus 2 visitas en la semana y asiste un día más, se le cobrará $150 extra. Si asiste un sábado, se le cobrará $200 extra.
+  </div>
+
+  <h3>Solución de problemas comunes</h3>
+  <table>
+    <tr><th>Problema</th><th>Causa probable</th><th>Solución</th></tr>
+    <tr><td>No puede escanear QR</td><td>Cámara no autorizada</td><td>Permita el acceso a la cámara en la configuración del navegador</td></tr>
+    <tr><td>Alumno bloqueado al escanear</td><td>Sin membresía activa</td><td>Verifique que el alumno tenga membresía vigente (consulte al admin)</td></tr>
+    <tr><td>Cobro extra inesperado</td><td>Día fuera del plan o límite semanal</td><td>Verifique los días incluidos en la membresía del alumno</td></tr>
+    <tr><td>No ve alumnos</td><td>No tiene alumnos asignados</td><td>Contacte al administrador para que le asigne alumnos</td></tr>
+  </table>
+</div>
+
+<!-- =============================================
+     FOOTER
+     ============================================= -->
+<div class="page-footer">
+  GymControl — Guía de Usuario del Maestro &middot; Versión 1.0 &middot; Julio 2026
+</div>
+
+</body>
+</html>
