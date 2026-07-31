@@ -96,6 +96,14 @@
 
       <div>
         <ion-item class="field-row">
+          <ion-label position="stacked">Límite de días por semana (vacío = sin límite)</ion-label>
+          <ion-input class="field-input" [class.field-error]="errors['limite_dias_semana']" type="number" [(ngModel)]="limite_dias_semana" placeholder="2 = Básico, vacío = sin límite"></ion-input>
+        </ion-item>
+        @if (errors['limite_dias_semana']) { <span class="error-msg">{{ errors['limite_dias_semana'] }}</span> }
+      </div>
+
+      <div>
+        <ion-item class="field-row">
           <ion-label position="stacked">Color (hex)</ion-label>
           <ion-input class="field-input" [(ngModel)]="color" placeholder="#3b82f6"></ion-input>
         </ion-item>
@@ -123,6 +131,13 @@
             <ion-input class="field-input" [class.field-error]="errors['costo_dia_extra']" type="number" [(ngModel)]="costo_dia_extra" placeholder="150.00"></ion-input>
           </ion-item>
           @if (errors['costo_dia_extra']) { <span class="error-msg">{{ errors['costo_dia_extra'] }}</span> }
+        </div>
+        <div>
+          <ion-item class="field-row">
+            <ion-label position="stacked">Costo sábado extra ($)</ion-label>
+            <ion-input class="field-input" [class.field-error]="errors['costo_dia_extra_sabado']" type="number" [(ngModel)]="costo_dia_extra_sabado" placeholder="200.00"></ion-input>
+          </ion-item>
+          @if (errors['costo_dia_extra_sabado']) { <span class="error-msg">{{ errors['costo_dia_extra_sabado'] }}</span> }
         </div>
       }
 

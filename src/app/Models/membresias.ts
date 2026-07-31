@@ -6,12 +6,14 @@ export interface TipoMembresia {
   costo_base: number;
   duracion_dias: number;
   dias_incluidos: string;
+  limite_dias_semana: number | null;
   dias_por_semana: number | null;
   horas_por_clase: number | null;
   nivel_competitivo: boolean;
   color: string | null;
   permite_dias_extra: boolean;
   costo_dia_extra: number | null;
+  costo_dia_extra_sabado: number | null;
   bloquear_impago: boolean;
   is_active: boolean;
   is_deleted: boolean;

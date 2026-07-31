@@ -45,12 +45,14 @@ export class TipoMembresiaFormModal implements OnInit {
   costo_base: number | null = null;
   duracion_dias: number | null = null;
   dias_incluidos = '';
+  limite_dias_semana: number | null = null;
   dias_por_semana: number | null = null;
   horas_por_clase: number | null = null;
   nivel_competitivo = false;
   color = '';
   permite_dias_extra = false;
   costo_dia_extra: number | null = null;
+  costo_dia_extra_sabado: number | null = null;
   bloquear_impago = false;
   is_active = true;
 
@@ -74,12 +76,14 @@ export class TipoMembresiaFormModal implements OnInit {
       this.costo_base = this.tipo.costo_base;
       this.duracion_dias = this.tipo.duracion_dias;
       this.dias_incluidos = this.tipo.dias_incluidos;
+      this.limite_dias_semana = this.tipo.limite_dias_semana;
       this.dias_por_semana = this.tipo.dias_por_semana;
       this.horas_por_clase = this.tipo.horas_por_clase;
       this.nivel_competitivo = this.tipo.nivel_competitivo;
       this.color = this.tipo.color ?? '';
       this.permite_dias_extra = this.tipo.permite_dias_extra;
       this.costo_dia_extra = this.tipo.costo_dia_extra;
+      this.costo_dia_extra_sabado = this.tipo.costo_dia_extra_sabado;
       this.bloquear_impago = this.tipo.bloquear_impago;
       this.is_active = this.tipo.is_active;
       this.cdr.detectChanges();
@@ -92,8 +96,14 @@ export class TipoMembresiaFormModal implements OnInit {
     if (this.costo_base === null || this.costo_base < 0) this.errors['costo_base'] = 'Ingrese un costo válido';
     if (this.duracion_dias === null || this.duracion_dias < 1) this.errors['duracion_dias'] = 'Ingrese una duración válida';
     if (!this.dias_incluidos) this.errors['dias_incluidos'] = 'Seleccione los días incluidos';
+    if (this.limite_dias_semana !== null && (this.limite_dias_semana < 1 || this.limite_dias_semana > 7)) {
+      this.errors['limite_dias_semana'] = 'Ingrese un valor entre 1 y 7';
+    }
     if (this.permite_dias_extra && (this.costo_dia_extra === null || this.costo_dia_extra < 0)) {
       this.errors['costo_dia_extra'] = 'Ingrese el costo por día extra';
+    }
+    if (this.costo_dia_extra_sabado !== null && this.costo_dia_extra_sabado < 0) {
+      this.errors['costo_dia_extra_sabado'] = 'Ingrese un costo válido para sábado extra';
     }
     if (this.color && !/^#[0-9a-fA-F]{6}$/.test(this.color)) {
       this.errors['color'] = 'Color debe ser un hex válido (ej: #3b82f6)';
@@ -110,6 +120,7 @@ export class TipoMembresiaFormModal implements OnInit {
       costo_base: this.costo_base!,
       duracion_dias: this.duracion_dias!,
       dias_incluidos: this.dias_incluidos,
+      limite_dias_semana: this.limite_dias_semana,
       dias_por_semana: this.dias_por_semana,
       horas_por_clase: this.horas_por_clase,
       nivel_competitivo: this.nivel_competitivo,
@@ -117,6 +128,7 @@ export class TipoMembresiaFormModal implements OnInit {
       descripcion: this.descripcion || null,
       permite_dias_extra: this.permite_dias_extra,
       costo_dia_extra: this.costo_dia_extra,
+      costo_dia_extra_sabado: this.costo_dia_extra_sabado,
       bloquear_impago: this.bloquear_impago,
     };
 
