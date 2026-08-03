@@ -193,6 +193,28 @@ tr:nth-child(even) {
   font-size: 13px;
 }
 
+/* --- Capturas reales --- */
+.screenshot {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: 560px;
+  height: auto;
+  margin: 12px auto;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  page-break-inside: avoid;
+}
+
+.screenshot-caption {
+  text-align: center;
+  font-size: 12px;
+  font-style: italic;
+  color: #64748b;
+  margin: 4px 0 20px;
+}
+
 /* --- Callouts (Notas, Advertencias, Consejos) --- */
 .callout {
   border-radius: 6px;
