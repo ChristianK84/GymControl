@@ -48,6 +48,16 @@ body {
   opacity: 0.7;
 }
 
+.cover-logo {
+  width: 120px;
+  height: auto;
+  margin: 0 auto 24px;
+  border-radius: 12px;
+  background: white;
+  padding: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
 /* --- Índice --- */
 .toc {
   background: white;
@@ -87,7 +97,7 @@ body {
   padding: 24px 32px;
   margin-bottom: 24px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-  page-break-inside: avoid;
+  page-break-inside: auto;
 }
 
 .section-title {
@@ -122,6 +132,17 @@ h4 {
   font-weight: 600;
   color: #475569;
   margin: 16px 0 8px;
+}
+
+/* --- Utilidades de maquetación --- */
+.page-break {
+  page-break-before: always;
+  break-before: page;
+  padding-top: 24px;
+}
+
+.compact-note {
+  margin: 8px 0;
 }
 
 p {
@@ -379,7 +400,27 @@ hr {
   .section {
     box-shadow: none;
     border: 1px solid #e2e8f0;
-    page-break-inside: avoid;
+    page-break-inside: auto;
+  }
+
+  h3 {
+    margin: 14px 0 8px;
+  }
+
+  h4 {
+    margin: 10px 0 6px;
+  }
+
+  table {
+    margin: 8px 0;
+  }
+
+  th, td {
+    padding: 6px 10px;
+  }
+
+  .compact-note {
+    margin: 6px 0;
   }
 
   .screenshot-placeholder {
