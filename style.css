@@ -1,0 +1,211 @@
+/* ===================================
+   GymControl — Sitio informativo
+   Estilos compartidos
+   =================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #1e293b;
+  background: #f8fafc;
+}
+
+a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* --- Header --- */
+.site-header {
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  color: white;
+  text-align: center;
+  padding: 48px 24px;
+}
+
+.site-header img {
+  width: 90px;
+  height: auto;
+  border-radius: 12px;
+  background: white;
+  padding: 6px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.site-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.site-header p {
+  font-size: 17px;
+  opacity: 0.9;
+}
+
+/* --- Navigation --- */
+.site-nav {
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: center;
+  padding: 12px;
+}
+
+.site-nav a {
+  display: inline-block;
+  margin: 0 16px;
+  padding: 6px 12px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #1e40af;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.site-nav a:hover {
+  background: #eff6ff;
+  text-decoration: none;
+}
+
+/* --- Main content --- */
+.site-main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.site-main h2 {
+  font-size: 24px;
+  color: #1e40af;
+  margin: 32px 0 12px;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 8px;
+}
+
+.site-main h3 {
+  font-size: 18px;
+  color: #334155;
+  margin: 24px 0 8px;
+}
+
+.site-main p {
+  margin-bottom: 12px;
+}
+
+.site-main ul,
+.site-main ol {
+  padding-left: 24px;
+  margin-bottom: 16px;
+}
+
+.site-main li {
+  margin-bottom: 6px;
+}
+
+.site-main table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 14px;
+}
+
+.site-main th,
+.site-main td {
+  padding: 10px 12px;
+  text-align: left;
+  border: 1px solid #e2e8f0;
+}
+
+.site-main th {
+  background: #f1f5f9;
+  font-weight: 600;
+  color: #334155;
+}
+
+.site-main tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+.breadcrumb {
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.breadcrumb a {
+  color: #3b82f6;
+}
+
+/* --- Cards --- */
+.card {
+  background: white;
+  border-radius: 8px;
+  padding: 32px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  margin-bottom: 24px;
+}
+
+.card h2:first-of-type {
+  margin-top: 0;
+}
+
+/* --- Alerta --- */
+.alert {
+  background: #fef3c7;
+  border-left: 4px solid #f59e0b;
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin: 16px 0;
+  font-size: 14px;
+  color: #92400e;
+}
+
+/* --- Footer --- */
+.site-footer {
+  background: #1e293b;
+  color: #94a3b8;
+  text-align: center;
+  padding: 24px;
+  font-size: 13px;
+  margin-top: 40px;
+}
+
+.site-footer strong {
+  color: #cbd5e1;
+}
+
+/* --- Responsive --- */
+@media screen and (max-width: 600px) {
+  .site-header h1 {
+    font-size: 24px;
+  }
+
+  .site-header img {
+    height: 70px;
+  }
+
+  .site-main {
+    padding: 24px 16px;
+  }
+
+  .site-main table {
+    font-size: 13px;
+  }
+
+  .site-main th,
+  .site-main td {
+    padding: 6px 8px;
+  }
+}
