@@ -46,9 +46,8 @@
     <table class="firmas-table">
       <thead>
         <tr>
-          <th>Alumno</th>
           <th>Tutor</th>
-          <th>Estado</th>
+          <th>Documento</th>
           <th>Enviado</th>
           <th>Firmado</th>
           <th>PDF</th>
@@ -58,9 +57,8 @@
         @if (loading()) {
           @for (row of [1,2,3,4,5,6,7,8]; track row) {
             <tr class="skeleton-row">
-              <td><ion-skeleton-text class="skeleton-text-lg" [animated]="true"></ion-skeleton-text></td>
               <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
-              <td><ion-skeleton-text class="skeleton-badge" [animated]="true"></ion-skeleton-text></td>
+              <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
               <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
               <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
               <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
@@ -69,16 +67,18 @@
         } @else {
           @for (f of pagedFirmas(); track f.id) {
             <tr>
-              <td>{{ f.alumno_nombre || '—' }}</td>
-              <td>{{ f.tutor_nombre || '—' }}</td>
-              <td>
-                <span class="status-badge" [class.firmado]="f.estado === 'firmado'" [class.pendiente]="f.estado === 'pendiente'" [class.expirado]="f.estado === 'expirado'">
-                  <ion-icon [name]="estadoIcon(f.estado)"></ion-icon>
-                  {{ f.estado | titlecase }}
-                </span>
+              <td class="td-tutor-group"
+                  [class.strip-firmado]="f.estado === 'firmado'"
+                  [class.strip-pendiente]="f.estado === 'pendiente'"
+                  [class.strip-expirado]="f.estado === 'expirado'">
+                <div class="tutor-name-group">
+                  <span class="tutor-name">{{ f.tutor_nombre || '—' }}</span>
+                  <span class="alumno-name">{{ f.alumno_nombre || '—' }}</span>
+                </div>
               </td>
-              <td class="td-muted">{{ f.created_at | date:'dd/MM/yyyy' }}</td>
-              <td class="td-muted">{{ (f.fecha_firma | date:'dd/MM/yyyy HH:mm') || '—' }}</td>
+              <td>{{ f.reglamento_titulo || '—' }}</td>
+              <td class="td-muted">{{ f.created_at | date:"dd 'de' MMMM 'del' yyyy" }}</td>
+              <td class="td-muted">{{ (f.fecha_firma | date:"dd 'de' MMMM 'del' yyyy") || '—' }}</td>
               <td class="cell-actions">
                 @if (f.url_pdf_firmado_cloudinary) {
                   <ion-button fill="clear" size="small" (click)="abrirPdf(f.url_pdf_firmado_cloudinary!)">
@@ -92,7 +92,7 @@
           }
           @empty {
             <tr>
-              <td colspan="6" class="td-empty">
+              <td colspan="5" class="td-empty">
                 <div class="empty-state">
                   <ion-icon name="document-text-outline"></ion-icon>
                   <p>No se encontraron firmas</p>

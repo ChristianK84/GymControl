@@ -39,8 +39,6 @@
       <thead>
         <tr>
           <th>Documento</th>
-          <th>Versión</th>
-          <th>Estado</th>
           <th>Subido</th>
           <th>Acciones</th>
         </tr>
@@ -51,25 +49,20 @@
             <tr class="skeleton-row">
               <td><div class="skeleton-cell"><ion-skeleton-text class="skeleton-text-lg" [animated]="true"></ion-skeleton-text></div></td>
               <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
-              <td><ion-skeleton-text class="skeleton-badge" [animated]="true"></ion-skeleton-text></td>
-              <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
               <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
             </tr>
           }
         } @else {
           @for (reg of pagedReglamentos(); track reg.id) {
             <tr>
-              <td class="td-clickable" (click)="editarReglamento(reg)">
+              <td class="td-doc-group td-clickable"
+                  [class.strip-activo]="reg.is_active"
+                  [class.strip-inactivo]="!reg.is_active"
+                  (click)="editarReglamento(reg)">
                 <div class="doc-info">
                   <span class="doc-name">{{ reg.titulo }}</span>
                   <span class="doc-version">{{ reg.version }}</span>
                 </div>
-              </td>
-              <td>{{ reg.version }}</td>
-              <td>
-                <ion-badge class="status-badge" [class.status-inactive]="!reg.is_active">
-                  {{ reg.is_active ? 'Activo' : 'Inactivo' }}
-                </ion-badge>
               </td>
               <td class="td-muted">{{ reg.created_at | date:'dd/MM/yyyy' }}</td>
               <td class="cell-actions">
@@ -87,7 +80,7 @@
           }
           @empty {
             <tr>
-              <td colspan="5" class="td-empty">
+              <td colspan="3" class="td-empty">
                 <div class="empty-state">
                   <ion-icon name="file-tray-outline"></ion-icon>
                   <p>No se encontraron documentos</p>

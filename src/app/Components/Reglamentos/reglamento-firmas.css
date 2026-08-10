@@ -145,39 +145,49 @@ ion-select.filter-select {
   font-size: 0.83rem;
 }
 
-/* Status badge */
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.72rem;
+/* Tutor + Alumno name group */
+.tutor-name-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.tutor-name {
   font-weight: 600;
-  border-radius: 999px;
-  padding: 0.2rem 0.7rem;
+  line-height: 1.2;
 }
 
-.status-badge ion-icon {
-  font-size: 0.85rem;
+.alumno-name {
+  font-size: 0.72rem;
+  color: #5e3f3b;
+  line-height: 1.3;
 }
 
-.status-badge.firmado {
-  background: rgba(34, 197, 94, 0.1);
-  color: #16a34a;
+/* Court color strip */
+.td-tutor-group {
+  border-left: 3px solid transparent;
 }
 
-.status-badge.pendiente {
-  background: rgba(234, 179, 8, 0.1);
-  color: #ca8a04;
+.td-tutor-group .tutor-name-group {
+  padding-left: 0.3rem;
 }
 
-.status-badge.expirado {
-  background: rgba(239, 68, 68, 0.1);
-  color: #dc2626;
+.td-tutor-group.strip-firmado {
+  border-left-color: #16a34a;
+}
+
+.td-tutor-group.strip-pendiente {
+  border-left-color: #ca8a04;
+}
+
+.td-tutor-group.strip-expirado {
+  border-left-color: #dc2626;
 }
 
 /* Cell actions */
 .cell-actions {
+  width: 130px;
   text-align: center;
+  white-space: nowrap;
 }
 
 .cell-actions ion-button {
@@ -299,5 +309,3 @@ ion-skeleton-text {
 }
 
 .skeleton-text { width: 120px; height: 0.85rem; }
-.skeleton-text-lg { width: 200px; height: 0.95rem; }
-.skeleton-badge { width: 70px; height: 1.25rem; --border-radius: 999px; }

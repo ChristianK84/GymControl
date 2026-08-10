@@ -107,7 +107,7 @@ export class GenerarLinksModal {
     this.api.generarLinks({ reglamento_id: this.reglamentoId, alumno_ids: ids }).subscribe({
       next: (res) => {
         this.enviando.set(false);
-        this.showToast(`${res.enviados} de ${res.total} links enviados`, 'success');
+        this.showToast(`${res.enviados} enviados, ${res.ya_firmados} ya firmaron de ${res.total}`, 'success');
         this.modalCtrl.dismiss(res, 'saved');
       },
       error: () => {

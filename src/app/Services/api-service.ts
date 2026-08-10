@@ -572,8 +572,8 @@ export class ApiService {
     return this.http.put<Reglamento>(`${this.baseUrl}reglamentos/${id}`, body);
   }
 
-  generarLinks(body: GenerarLinksPayload): Observable<{ enviados: number; total: number }> {
-    return this.http.post<{ enviados: number; total: number }>(
+  generarLinks(body: GenerarLinksPayload): Observable<{ enviados: number; total: number; ya_firmados: number }> {
+    return this.http.post<{ enviados: number; total: number; ya_firmados: number }>(
       `${this.baseUrl}reglamentos/generar-links`,
       body,
     );

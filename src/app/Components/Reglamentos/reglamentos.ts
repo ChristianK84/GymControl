@@ -3,13 +3,13 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import {
-  IonButton, IonIcon, IonBadge, IonSkeletonText, IonInput,
+  IonButton, IonIcon, IonSkeletonText, IonInput,
   ModalController, ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   addOutline, searchOutline, closeCircleOutline, fileTrayOutline,
-  checkmarkDoneOutline, eyeOutline, trashOutline, linkOutline,
+  eyeOutline, trashOutline, linkOutline,
   chevronBackOutline, chevronForwardOutline,
 } from 'ionicons/icons';
 import { ApiService } from '../../Services/api-service';
@@ -22,7 +22,7 @@ import { GenerarLinksModal } from './generar-links-modal';
   selector: 'app-reglamentos',
   imports: [
     FormsModule, DatePipe,
-    IonButton, IonIcon, IonBadge, IonSkeletonText, IonInput,
+    IonButton, IonIcon, IonSkeletonText, IonInput,
   ],
   templateUrl: './reglamentos.html',
   styleUrl: './reglamentos.css',
@@ -40,7 +40,7 @@ export class Reglamentos implements OnInit {
   readonly pageSize = 8;
 
   constructor() {
-    addIcons({ addOutline, searchOutline, closeCircleOutline, fileTrayOutline, checkmarkDoneOutline, eyeOutline, trashOutline, linkOutline, chevronBackOutline, chevronForwardOutline });
+    addIcons({ addOutline, searchOutline, closeCircleOutline, fileTrayOutline, eyeOutline, trashOutline, linkOutline, chevronBackOutline, chevronForwardOutline });
   }
 
   ngOnInit(): void {

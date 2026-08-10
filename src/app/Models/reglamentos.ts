@@ -12,6 +12,7 @@ export interface Reglamento {
 export interface FirmaReglamento {
   id: number;
   reglamento_id: number;
+  reglamento_titulo?: string;
   alumno_id: number;
   tutor_id: number;
   alumno_nombre?: string;

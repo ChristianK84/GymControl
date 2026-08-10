@@ -1,5 +1,5 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
-import { DatePipe, TitleCasePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   IonButton, IonIcon, IonSkeletonText,
@@ -8,7 +8,6 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
-  checkmarkCircleOutline, timeOutline, alertCircleOutline,
   documentTextOutline, chevronBackOutline, chevronForwardOutline,
 } from 'ionicons/icons';
 import { ApiService } from '../../Services/api-service';
@@ -17,7 +16,7 @@ import { FirmaReglamento, Reglamento } from '../../Models/reglamentos';
 @Component({
   selector: 'app-reglamento-firmas',
   imports: [
-    FormsModule, DatePipe, TitleCasePipe,
+    FormsModule, DatePipe,
     IonButton, IonIcon, IonSkeletonText,
     IonSelect, IonSelectOption,
   ],
@@ -37,7 +36,7 @@ export class ReglamentoFirmas implements OnInit {
   readonly pageSize = 8;
 
   constructor() {
-    addIcons({ checkmarkCircleOutline, timeOutline, alertCircleOutline, documentTextOutline, chevronBackOutline, chevronForwardOutline });
+    addIcons({ documentTextOutline, chevronBackOutline, chevronForwardOutline });
   }
 
   ngOnInit(): void {
@@ -96,14 +95,6 @@ export class ReglamentoFirmas implements OnInit {
 
   goToPage(p: number): void {
     if (p >= 1 && p <= this.totalPages()) this.page.set(p);
-  }
-
-  estadoIcon(estado: string): string {
-    switch (estado) {
-      case 'firmado': return 'checkmark-circle-outline';
-      case 'expirado': return 'alert-circle-outline';
-      default: return 'time-outline';
-    }
   }
 
   abrirPdf(url: string): void {
