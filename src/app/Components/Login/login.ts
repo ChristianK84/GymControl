@@ -73,7 +73,9 @@ export class Login implements OnInit {
 
     this.loggingIn.set(true);
     const { user, password } = this.loginForm.value;
-    this.apiService.login(user, password).subscribe({
+    const cleanUser = (user ?? '').trim().toLowerCase();
+    const cleanPass = (password ?? '').trim();
+    this.apiService.login(cleanUser, cleanPass).subscribe({
       next: (res) => {
         this.session.saveSession(res);
         (document.activeElement as HTMLElement)?.blur();
@@ -83,8 +85,10 @@ export class Login implements OnInit {
       },
       error: (err) => {
         this.loggingIn.set(false);
-        if (err.status === 401) {
-          this.showToast('Contraseña incorrecta', 'warning');
+        if (err.status === 423) {
+          this.showToast(err.error?.detail ?? 'Cuenta bloqueada temporalmente', 'warning');
+        } else if (err.status === 401) {
+          this.showToast('Credenciales incorrectas', 'warning');
         } else {
           this.showToast('Ocurrió un error', 'danger');
         }

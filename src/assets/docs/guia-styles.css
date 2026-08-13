@@ -307,6 +307,23 @@ code {
   color: #475569;
 }
 
+/* --- Enlace de descarga --- */
+.download-link {
+  display: inline-block;
+  background: #2563eb;
+  color: #ffffff;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.download-link:hover {
+  background: #1d4ed8;
+}
+
 /* --- Badges --- */
 .badge {
   display: inline-block;

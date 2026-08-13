@@ -1,7 +1,7 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { IonIcon, IonButton, IonInput, IonSelect, IonSelectOption, IonSkeletonText, IonBadge, ToastController, ModalController } from '@ionic/angular/standalone';
+import { IonIcon, IonButton, IonInput, IonSelect, IonSelectOption, IonSkeletonText, IonBadge, ToastController, ModalController, AlertController } from '@ionic/angular/standalone';
 import { ApiService } from '../../Services/api-service';
 import { Maestro } from '../../Models/maestros';
 import { MaestroFormModal } from './maestro-form-modal';
@@ -21,6 +21,7 @@ export class Maestros implements OnInit {
   private api = inject(ApiService);
   private toastCtrl = inject(ToastController);
   private modalCtrl = inject(ModalController);
+  private alertCtrl = inject(AlertController);
   private router = inject(Router);
 
   allMaestros = signal<Maestro[]>([]);
@@ -118,10 +119,30 @@ export class Maestros implements OnInit {
       component: MaestroFormModal,
     });
     await modal.present();
-    const { role } = await modal.onDidDismiss();
+    const { data, role } = await modal.onDidDismiss();
     if (role === 'saved') {
       this.loadMaestros();
-      this.showToast('Maestro creado con éxito', 'success');
+      if (data?.generated_password) {
+        const alert = await this.alertCtrl.create({
+          header: 'Maestro creado',
+          subHeader: 'Contraseña generada',
+          message: `Comparte esta contraseña con el maestro:<br><br><strong>${data.generated_password}</strong>`,
+          buttons: [
+            {
+              text: 'Copiar',
+              handler: () => {
+                navigator.clipboard.writeText(data.generated_password);
+                this.showToast('Contraseña copiada al portapapeles', 'success');
+              },
+            },
+            { text: 'Cerrar' },
+          ],
+          cssClass: 'custom-alert',
+        });
+        await alert.present();
+      } else {
+        this.showToast('Maestro creado con éxito', 'success');
+      }
     }
   }
 

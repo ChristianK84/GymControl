@@ -36,6 +36,7 @@
           <ion-select-option value="">Todos</ion-select-option>
           <ion-select-option value="pendiente">Pendiente</ion-select-option>
           <ion-select-option value="firmado">Firmado</ion-select-option>
+          <ion-select-option value="leido">Leído</ion-select-option>
           <ion-select-option value="expirado">Expirado</ion-select-option>
         </ion-select>
       </label>
@@ -49,7 +50,7 @@
           <th>Tutor</th>
           <th>Documento</th>
           <th>Enviado</th>
-          <th>Firmado</th>
+          <th>Estado</th>
           <th>PDF</th>
         </tr>
       </thead>
@@ -69,6 +70,7 @@
             <tr>
               <td class="td-tutor-group"
                   [class.strip-firmado]="f.estado === 'firmado'"
+                  [class.strip-leido]="f.estado === 'leido'"
                   [class.strip-pendiente]="f.estado === 'pendiente'"
                   [class.strip-expirado]="f.estado === 'expirado'">
                 <div class="tutor-name-group">
@@ -76,12 +78,33 @@
                   <span class="alumno-name">{{ f.alumno_nombre || '—' }}</span>
                 </div>
               </td>
-              <td>{{ f.reglamento_titulo || '—' }}</td>
+              <td>
+                {{ f.reglamento_titulo || '—' }}
+                @if (!f.requires_firma) {
+                  <span class="doc-badge lectura-badge">Solo lectura</span>
+                }
+              </td>
               <td class="td-muted">{{ f.created_at | date:"dd 'de' MMMM 'del' yyyy" }}</td>
-              <td class="td-muted">{{ (f.fecha_firma | date:"dd 'de' MMMM 'del' yyyy") || '—' }}</td>
+              <td>
+                @if (f.estado === 'firmado') {
+                  <span class="estado-badge estado-firmado">Firmado</span>
+                  <span class="fecha-badge">{{ f.fecha_firma | date:"dd/MM/yyyy" }}</span>
+                } @else if (f.estado === 'leido') {
+                  <span class="estado-badge estado-leido">Leído</span>
+                  <span class="fecha-badge">{{ f.fecha_lectura | date:"dd/MM/yyyy" }}</span>
+                } @else if (f.estado === 'expirado') {
+                  <span class="estado-badge estado-expirado">Expirado</span>
+                } @else {
+                  <span class="estado-badge estado-pendiente">Pendiente</span>
+                }
+              </td>
               <td class="cell-actions">
                 @if (f.url_pdf_firmado_cloudinary) {
-                  <ion-button fill="clear" size="small" (click)="abrirPdf(f.url_pdf_firmado_cloudinary!)">
+                  <ion-button fill="clear" size="small" (click)="abrirPdf(f.url_pdf_firmado_cloudinary!)" title="Ver PDF firmado">
+                    <ion-icon slot="icon-only" name="document-text-outline"></ion-icon>
+                  </ion-button>
+                } @else if (!f.requires_firma) {
+                  <ion-button fill="clear" size="small" (click)="abrirPdfOriginal(f)" title="Ver documento">
                     <ion-icon slot="icon-only" name="document-text-outline"></ion-icon>
                   </ion-button>
                 } @else {

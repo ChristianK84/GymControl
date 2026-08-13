@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
   IonButton, IonIcon, IonFooter, IonSpinner,
-  IonInput, IonItem, IonLabel, IonToggle,
+  IonInput, IonItem, IonLabel, IonToggle, IonCheckbox,
   ModalController, ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -21,7 +21,7 @@ const UPLOAD_PRESET = environment.cloudinary.pdfPreset;
     FormsModule,
     IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
     IonButton, IonIcon, IonFooter, IonSpinner,
-    IonInput, IonItem, IonLabel, IonToggle,
+    IonInput, IonItem, IonLabel, IonToggle, IonCheckbox,
   ],
   templateUrl: './edit-reglamento-modal.html',
   styleUrl: './edit-reglamento-modal.css',
@@ -42,6 +42,7 @@ export class EditReglamentoModal {
       this.descripcion = value.descripcion || '';
       this.version = value.version;
       this.isActive = value.is_active;
+      this.requiresFirma = value.requires_firma ?? true;
     }
   }
 
@@ -49,6 +50,7 @@ export class EditReglamentoModal {
   descripcion = '';
   version = '';
   isActive = true;
+  requiresFirma = true;
   selectedFile: File | null = null;
   uploading = signal(false);
 
@@ -101,6 +103,7 @@ export class EditReglamentoModal {
         descripcion: this.descripcion.trim() || undefined,
         version: this.version.trim(),
         is_active: this.isActive,
+        requires_firma: this.requiresFirma,
         ...(publicId ? { url_pdf_cloudinary: urlPdf, cloudinary_public_id: publicId } : {}),
       }).subscribe({
         next: (updated) => this.modalCtrl.dismiss(updated, 'saved'),

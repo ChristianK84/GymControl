@@ -12,7 +12,7 @@
 
     <!-- Profile Header -->
     <header class="profile-header">
-      <div class="profile-photo" [class.editing]="editing()">
+      <div class="profile-photo" [class.editing]="editing() || photoEditing()">
         <input type="file" accept="image/*" style="display:none" #fileInput (change)="onFileSelected($event)" />
         @if (photoPreview) {
           <img [src]="photoPreview" [alt]="a.nombrecompleto" />
@@ -23,7 +23,7 @@
             <ion-icon name="person-outline"></ion-icon>
           </div>
         }
-        @if (editing()) {
+        @if (editing() || photoEditing()) {
           <div class="photo-edit-overlay">
             <ion-button class="photo-edit-btn" (click)="fileInput.click()" title="Cambiar foto" fill="solid">
               <ion-icon name="cloud-upload-outline" slot="icon-only"></ion-icon>
@@ -62,7 +62,27 @@
               Guardar Cambios
             </ion-button>
           </div>
-        } @else if (!isMaestro) {
+        } @else if (photoEditing()) {
+          <div class="edit-btns">
+            <ion-button class="btn-cancel-edit" (click)="cancelPhotoEditing()" fill="solid">
+              <ion-icon name="close-outline" slot="start"></ion-icon>
+              Cancelar
+            </ion-button>
+            <ion-button class="btn-save-edit" (click)="savePhoto()" [disabled]="saving()" fill="solid">
+              @if (saving()) {
+                <ion-spinner name="lines-small"></ion-spinner>
+              } @else {
+                <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+              }
+              Guardar Foto
+            </ion-button>
+          </div>
+        } @else if (isMaestro) {
+          <ion-button class="edit-btn" (click)="startPhotoEditing()" fill="solid">
+            <ion-icon name="camera-outline" slot="start"></ion-icon>
+            Cambiar Foto
+          </ion-button>
+        } @else {
           <ion-button class="edit-btn" (click)="startEditing()" fill="solid">
             <ion-icon name="create-outline" slot="start"></ion-icon>
             Editar Perfil
@@ -85,6 +105,21 @@
         <ion-segment-button value="membresia">
           <ion-icon name="card-outline"></ion-icon>
           <ion-label>Membresía</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="expediente">
+          <ion-icon name="folder-open-outline"></ion-icon>
+          <ion-label>Expediente</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    } @else {
+      <ion-segment [(ngModel)]="activeTab" (ionChange)="onTabChange($event.detail.value)" class="profile-segment">
+        <ion-segment-button value="info">
+          <ion-icon name="person-outline"></ion-icon>
+          <ion-label>Información</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="expediente">
+          <ion-icon name="folder-open-outline"></ion-icon>
+          <ion-label>Expediente</ion-label>
         </ion-segment-button>
       </ion-segment>
     }
@@ -278,6 +313,15 @@
                 <ion-icon [name]="m.pagado ? 'checkmark-circle-outline' : 'alert-circle-outline'"></ion-icon>
                 {{ m.pagado ? 'Pagado' : 'Pendiente' }}
               </span>
+              <ion-button class="m-whatsapp-btn" fill="clear" size="small"
+                          [disabled]="sendingWhatsAppMembresiaId() !== null"
+                          (click)="enviarWhatsAppMembresia(m, $event)" title="Enviar por WhatsApp">
+                @if (sendingWhatsAppMembresiaId() === m.id) {
+                  <ion-spinner name="lines-small" slot="icon-only"></ion-spinner>
+                } @else {
+                  <ion-icon name="logo-whatsapp" slot="icon-only"></ion-icon>
+                }
+              </ion-button>
             </div>
             @if (m.notas) {<p class="m-card-notas">{{ m.notas }}</p>}
           </div>
@@ -286,6 +330,67 @@
             <ion-icon name="card-outline"></ion-icon>
             <p>Sin membresías registradas</p>
             <ion-button class="btn-add" (click)="addMembresia()" fill="outline"><ion-icon name="add-outline" slot="start"></ion-icon>Registrar primera membresía</ion-button>
+          </div>
+        }
+      }
+    </div>
+    }
+
+    @if (activeTab() === 'expediente') {
+    <div class="expediente-section">
+      <div class="expediente-header">
+        <h3>Expediente</h3>
+        <p>Documentos firmados o leídos por el tutor del alumno</p>
+      </div>
+
+      @if (loadingExpediente()) {
+        @for (i of [1,2,3]; track i) {
+          <div class="expediente-card skeleton"><ion-skeleton-text [animated]="true" style="width:60%;height:1rem;"></ion-skeleton-text><ion-skeleton-text [animated]="true" style="width:40%;height:0.85rem;"></ion-skeleton-text></div>
+        }
+      } @else {
+        @for (f of expediente(); track f.id) {
+          <div class="expediente-card">
+            <div class="exp-card-top">
+              <span class="exp-doc-title">{{ f.reglamento_titulo || 'Documento' }}</span>
+              @if (f.estado === 'firmado') {
+                <span class="exp-estado-badge estado-firmado">Firmado</span>
+              } @else if (f.estado === 'leido') {
+                <span class="exp-estado-badge estado-leido">Leído</span>
+              } @else if (f.estado === 'expirado') {
+                <span class="exp-estado-badge estado-expirado">Expirado</span>
+              } @else {
+                <span class="exp-estado-badge estado-pendiente">Pendiente</span>
+              }
+            </div>
+            <div class="exp-card-dates">
+              @if (f.estado === 'firmado' && f.fecha_firma) {
+                <span>Firmado el {{ f.fecha_firma | date:'dd/MM/yyyy' }}</span>
+              } @else if (f.estado === 'leido' && f.fecha_lectura) {
+                <span>Leído el {{ f.fecha_lectura | date:'dd/MM/yyyy' }}</span>
+              } @else if (f.estado === 'expirado') {
+                <span>Enlace expirado</span>
+              } @else {
+                <span>Enviado el {{ f.created_at | date:'dd/MM/yyyy' }}</span>
+              }
+            </div>
+            <div class="exp-card-actions">
+              @if (f.url_pdf_firmado_cloudinary) {
+                <ion-button fill="clear" size="small" (click)="abrirPdfExpediente(f.url_pdf_firmado_cloudinary)">
+                  <ion-icon name="document-text-outline" slot="start"></ion-icon>
+                  Ver firmado
+                </ion-button>
+              } @else if (f.url_pdf_cloudinary) {
+                <ion-button fill="clear" size="small" (click)="abrirPdfExpediente(f.url_pdf_cloudinary)">
+                  <ion-icon name="document-text-outline" slot="start"></ion-icon>
+                  Ver documento
+                </ion-button>
+              }
+            </div>
+          </div>
+        } @empty {
+          <div class="empty-tab">
+            <ion-icon name="folder-open-outline"></ion-icon>
+            <p>Sin documentos en el expediente</p>
           </div>
         }
       }

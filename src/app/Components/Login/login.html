@@ -17,7 +17,9 @@
             <label class="form-label" for="usuario">Usuario</label>
             <div class="input-wrapper">
               <ion-icon class="input-icon" name="person-outline"></ion-icon>
-              <input class="form-input" type="text" id="usuario" formControlName="user" placeholder="Ingrese su usuario" tabindex="0" />
+              <input class="form-input" type="text" id="usuario" formControlName="user"
+                placeholder="Ingrese su usuario" tabindex="0"
+                autocapitalize="none" autocomplete="username" spellcheck="false" />
             </div>
           </div>
 
@@ -27,7 +29,8 @@
             <div class="input-wrapper">
               <ion-icon class="input-icon" name="lock-closed-outline"></ion-icon>
               <input class="form-input" [type]="hidePassword() ? 'password' : 'text'" id="password"
-                formControlName="password" autocomplete="current-password" placeholder="••••••••" />
+                formControlName="password" autocomplete="current-password" placeholder="••••••••"
+                autocapitalize="none" spellcheck="false" />
               <button class="toggle-visibility" type="button" (click)="togglePasswordVisibility()"
                 [attr.aria-label]="hidePassword() ? 'Show password' : 'Hide password'">
                 <ion-icon [name]="hidePassword() ? 'eye-outline' : 'eye-off-outline'"></ion-icon>

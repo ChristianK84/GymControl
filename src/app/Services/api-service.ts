@@ -445,6 +445,12 @@ export class ApiService {
     return this.http.post<{ message: string }>(`${this.baseUrl}membresias/${id}/enviar-recibo`, {});
   }
 
+  descargarReciboMembresia(id: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}membresias/${id}/recibo.pdf`, {
+      responseType: 'blob',
+    });
+  }
+
   getMembresiasImpagas(): Observable<Membresia[]> {
     return this.http.get<Membresia[]>(`${this.baseUrl}membresias/impagas`);
   }
@@ -553,6 +559,7 @@ export class ApiService {
     version: string;
     url_pdf_cloudinary: string;
     cloudinary_public_id: string;
+    requires_firma?: boolean;
   }): Observable<Reglamento> {
     return this.http.post<Reglamento>(`${this.baseUrl}reglamentos/`, body);
   }
@@ -566,6 +573,7 @@ export class ApiService {
     descripcion?: string;
     version?: string;
     is_active?: boolean;
+    requires_firma?: boolean;
     url_pdf_cloudinary?: string;
     cloudinary_public_id?: string;
   }): Observable<Reglamento> {

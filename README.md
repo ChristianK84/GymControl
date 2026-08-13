@@ -10,6 +10,19 @@ Aplicación híbrida para gestión de gimnasios: control de alumnos, maestros, u
 - **SSR** (Angular Universal) — renderizado del lado del servidor
 - **Karma + Jasmine** — tests unitarios
 
+## Características
+
+- **CRUD completo** — Alumnos, Maestros, Usuarios, Membresías, Asistencias, Transacciones, Auditoría
+- **Firma Digital de Reglamentos** — Admin sube PDF, genera links JWT, envía emails a tutores, tutores firman en navegador (canvas), PDF firmado guardado en Cloudinary
+- **Documentos solo lectura** — Algunos documentos no requieren firma; el tutor confirma lectura y queda registrado
+- **Expediente del alumno** — Pestaña con los documentos firmados/leídos por el tutor
+- **WhatsApp para recibos** — Botón que comparte el PDF del recibo de membresía vía WhatsApp (share nativo o `wa.me`)
+- **Edición por rol** — El maestro solo puede cambiar la foto del alumno; el admin edita todo
+- **Login flexible** — Username y password con `trim()` y comparación sin distinguir mayúsculas
+- **OTA Auto-Update** — El backend sirve la versión de la app; el frontend (Capacitor + `@capgo/capacitor-updater`) se actualiza por aire
+- **Electron** — App de escritorio para Windows
+- **Android vía Capacitor** — Despliegue a dispositivos móviles
+
 ## Comandos principales
 
 ```bash

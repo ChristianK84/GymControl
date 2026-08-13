@@ -47,6 +47,11 @@
         ></ion-input>
       </ion-item>
 
+      <ion-item class="field-row checkbox-row">
+        <ion-checkbox slot="start" [(ngModel)]="requiresFirma" name="requiresFirma"></ion-checkbox>
+        <ion-label>Este documento requiere firma del tutor</ion-label>
+      </ion-item>
+
       <ion-item class="field-row">
         <ion-label position="stacked">Archivo PDF</ion-label>
         <div class="file-input-wrapper">

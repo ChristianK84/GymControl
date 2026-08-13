@@ -6,8 +6,9 @@ import {
   ModalController, ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { createOutline, warningOutline, fileTrayOutline, addOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline, checkmarkCircleOutline, alertCircleOutline, searchOutline, mailOutline } from 'ionicons/icons';
+import { createOutline, warningOutline, fileTrayOutline, addOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline, checkmarkCircleOutline, alertCircleOutline, searchOutline, mailOutline, logoWhatsapp } from 'ionicons/icons';
 import { ApiService } from '../../Services/api-service';
+import { WhatsAppService } from '../../Services/whatsapp.service';
 import { Membresia } from '../../Models/membresias';
 import { MembresiaFormModal } from './membresia-form-modal';
 import { MembresiaImpagasModal } from './membresia-impagas-modal';
@@ -32,10 +33,12 @@ export class Membresias implements OnInit {
   private api = inject(ApiService);
   private modalCtrl = inject(ModalController);
   private toastCtrl = inject(ToastController);
+  private whatsapp = inject(WhatsAppService);
 
   allMembresias = signal<Membresia[]>([]);
   loading = signal(true);
   sendingReciboId = signal<number | null>(null);
+  sendingWhatsAppId = signal<number | null>(null);
   page = signal(1);
   readonly pageSize = 8;
 
@@ -45,7 +48,7 @@ export class Membresias implements OnInit {
   searchTerm = signal('');
 
   constructor() {
-    addIcons({ createOutline, warningOutline, fileTrayOutline, addOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline, checkmarkCircleOutline, alertCircleOutline, searchOutline, mailOutline });
+    addIcons({ createOutline, warningOutline, fileTrayOutline, addOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline, checkmarkCircleOutline, alertCircleOutline, searchOutline, mailOutline, logoWhatsapp });
   }
 
   ngOnInit(): void {
@@ -171,6 +174,23 @@ export class Membresias implements OnInit {
       next: (res) => { this.sendingReciboId.set(null); this.showToast(res.message); },
       error: (err) => { this.sendingReciboId.set(null); this.showToast(err.error?.detail ?? 'Error al enviar recibo', 'danger'); },
     });
+  }
+
+  async enviarWhatsApp(membresia: Membresia, event: Event): Promise<void> {
+    event.stopPropagation();
+    if (!membresia.alumno?.tutor?.telefono) {
+      this.showToast('El tutor no tiene teléfono registrado', 'danger');
+      return;
+    }
+    this.sendingWhatsAppId.set(membresia.id);
+    try {
+      await this.whatsapp.enviarRecibo(membresia);
+      this.showToast('Abriendo WhatsApp...');
+    } catch (err: any) {
+      this.showToast(err?.message ?? 'Error al preparar WhatsApp', 'danger');
+    } finally {
+      this.sendingWhatsAppId.set(null);
+    }
   }
 
   async verImpagas(): Promise<void> {

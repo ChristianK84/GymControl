@@ -1,8 +1,10 @@
 # GymControl — Notas del agente
 
-App híbrida Angular 20 + Ionic 8 para gestión de gimnasio (alumnos, maestros, usuarios, asistencias, membresías). Apunta a web, Electron (Windows) y Android vía Capacitor. UI en español (es-MX).
+App híbrida Angular 20 + Ionic 8 para gestión de gimnasio (alumnos, maestros, usuarios, asistencias, membresías, documentos/firmas, expediente). Apunta a web, Electron (Windows) y Android vía Capacitor. UI en español (es-MX).
 
 El backend vive en `https://gymcontrol-api-sne4.onrender.com/api/v1/`. Este repo es solo el frontend.
+
+Cambios recientes: maestro solo cambia foto del alumno, envío de recibos por WhatsApp, documentos con/sin firma, pestaña Expediente, login flexible (trim + case-insensitive).
 
 ---
 
@@ -19,6 +21,7 @@ El backend vive en `https://gymcontrol-api-sne4.onrender.com/api/v1/`. Este repo
 | Servidor SSR | `npm run serve:ssr:GymControl` | Express en `PORT` (default 4000) |
 | Tests unitarios | `npm test` | **Karma + Chrome** (no Jest). Requiere Chrome instalado. CI usa flags headless. |
 | Abrir Android Studio | `npm run capacitor:open` | |
+| OTA bundle | `npm run ota:bundle` | Build capacitor + genera `.zip` para `@capgo/capacitor-updater` |
 
 No hay script de lint ni typecheck separado. `ng build` ya verifica tipos y lint equivalentes vía el compilador strict de Angular.
 
@@ -114,32 +117,28 @@ La app sube directamente a Cloudinary vía `fetch` (sin SDK). Busca `cloudinary`
 
 ---
 
-## Módulo: Firma Digital de Reglamentos (última sesión — pendiente implementar)
+## Módulo: Firma Digital de Reglamentos (IMPLEMENTADO)
 
-### Visión general — solo admin app
+### Visión general
 
 El tutor NO usa esta app. Todo el flujo del tutor es vía página web estática servida por el backend. Esta app solo tiene:
 
-1. **Admin sube reglamento PDF** → subido a Cloudinary (nuevo bucket)
-2. **Admin selecciona alumnos** → genera links JWT por alumno → envía emails a los tutores
+1. **Admin sube reglamento PDF** → subido a Cloudinary (preset `archivos`)
+2. **Admin selecciona alumnos** → genera links JWT por alumno → envía emails a tutores
 3. **Admin ve estado de firmas** (quién firmó, quién no, fecha, PDF firmado)
 
-### Archivos a crear
+### Archivos existentes
 
 | Archivo | Propósito |
 |---------|-----------|
 | `src/app/Components/Reglamentos/reglamentos.ts` | Página admin: listar reglamentos subidos |
-| `src/app/Components/Reglamentos/reglamentos.html` | Template |
-| `src/app/Components/Reglamentos/reglamentos.css` | Estilos |
 | `src/app/Components/Reglamentos/upload-reglamento-modal.ts` | Modal para subir nuevo reglamento PDF |
-| `src/app/Components/Reglamentos/upload-reglamento-modal.html` | Template |
-| `src/app/Components/Reglamentos/upload-reglamento-modal.css` | Estilos |
+| `src/app/Components/Reglamentos/edit-reglamento-modal.ts` | Modal para editar reglamento existente |
+| `src/app/Components/Reglamentos/generar-links-modal.ts` | Modal para seleccionar alumnos y generar links JWT |
 | `src/app/Components/Reglamentos/reglamento-firmas.ts` | Página admin: estado de firmas por alumno |
-| `src/app/Components/Reglamentos/reglamento-firmas.html` | Template |
-| `src/app/Components/Reglamentos/reglamento-firmas.css` | Estilos |
 | `src/app/Models/reglamentos.ts` | Interfaces TypeScript |
 
-### Modelos TypeScript a crear (`src/app/Models/reglamentos.ts`)
+### Modelos (`src/app/Models/reglamentos.ts`)
 
 ```typescript
 export interface Reglamento {
@@ -148,6 +147,7 @@ export interface Reglamento {
   descripcion?: string;
   version: string;
   url_pdf_cloudinary: string;
+  requires_firma: boolean;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -156,14 +156,19 @@ export interface Reglamento {
 export interface FirmaReglamento {
   id: number;
   reglamento_id: number;
+  reglamento_titulo?: string;
+  requires_firma?: boolean;
+  url_pdf_cloudinary?: string;
   alumno_id: number;
   tutor_id: number;
-  alumno_nombre: string;
-  tutor_nombre: string;
+  alumno_nombre?: string;
+  tutor_nombre?: string;
   url_pdf_firmado_cloudinary?: string;
   fecha_firma?: string;
+  fecha_lectura?: string;
   expira_en: string;
-  estado: 'pendiente' | 'firmado' | 'expirado';
+  estado: 'pendiente' | 'firmado' | 'leido' | 'expirado';
+  created_at: string;
 }
 
 export interface GenerarLinksPayload {
@@ -172,18 +177,27 @@ export interface GenerarLinksPayload {
 }
 ```
 
-### Métodos a agregar en `ApiService`
+### Métodos del ApiService (`Services/api-service.ts`)
 
+Reglamentos (`:542-596`):
 ```typescript
-getReglamentos(): Observable<Reglamento[]>
-uploadReglamento(body: FormData): Observable<Reglamento>
+getReglamentos(includeDeleted = false): Observable<Reglamento[]>
+createReglamento(body: { titulo, descripcion?, version, url_pdf_cloudinary, cloudinary_public_id, requires_firma? }): Observable<Reglamento>
 deleteReglamento(id: number): Observable<void>
-generarLinks(body: GenerarLinksPayload): Observable<{ enviados: number }>
-getFirmasReglamento(reglamentoId?: number, alumnoId?: number, estado?: string): Observable<FirmaReglamento[]>
-getFirmaByAlumno(alumnoId: number): Observable<FirmaReglamento | null>
+updateReglamento(id: number, body: { titulo?, descripcion?, version?, is_active?, requires_firma?, url_pdf_cloudinary?, cloudinary_public_id? }): Observable<Reglamento>
+generarLinks(body: GenerarLinksPayload): Observable<{ enviados: number; total: number; ya_firmados: number }>
+getFirmas(reglamentoId?, alumnoId?, estado?): Observable<FirmaReglamento[]>
+getFirmasByAlumno(alumnoId: number): Observable<FirmaReglamento[]>
 ```
 
-### Rutas a agregar en `app.routes.ts`
+Membresías:
+```typescript
+descargarReciboMembresia(id: number): Observable<Blob>  // GET /membresias/{id}/recibo.pdf
+```
+
+WhatsApp: `Services/whatsapp.service.ts` recibe una `Membresia`, descarga el recibo como Blob y usa `navigator.share` (fallback a descarga + `wa.me`).
+
+### Rutas (`app.routes.ts`)
 
 ```typescript
 {
@@ -200,26 +214,41 @@ getFirmaByAlumno(alumnoId: number): Observable<FirmaReglamento | null>
 
 ### Navegación (sidebar del Dashboard)
 
-Agregar al arreglo `fullNavItems` (o `maestroNavItems` según el caso) en `dashboard-home.ts`:
+En `dashboard.ts` → `fullNavItems`:
 
 ```typescript
-{ icon: 'document-text', label: 'Reglamentos', route: '/dashboard/reglamentos', roles: [1] },
-{ icon: 'checkmark-done', label: 'Firmas', route: '/dashboard/reglamentos/firmas', roles: [1] },
+{ icon: 'document-text-outline', label: 'Documentos', route: '/dashboard/reglamentos', roles: [1], exact: true },
+{ icon: 'checkmark-done-outline', label: 'Firmas', route: '/dashboard/reglamentos/firmas', roles: [1], exact: true },
 ```
 
-Registrar iconos: `import { documentText, checkmarkDone } from 'ionicons/icons';`
+Registrar iconos: `import { documentTextOutline, checkmarkDoneOutline } from 'ionicons/icons';` (ya registrado en `constructor()`)
 
-### Cloudinary upload pattern (ya existente en formularios de alumno/maestro)
+---
 
-Replicar el patrón usado en `alumno-form-modal.ts`:
-- Subir vía POST a `https://api.cloudinary.com/v1_1/dyvqspnz7/auto/upload` con upload preset
-- El nuevo bucket/preset para PDFs de reglamentos se definirá durante implementación
-- Respuesta incluye `secure_url` y `public_id`
+## Permisos de edición del perfil del alumno
 
-### Flujo de implementación sugerido
+- **Admin** puede editar todos los campos desde `perfil-alumno` (botón "Editar Perfil").
+- **Maestro** solo puede cambiar la fotografía (botón "Cambiar Foto"). El backend (`alumnos.py`) rechaza cualquier otro campo con 400.
+- Modo foto-only usa el flag `photoEditing` y el método `savePhoto()` que solo envía `{ fotografia }`.
 
-1. Backend: modelos + schemas + ruta upload → probar subida PDF a Cloudinary
-2. Backend: ruta generar-links + JWT + email → probar envío
-3. Backend: página HTML estática + ruta firmar → probar flujo completo
-4. Frontend: páginas admin (reglamentos list + upload modal + firmas status)
-5. Integrar navegación y probar end-to-end
+## Envío de recibos de membresía por WhatsApp
+
+- Botón de WhatsApp en la lista de membresías (`membresias.ts/html`) y en cada tarjeta del perfil del alumno (tab Membresía).
+- `Services/whatsapp.service.ts` normaliza el teléfono del tutor (`52` + 10 dígitos), descarga el PDF vía `descargarReciboMembresia()` y abre el share nativo; en web/Electron hace fallback a descarga + enlace `https://wa.me/<tel>?text=<msg>`.
+
+## Documentos con/sin firma
+
+- Cada `Reglamento` tiene `requires_firma: boolean` (default `true`).
+- En upload/edit modal hay un checkbox "Este documento requiere firma del tutor".
+- Si `requires_firma == false`, la página pública muestra solo el PDF y un botón "Confirmar lectura"; el backend guarda `fecha_lectura` y el estado pasa a `leido`.
+- La tabla de Firmas y el Expediente distinguen estados `pendiente | firmado | leido | expirado`.
+
+## Expediente del alumno
+
+- Nueva pestaña "Expediente" en `perfil-alumno`, visible para admin y maestro.
+- Carga `getFirmasByAlumno(alumnoId)` y muestra documentos firmados/leídos con sus fechas y links a PDFs.
+
+## Login flexible
+
+- El frontend hace `trim()` de username y password antes de enviar.
+- El backend normaliza username a minúsculas y acepta la contraseña tal cual o en minúsculas (fallback).

@@ -103,6 +103,12 @@ export class ReglamentoFirmas implements OnInit {
     }
   }
 
+  abrirPdfOriginal(f: FirmaReglamento): void {
+    if (f.url_pdf_cloudinary) {
+      window.open(f.url_pdf_cloudinary, '_blank');
+    }
+  }
+
   private async showToast(message: string, color: 'success' | 'danger'): Promise<void> {
     const toast = await this.toastCtrl.create({
       message, duration: 3000, color, position: 'top',

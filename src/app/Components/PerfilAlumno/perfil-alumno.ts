@@ -1,4 +1,5 @@
 import { Component, inject, signal, OnInit, computed, ChangeDetectorRef, ElementRef, viewChild, effect } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Filesystem, Directory } from '@capacitor/filesystem';
@@ -14,10 +15,12 @@ import QRCode from 'qrcode';
 import { environment } from '../../../environments/environment';
 import { ApiService } from '../../Services/api-service';
 import { SessionService } from '../../Services/session.service';
+import { WhatsAppService } from '../../Services/whatsapp.service';
 import { Alumno } from '../../Models/alumnos';
 import { Maestro } from '../../Models/maestros';
 import { Asistencia } from '../../Models/asistencias';
 import { Membresia } from '../../Models/membresias';
+import { FirmaReglamento } from '../../Models/reglamentos';
 import { MembresiaFormModal } from '../Membresias/membresia-form-modal';
 import { addIcons } from 'ionicons';
 import {
@@ -30,11 +33,12 @@ import {
   searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline,
   arrowBackOutline, cardOutline, qrCodeOutline, addOutline,
   schoolOutline, cashOutline, downloadOutline, alertCircleOutline,
+  cameraOutline, folderOpenOutline,
 } from 'ionicons/icons';
 
 @Component({
   selector: 'app-perfil-alumno',
-  imports: [FormsModule, IonIcon, IonSpinner, IonSegment, IonSegmentButton, IonLabel, IonSelect, IonSelectOption, IonButton, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonBadge, IonSkeletonText, IonAvatar, IonItem],
+  imports: [FormsModule, DatePipe, IonIcon, IonSpinner, IonSegment, IonSegmentButton, IonLabel, IonSelect, IonSelectOption, IonButton, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonBadge, IonSkeletonText, IonAvatar, IonItem],
   templateUrl: './perfil-alumno.html',
   styleUrl: './perfil-alumno.css',
 })
@@ -47,6 +51,7 @@ export class PerfilAlumno implements OnInit {
   private alertCtrl = inject(AlertController);
   private cdr = inject(ChangeDetectorRef);
   private modalCtrl = inject(ModalController);
+  private whatsapp = inject(WhatsAppService);
 
   readonly isMaestro = this.session.getUser()?.role_id === 2;
 
@@ -55,6 +60,7 @@ export class PerfilAlumno implements OnInit {
   allMaestros = signal<Maestro[]>([]);
   loading = signal(true);
   editing = signal(false);
+  photoEditing = signal(false);
   saving = signal(false);
   activeTab = signal('info');
 
@@ -65,6 +71,11 @@ export class PerfilAlumno implements OnInit {
   // Membresias
   membresias = signal<Membresia[]>([]);
   loadingMembresias = signal(false);
+  sendingWhatsAppMembresiaId = signal<number | null>(null);
+
+  // Expediente
+  expediente = signal<FirmaReglamento[]>([]);
+  loadingExpediente = signal(false);
 
   // Asistencias
   asistencias = signal<Asistencia[]>([]);
@@ -103,6 +114,7 @@ export class PerfilAlumno implements OnInit {
       searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline,
       arrowBackOutline, cardOutline, qrCodeOutline, addOutline,
       schoolOutline, cashOutline, downloadOutline, alertCircleOutline,
+      cameraOutline, folderOpenOutline,
     });
     effect(() => {
       const canvas = this.qrCanvas();
@@ -230,6 +242,55 @@ export class PerfilAlumno implements OnInit {
     this.photoPreview = null;
     this.removePhotoFlag = false;
     this.editing.set(false);
+  }
+
+  startPhotoEditing(): void {
+    this.photoEditing.set(true);
+  }
+
+  cancelPhotoEditing(): void {
+    this.selectedFile = null;
+    this.photoPreview = null;
+    this.removePhotoFlag = false;
+    this.photoEditing.set(false);
+  }
+
+  async savePhoto(): Promise<void> {
+    const a = this.alumno()!;
+    this.saving.set(true);
+
+    let fotoUrl: string | null | undefined;
+    if (this.selectedFile) {
+      try {
+        fotoUrl = await this.uploadToCloudinary(this.selectedFile);
+      } catch {
+        this.showToast('Error al subir la foto', 'danger');
+        this.saving.set(false);
+        return;
+      }
+    } else if (this.removePhotoFlag) {
+      fotoUrl = null;
+    } else {
+      this.saving.set(false);
+      this.photoEditing.set(false);
+      return;
+    }
+
+    this.api.updateAlumno(a.id, { fotografia: fotoUrl ?? null } as any).subscribe({
+      next: (updated) => {
+        this.alumno.set(updated);
+        this.selectedFile = null;
+        this.photoPreview = null;
+        this.removePhotoFlag = false;
+        this.photoEditing.set(false);
+        this.saving.set(false);
+        this.showToast('Foto actualizada', 'success');
+      },
+      error: () => {
+        this.saving.set(false);
+        this.showToast('Error al guardar', 'danger');
+      },
+    });
   }
 
   async saveChanges(): Promise<void> {
@@ -509,11 +570,49 @@ export class PerfilAlumno implements OnInit {
     }
   }
 
+  async enviarWhatsAppMembresia(m: Membresia, event: Event): Promise<void> {
+    event.stopPropagation();
+    if (!m.alumno?.tutor?.telefono) {
+      this.showToast('El tutor no tiene teléfono registrado', 'danger');
+      return;
+    }
+    this.sendingWhatsAppMembresiaId.set(m.id);
+    try {
+      await this.whatsapp.enviarRecibo(m);
+      this.showToast('Abriendo WhatsApp...', 'success');
+    } catch (err: any) {
+      this.showToast(err?.message ?? 'Error al preparar WhatsApp', 'danger');
+    } finally {
+      this.sendingWhatsAppMembresiaId.set(null);
+    }
+  }
+
+  abrirPdfExpediente(url?: string): void {
+    if (url) window.open(url, '_blank');
+  }
+
   onTabChange(value: unknown): void {
     const tab = String(value ?? 'info');
     this.activeTab.set(tab);
     if (tab === 'asistencias') this.loadAsistencias();
     if (tab === 'membresia') this.loadMembresias();
+    if (tab === 'expediente') this.loadExpediente();
+  }
+
+  loadExpediente(): void {
+    const a = this.alumno();
+    if (!a) return;
+    this.loadingExpediente.set(true);
+    this.api.getFirmasByAlumno(a.id).subscribe({
+      next: (data) => {
+        this.expediente.set(data);
+        this.loadingExpediente.set(false);
+      },
+      error: () => {
+        this.loadingExpediente.set(false);
+        this.showToast('Error al cargar expediente', 'danger');
+      },
+    });
   }
 
   private async showToast(message: string, color: 'success' | 'danger'): Promise<void> {

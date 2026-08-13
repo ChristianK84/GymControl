@@ -19,4 +19,5 @@ export interface Maestro {
   created_at: string;
   updated_at: string;
   user: MaestroUser | null;
+  generated_password?: string;
 }

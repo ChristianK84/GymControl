@@ -28,6 +28,13 @@ export interface MembresiaAlumno {
   apellido_materno: string | null;
   rama: string;
   fotografia?: string;
+  tutor?: {
+    id: number;
+    nombre: string;
+    apellido_paterno: string;
+    telefono: string;
+    email?: string;
+  } | null;
 }
 
 export interface MembresiaTipoPlan {

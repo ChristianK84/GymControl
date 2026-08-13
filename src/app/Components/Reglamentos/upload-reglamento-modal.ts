@@ -1,10 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
-  IonButton, IonIcon, IonFooter, IonSpinner,
-  IonInput, IonItem, IonLabel,
-  ModalController, ToastController,
+    IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
+    IonButton, IonIcon, IonFooter, IonSpinner,
+    IonInput, IonItem, IonLabel, IonCheckbox,
+    ModalController, ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { closeOutline, cloudUploadOutline } from 'ionicons/icons';
@@ -20,7 +20,7 @@ const UPLOAD_PRESET = environment.cloudinary.pdfPreset;
     FormsModule,
     IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
     IonButton, IonIcon, IonFooter, IonSpinner,
-    IonInput, IonItem, IonLabel,
+    IonInput, IonItem, IonLabel, IonCheckbox,
   ],
   templateUrl: './upload-reglamento-modal.html',
   styleUrl: './upload-reglamento-modal.css',
@@ -33,6 +33,7 @@ export class UploadReglamentoModal {
   titulo = '';
   descripcion = '';
   version = '';
+  requiresFirma = true;
   selectedFile: File | null = null;
   uploading = signal(false);
 
@@ -81,6 +82,7 @@ export class UploadReglamentoModal {
         version: this.version.trim(),
         url_pdf_cloudinary: data.secure_url as string,
         cloudinary_public_id: data.public_id as string,
+        requires_firma: this.requiresFirma,
       }).subscribe({
         next: (created) => this.modalCtrl.dismiss(created, 'saved'),
         error: (err) => {
