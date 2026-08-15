@@ -49,6 +49,13 @@ export class ApiService {
     return this.http.post<TokenResponse>(`${this.baseUrl}auth/refresh`, {});
   }
 
+  changePassword(currentPassword: string, newPassword: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}auth/change-password`, {
+      current_password: currentPassword,
+      new_password: newPassword,
+    });
+  }
+
   // ── Roles ──
 
   getRoles(): Observable<Rol[]> {
@@ -124,6 +131,7 @@ export class ApiService {
     apellido_paterno: string;
     apellido_materno?: string | null;
     telefono?: string | null;
+    email?: string | null;
     foto?: string | null;
     fecha_nacimiento?: string | null;
   }): Observable<Maestro> {
@@ -138,6 +146,7 @@ export class ApiService {
       apellido_paterno?: string;
       apellido_materno?: string | null;
       telefono?: string | null;
+      email?: string | null;
       foto?: string | null;
       fecha_nacimiento?: string | null;
       is_active?: boolean;
@@ -151,6 +160,13 @@ export class ApiService {
 
   deleteMaestro(maestroId: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}maestros/${maestroId}`);
+  }
+
+  enviarBienvenida(maestroIds: number[]): Observable<{ enviados: number; fallidos: { id: number; nombre: string; error: string }[] }> {
+    return this.http.post<{ enviados: number; fallidos: { id: number; nombre: string; error: string }[] }>(
+      `${this.baseUrl}administracion/enviar-bienvenida`,
+      { maestro_ids: maestroIds },
+    );
   }
 
   // ── Alumnos ──

@@ -27,6 +27,7 @@ import {
   cardOutline,
   cloudUploadOutline,
   checkmarkDoneOutline,
+  settingsOutline,
 } from 'ionicons/icons';
 
 const ROLE_MAP: Record<number, string> = {
@@ -73,8 +74,7 @@ export class Dashboard implements OnInit, OnDestroy {
     { icon: 'card-outline', label: 'Membresías', route: '/dashboard/membresias' as string | null, roles: [1] },
     { icon: 'pricetag-outline', label: 'Tipos Membresía', route: '/dashboard/tipos-membresia' as string | null, roles: [1] },
     { icon: 'person-outline', label: 'Usuarios', route: '/dashboard/usuarios' as string | null, roles: [1] },
-    { icon: 'document-text-outline', label: 'Auditoría', route: '/dashboard/auditoria' as string | null, roles: [1] },
-    { icon: 'cloud-upload-outline', label: 'Publicar Versión', route: '/dashboard/publicar-version' as string | null, roles: [1] },
+    { icon: 'settings-outline', label: 'Administración', route: '/dashboard/administracion' as string | null, roles: [1] },
     { icon: 'document-text-outline', label: 'Documentos', route: '/dashboard/reglamentos' as string | null, roles: [1], exact: true },
     { icon: 'checkmark-done-outline', label: 'Firmas', route: '/dashboard/reglamentos/firmas' as string | null, roles: [1], exact: true },
   ];
@@ -83,7 +83,7 @@ export class Dashboard implements OnInit, OnDestroy {
     const role = this.user?.role_id ?? 0;
     const username = this.user?.username ?? '';
     return this.fullNavItems.filter(item => {
-      if (item.route === '/dashboard/publicar-version' && username !== 'Admin') return false;
+      if (item.route === '/dashboard/administracion' && username !== 'Admin') return false;
       return item.roles.includes(role) && item.route;
     });
   }
@@ -95,7 +95,7 @@ export class Dashboard implements OnInit, OnDestroy {
       chevronBackOutline, chevronForwardOutline,
       documentTextOutline, checkmarkDoneOutline,
       pricetagOutline, cardOutline,
-      cloudUploadOutline,
+      cloudUploadOutline, settingsOutline,
     });
   }
 

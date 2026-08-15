@@ -208,6 +208,48 @@
           </ion-card-content>
         </ion-card>
       }
+
+      <!-- Cambiar Contraseña -->
+      @if (m.user) {
+        <ion-card class="card">
+          <ion-card-header>
+            <ion-card-title>
+              <ion-icon name="key-outline"></ion-icon>
+              Cambiar Contraseña
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            @if (passwordSuccess()) {
+              <p class="success-msg">{{ passwordSuccess() }}</p>
+            }
+            @if (passwordError()) {
+              <p class="error-msg">{{ passwordError() }}</p>
+            }
+            <div class="data-grid">
+              <div class="data-item">
+                <span class="data-label">Contraseña actual</span>
+                <ion-input class="field-input" type="password" [(ngModel)]="currentPassword" fill="outline" placeholder="Ingresa la contraseña actual"></ion-input>
+              </div>
+              <div class="data-item">
+                <span class="data-label">Nueva contraseña</span>
+                <ion-input class="field-input" type="password" [(ngModel)]="newPassword" fill="outline" placeholder="Mínimo 8 caracteres, 1 mayúscula, 1 minúscula, 1 número"></ion-input>
+              </div>
+              <div class="data-item">
+                <span class="data-label">Confirmar contraseña</span>
+                <ion-input class="field-input" type="password" [(ngModel)]="confirmPassword" fill="outline" placeholder="Repite la nueva contraseña"></ion-input>
+              </div>
+            </div>
+            <ion-button class="btn-save-edit" (click)="changePassword()" [disabled]="changingPassword()" fill="solid" style="margin-top: 0.5rem;">
+              @if (changingPassword()) {
+                <ion-spinner name="lines-small"></ion-spinner>
+              } @else {
+                <ion-icon name="key-outline" slot="start"></ion-icon>
+                Cambiar Contraseña
+              }
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      }
     </div>
     }
 

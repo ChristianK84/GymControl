@@ -1,0 +1,97 @@
+<div class="enviar-container">
+  <!-- Header -->
+  <div class="enviar-header">
+    <h1>Enviar Bienvenida</h1>
+    <p>Envía un email de bienvenida con credenciales y guía de uso a los maestros seleccionados.</p>
+  </div>
+
+  <!-- Resultado -->
+  @if (resultado()) {
+    <div class="result-card" [class.result-success]="resultado()!.fallidos.length === 0" [class.result-partial]="resultado()!.fallidos.length > 0">
+      <div class="result-header">
+        <ion-icon [name]="resultado()!.fallidos.length === 0 ? 'checkmark-circle-outline' : 'alert-circle-outline'"></ion-icon>
+        <span>{{ resultado()!.enviados }} enviado(s) exitosamente</span>
+      </div>
+      @if (resultado()!.fallidos.length > 0) {
+        <div class="result-failures">
+          <p class="result-subtitle">{{ resultado()!.fallidos.length }} fallido(s):</p>
+          @for (f of resultado()!.fallidos; track f.id) {
+            <p class="failure-item">{{ f.nombre }} — {{ f.error }}</p>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-box">
+      <ion-icon name="search-outline"></ion-icon>
+      <input type="text" placeholder="Buscar maestro..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" />
+    </div>
+    <div class="toolbar-actions">
+      <button class="btn-select-all" (click)="toggleAll()">
+        {{ allSelected() ? 'Deseleccionar todo' : 'Seleccionar todo' }}
+      </button>
+      <ion-button class="btn-send" [disabled]="sending() || selectedIds().size === 0" (click)="send()">
+        @if (sending()) {
+          <ion-spinner name="lines-small" slot="start"></ion-spinner>
+          Enviando...
+        } @else {
+          <ion-icon name="mail-outline" slot="start"></ion-icon>
+          Enviar bienvenida ({{ selectedIds().size }})
+        }
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  @if (loading()) {
+    <div class="skeleton-rows">
+      @for (row of [1,2,3,4,5]; track row) {
+        <div class="skeleton-row">
+          <ion-skeleton-text [animated]="true" style="width:24px;height:24px;"></ion-skeleton-text>
+          <ion-skeleton-text [animated]="true" style="flex:1;height:0.9rem;"></ion-skeleton-text>
+          <ion-skeleton-text [animated]="true" style="width:150px;height:0.85rem;"></ion-skeleton-text>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="table-wrapper">
+      <table class="enviar-table">
+        <thead>
+          <tr>
+            <th class="col-check"></th>
+            <th>Maestro</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (m of filteredMaestros(); track m.id) {
+            <tr [class.row-selected]="isSelected(m.id)" (click)="toggleSelection(m.id)">
+              <td class="col-check" (click)="$event.stopPropagation()">
+                <ion-checkbox [checked]="isSelected(m.id)" (ionChange)="toggleSelection(m.id)"></ion-checkbox>
+              </td>
+              <td>
+                <div class="maestro-name">
+                  <span class="nombre">{{ m.nombre }} {{ m.apellido_paterno }}</span>
+                  @if (m.apellido_materno) {
+                    <span class="apellido-m">{{ m.apellido_materno }}</span>
+                  }
+                </div>
+              </td>
+              <td class="td-muted">{{ m.email }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="3" class="td-empty">No se encontraron maestros con email registrado.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="table-footer">
+      <span>{{ filteredMaestros().length }} maestro(s) disponibles</span>
+    </div>
+  }
+</div>

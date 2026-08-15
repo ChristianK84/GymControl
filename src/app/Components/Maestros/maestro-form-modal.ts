@@ -43,6 +43,7 @@ export class MaestroFormModal implements OnInit {
   apellidoPaterno = '';
   apellidoMaterno = '';
   telefono = '';
+  email = '';
   fechaNacimiento = '';
   isActive = true;
 
@@ -64,6 +65,7 @@ export class MaestroFormModal implements OnInit {
       this.apellidoPaterno = this.maestro.apellido_paterno;
       this.apellidoMaterno = this.maestro.apellido_materno ?? '';
       this.telefono = this.maestro.telefono ?? '';
+      this.email = this.maestro.email ?? '';
       this.fechaNacimiento = this.maestro.fecha_nacimiento ?? '';
       this.isActive = this.maestro.is_active;
       this.currentPhotoUrl = this.maestro.foto ?? null;
@@ -150,6 +152,7 @@ export class MaestroFormModal implements OnInit {
       apellido_paterno: this.apellidoPaterno,
       apellido_materno: this.apellidoMaterno || null,
       telefono: this.telefono || null,
+      email: this.email || null,
       fecha_nacimiento: this.fechaNacimiento || null,
       ...(fotoUrl !== undefined ? { foto: fotoUrl } : {}),
       is_active: this.isActive,

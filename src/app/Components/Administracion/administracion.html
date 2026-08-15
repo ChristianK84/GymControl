@@ -1,0 +1,23 @@
+<div class="admin-container">
+  <!-- Header -->
+  <div class="admin-header">
+    <div>
+      <h1 class="admin-title">Administración</h1>
+      <p class="admin-subtitle">Opciones restringidas para el administrador principal.</p>
+    </div>
+  </div>
+
+  <!-- Sub-nav -->
+  <nav class="admin-subnav">
+    @for (item of subNavItems; track item.route) {
+      <a [routerLink]="item.route"
+         [class.active]="isActive(item.route, item.exact)">
+        <ion-icon [name]="item.icon"></ion-icon>
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+
+  <!-- Router outlet para sub-rutas -->
+  <router-outlet></router-outlet>
+</div>

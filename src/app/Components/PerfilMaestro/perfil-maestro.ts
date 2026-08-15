@@ -85,6 +85,14 @@ export class PerfilMaestro implements OnInit {
   editingAsistenciaId = signal<number | null>(null);
   editAsistio = false; editAsisNotas = ''; editAsisMaestroId: number | null = null;
 
+  // Cambiar contraseña
+  currentPassword = '';
+  newPassword = '';
+  confirmPassword = '';
+  changingPassword = signal(false);
+  passwordSuccess = signal('');
+  passwordError = signal('');
+
   constructor() {
     addIcons({
       personOutline, callOutline, mailOutline, calendarOutline,
@@ -346,6 +354,44 @@ export class PerfilMaestro implements OnInit {
 
   goToAlumnoPage(p: number): void { if (p >= 1 && p <= this.alumnoTotalPages()) this.alumnoPage.set(p); }
   goToAsisPage(p: number): void { if (p >= 1 && p <= this.asisTotalPages()) this.asisPage.set(p); }
+
+  // ── Cambiar contraseña ──
+  changePassword(): void {
+    this.passwordSuccess.set('');
+    this.passwordError.set('');
+
+    if (!this.currentPassword) {
+      this.passwordError.set('Ingresa tu contraseña actual');
+      return;
+    }
+    if (!this.newPassword) {
+      this.passwordError.set('Ingresa la nueva contraseña');
+      return;
+    }
+    if (this.newPassword !== this.confirmPassword) {
+      this.passwordError.set('Las contraseñas no coinciden');
+      return;
+    }
+    if (this.newPassword.length < 8) {
+      this.passwordError.set('La contraseña debe tener al menos 8 caracteres');
+      return;
+    }
+
+    this.changingPassword.set(true);
+    this.api.changePassword(this.currentPassword, this.newPassword).subscribe({
+      next: (res) => {
+        this.changingPassword.set(false);
+        this.passwordSuccess.set(res.message);
+        this.currentPassword = '';
+        this.newPassword = '';
+        this.confirmPassword = '';
+      },
+      error: (err) => {
+        this.changingPassword.set(false);
+        this.passwordError.set(err.error?.detail ?? 'Error al cambiar la contraseña');
+      },
+    });
+  }
 
   // ── Toast ──
 

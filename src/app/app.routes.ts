@@ -74,17 +74,55 @@ export const routes: Routes = [
       },
       {
         path: 'auditoria',
-        loadComponent: () =>
-          import('./Components/AuditLogs/audit-logs').then((m) => m.AuditLogs),
-        data: { roles: [1] },
+        redirectTo: 'administracion/auditoria',
+        pathMatch: 'full',
       },
       {
         path: 'publicar-version',
+        redirectTo: 'administracion/publicar-version',
+        pathMatch: 'full',
+      },
+      {
+        path: 'administracion',
         loadComponent: () =>
-          import('./Components/PublishVersion/publish-version').then(
-            (m) => m.PublishVersion,
+          import('./Components/Administracion/administracion').then(
+            (m) => m.Administracion,
           ),
         data: { roles: [1] },
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./Components/Administracion/admin-menu').then(
+                (m) => m.AdminMenu,
+              ),
+            data: { roles: [1] },
+          },
+          {
+            path: 'publicar-version',
+            loadComponent: () =>
+              import('./Components/PublishVersion/publish-version').then(
+                (m) => m.PublishVersion,
+              ),
+            data: { roles: [1] },
+          },
+          {
+            path: 'auditoria',
+            loadComponent: () =>
+              import('./Components/AuditLogs/audit-logs').then(
+                (m) => m.AuditLogs,
+              ),
+            data: { roles: [1] },
+          },
+          {
+            path: 'enviar-bienvenida',
+            loadComponent: () =>
+              import('./Components/Administracion/enviar-bienvenida').then(
+                (m) => m.EnviarBienvenida,
+              ),
+            data: { roles: [1] },
+          },
+        ],
       },
       {
         path: 'reglamentos',

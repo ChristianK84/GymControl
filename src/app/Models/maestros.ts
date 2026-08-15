@@ -12,6 +12,7 @@ export interface Maestro {
   apellido_paterno: string;
   apellido_materno: string | null;
   telefono: string | null;
+  email: string | null;
   foto: string | null;
   fecha_nacimiento: string | null;
   is_active: boolean;

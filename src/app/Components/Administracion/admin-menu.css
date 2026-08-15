@@ -1,0 +1,91 @@
+/* ===================================
+   Admin Menu — Landing Cards
+   =================================== */
+
+.admin-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.admin-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #ffffff;
+  border: 1px solid #e5e2e1;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  text-decoration: none;
+  color: #2a1714;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(15, 15, 15, 0.03);
+}
+
+.admin-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(15, 15, 15, 0.08);
+  border-color: #e30613;
+}
+
+/* Icono */
+.card-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card-icon ion-icon {
+  font-size: 1.4rem;
+  color: #ffffff;
+}
+
+.card-icon-cloud {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
+
+.card-icon-mail {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+}
+
+.card-icon-doc {
+  background: linear-gradient(135deg, #0e7490, #22d3ee);
+}
+
+/* Contenido */
+.card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2a1714;
+  margin: 0 0 0.25rem;
+}
+
+.card-desc {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: #5e3f3b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Flecha */
+.card-arrow {
+  font-size: 1.25rem;
+  color: #936e69;
+  transition: transform 0.2s;
+}
+
+.admin-card:hover .card-arrow {
+  transform: translateX(3px);
+  color: #e30613;
+}
