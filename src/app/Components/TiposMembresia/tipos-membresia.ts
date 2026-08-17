@@ -7,6 +7,7 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { createOutline, searchOutline, closeCircleOutline, fileTrayOutline, addOutline, trashOutline, chevronBackOutline, chevronForwardOutline, checkmarkCircleOutline, alertCircleOutline } from 'ionicons/icons';
+import { Pagination } from '../Shared/Pagination/pagination';
 import { ApiService } from '../../Services/api-service';
 import { TipoMembresia } from '../../Models/membresias';
 import { TipoMembresiaFormModal } from './tipo-membresia-form-modal';
@@ -16,6 +17,7 @@ import { TipoMembresiaFormModal } from './tipo-membresia-form-modal';
   imports: [
     FormsModule,
     IonButton, IonIcon, IonBadge, IonSkeletonText, IonInput,
+    Pagination,
   ],
   templateUrl: './tipos-membresia.html',
   styleUrl: './tipos-membresia.css',
@@ -125,6 +127,8 @@ export class TiposMembresia implements OnInit {
   formatCurrency(value: number): string {
     return `$${value.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`;
   }
+
+  onPageChange(p: number): void { this.page.set(p); }
 
   private async showToast(message: string, color: 'success' | 'danger' = 'success'): Promise<void> {
     const toast = await this.toastCtrl.create({

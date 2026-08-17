@@ -12,6 +12,7 @@ import {
   eyeOutline, trashOutline, linkOutline,
   chevronBackOutline, chevronForwardOutline,
 } from 'ionicons/icons';
+import { Pagination } from '../Shared/Pagination/pagination';
 import { ApiService } from '../../Services/api-service';
 import { Reglamento } from '../../Models/reglamentos';
 import { UploadReglamentoModal } from './upload-reglamento-modal';
@@ -23,6 +24,7 @@ import { GenerarLinksModal } from './generar-links-modal';
   imports: [
     FormsModule, DatePipe,
     IonButton, IonIcon, IonSkeletonText, IonInput,
+    Pagination,
   ],
   templateUrl: './reglamentos.html',
   styleUrl: './reglamentos.css',
@@ -144,6 +146,8 @@ export class Reglamentos implements OnInit {
     });
     await modal.present();
   }
+
+  onPageChange(p: number): void { this.page.set(p); }
 
   private async showToast(message: string, color: 'success' | 'danger'): Promise<void> {
     const toast = await this.toastCtrl.create({

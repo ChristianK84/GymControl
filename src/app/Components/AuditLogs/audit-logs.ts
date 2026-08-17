@@ -9,6 +9,7 @@ import {
   searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline,
   checkmarkCircleOutline, alertCircleOutline,
 } from 'ionicons/icons';
+import { Pagination } from '../Shared/Pagination/pagination';
 import { ApiService } from '../../Services/api-service';
 import { AuditLogEntry } from '../../Models/audit-logs';
 
@@ -17,6 +18,7 @@ import { AuditLogEntry } from '../../Models/audit-logs';
   imports: [
     FormsModule,
     IonButton, IonIcon, IonSelect, IonSelectOption, IonSkeletonText, IonBadge, IonInput,
+    Pagination,
   ],
   templateUrl: './audit-logs.html',
   styleUrl: './audit-logs.css',
@@ -103,6 +105,8 @@ export class AuditLogs implements OnInit {
     const d = new Date(fecha);
     return d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
   }
+
+  onPageChange(p: number): void { this.page.set(p); }
 
   private async showToast(message: string, color: 'success' | 'danger' = 'success'): Promise<void> {
     const toast = await this.toastCtrl.create({

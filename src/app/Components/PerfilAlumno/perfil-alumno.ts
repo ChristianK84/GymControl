@@ -35,10 +35,11 @@ import {
   schoolOutline, cashOutline, downloadOutline, alertCircleOutline,
   cameraOutline, folderOpenOutline,
 } from 'ionicons/icons';
+import { Pagination } from '../Shared/Pagination/pagination';
 
 @Component({
   selector: 'app-perfil-alumno',
-  imports: [FormsModule, DatePipe, IonIcon, IonSpinner, IonSegment, IonSegmentButton, IonLabel, IonSelect, IonSelectOption, IonButton, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonBadge, IonSkeletonText, IonAvatar, IonItem],
+  imports: [FormsModule, DatePipe, IonIcon, IonSpinner, IonSegment, IonSegmentButton, IonLabel, IonSelect, IonSelectOption, IonButton, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonBadge, IonSkeletonText, IonAvatar, IonItem, Pagination],
   templateUrl: './perfil-alumno.html',
   styleUrl: './perfil-alumno.css',
 })
@@ -614,6 +615,8 @@ export class PerfilAlumno implements OnInit {
       },
     });
   }
+
+  onAsisPageChange(p: number): void { this.asisPage.set(p); }
 
   private async showToast(message: string, color: 'success' | 'danger'): Promise<void> {
     const icons: Record<string, string> = { success: 'checkmark-circle', danger: 'close-circle' };

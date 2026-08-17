@@ -193,244 +193,108 @@ ion-button.btn-clear {
   white-space: nowrap;
 }
 
-/* ---------- Table ---------- */
-.table-wrapper {
+/* ---------- Cards Grid ---------- */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.alumno-card {
   background: #ffffff;
   border: 1px solid #e5e2e1;
   border-radius: 0.75rem;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  box-shadow: 0 4px 20px rgba(15, 15, 15, 0.05);
-}
-
-.alumnos-table {
-  width: 100%;
-  min-width: 650px;
-  border-collapse: collapse;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
-}
-
-.alumnos-table thead {
-  background: #fff8f7;
-  border-bottom: 2px solid #e5e2e1;
-}
-
-.alumnos-table th {
-  padding: 0.8rem 1rem;
-  text-align: left;
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #5e3f3b;
-  white-space: nowrap;
-  vertical-align: middle;
-}
-
-.alumnos-table td {
-  padding: 0.7rem 1rem;
-  color: #2a1714;
-  border-bottom: 1px solid #f3efee;
-  white-space: nowrap;
-  vertical-align: middle;
-}
-
-.alumnos-table tbody tr {
-  transition: background-color 0.15s;
-}
-
-.alumnos-table tbody tr:hover {
-  background-color: #fff8f7;
-}
-
-.alumnos-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.td-muted {
-  color: #5e3f3b !important;
-  font-size: 0.83rem;
-}
-
-/* Alumno cell */
-.td-clickable {
+  padding: 1rem;
   cursor: pointer;
-}
-
-.td-clickable:hover .alumno-name {
-  color: #e30613;
-}
-
-.alumno-cell {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-}
-
-.alumno-avatar {
-  width: 2.25rem;
-  height: 2.25rem;
-  min-width: 2.25rem;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.alumno-avatar-fallback {
-  background: #fedad5;
-  color: #2a1714;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.7rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.alumno-name-group,
-.maestro-name-group {
+  transition: transform 0.15s, box-shadow 0.15s;
   display: flex;
   flex-direction: column;
-}
-
-.alumno-name {
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-.alumno-apellido {
-  font-size: 0.72rem;
-  color: #5e3f3b;
-  line-height: 1.3;
-}
-
-.alumno-edad {
-  font-size: 0.68rem;
-  color: #936e69;
-  line-height: 1.2;
-}
-
-/* Rama pill */
-.rama-pill {
-  display: inline-block;
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 0.2rem 0.65rem;
-  border-radius: 999px;
-  letter-spacing: 0.02em;
-}
-
-.rama-varonil {
-  background: #1a2744;
-  color: #c5d5f7;
-}
-
-.rama-femenil {
-  background: #e61d6e;
-  color: #ffe0ed;
-}
-
-/* Status badge */
-ion-badge.status-badge {
-  --background: rgba(34, 197, 94, 0.1);
-  --color: #16a34a;
-  font-size: 0.72rem;
-  font-weight: 600;
-  border-radius: 999px;
-  padding: 0.2rem 0.7rem;
-  display: inline-block;
-}
-
-ion-badge.status-badge.status-inactive {
-  --background: rgba(148, 163, 184, 0.15);
-  --color: #64748b;
-}
-
-/* Empty state */
-.td-empty {
-  text-align: center;
-  padding: 3rem 1rem !important;
-}
-
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  color: #5e3f3b;
-}
-
-.empty-state ion-icon {
-  font-size: 2.5rem;
-}
-
-.empty-state p {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
-  margin: 0;
-}
-
-/* Footer */
-.table-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 0.75rem;
-  flex-wrap: wrap;
   gap: 0.75rem;
 }
 
-.footer-count {
+.alumno-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.card-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.card-name {
   font-family: 'Inter', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #2a1714;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-meta {
+  font-size: 0.78rem;
+  color: #936e69;
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #f0eeed;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
   color: #5e3f3b;
 }
 
-/* Pagination */
-.pagination {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-ion-button.page-btn {
-  --padding-start: 0;
-  --padding-end: 0;
-  --padding-top: 0;
-  --padding-bottom: 0;
-  --border-radius: 0.4rem;
-  --box-shadow: none;
-  --min-height: auto;
-  --color: #5e3f3b;
-  --color-hover: #2a1714;
-  --background: #ffffff;
-  --background-hover: #f0edec;
-  --border-color: #e5e2e1;
-  --border-style: solid;
-  --border-width: 1px;
-  min-width: 34px;
-  height: 34px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-transform: none;
-}
-
-ion-button.page-btn[disabled] {
-  opacity: 0.4;
-}
-
-ion-button.page-btn.page-active {
-  --background: #2a1714;
-  --color: #ffffff;
-  --border-color: #2a1714;
-  --background-hover: #2a1714;
-  --color-hover: #ffffff;
-}
-
-ion-button.page-btn ion-icon {
+.info-row ion-icon {
+  color: #936e69;
   font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.card-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  padding-top: 0.5rem;
+  border-top: 1px solid #f0eeed;
+}
+
+.vencimiento {
+  font-size: 0.75rem;
+  color: #936e69;
+  margin-left: auto;
+}
+
+.skeleton-card {
+  pointer-events: none;
+}
+
+.skeleton-card .card-header {
+  gap: 0.75rem;
+}
+
+.skeleton-card .card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 /* ---------- Responsive ---------- */
@@ -451,25 +315,82 @@ ion-button.page-btn ion-icon {
   }
 }
 
-
-/* ========== Skeleton Loading ========== */
-.skeleton-row td {
-  padding: 0.7rem 1rem;
+/* ========== Avatar ========== */
+.alumno-avatar {
+  width: 2.25rem;
+  height: 2.25rem;
+  min-width: 2.25rem;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
+.alumno-avatar-fallback {
+  background: #fedad5;
+  color: #2a1714;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========== Status Badge ========== */
+ion-badge.status-badge {
+  --background: rgba(34, 197, 94, 0.1);
+  --color: #16a34a;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  display: inline-block;
+}
+
+ion-badge.status-badge.status-inactive {
+  --background: rgba(148, 163, 184, 0.15);
+  --color: #64748b;
+}
+
+/* ========== Empty State ========== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: #5e3f3b;
+}
+
+.empty-state ion-icon {
+  font-size: 2.5rem;
+}
+
+.empty-state p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* ========== Footer ========== */
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.footer-count {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #5e3f3b;
+}
 ion-skeleton-text {
   --background: #e5e2e1;
   --border-radius: 0.375rem;
 }
 
 .skeleton-avatar { width: 2.25rem; height: 2.25rem; min-width: 2.25rem; --border-radius: 50%; }
-.skeleton-text { width: 120px; height: 0.85rem; }
-.skeleton-text-lg { width: 160px; height: 0.95rem; }
-.skeleton-text-sm { width: 60px; height: 0.8rem; }
-.skeleton-badge { width: 70px; height: 1.25rem; --border-radius: 999px; }
-
-.skeleton-cell {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-}
+.skeleton-text { width: 60%; height: 0.85rem; }
+.skeleton-text-lg { width: 80%; height: 0.95rem; }

@@ -62,76 +62,72 @@
     </div>
   </div>
 
-  <!-- Table -->
-  <div class="table-wrapper">
-    <table class="alumnos-table">
-      <thead>
-        <tr>
-          <th>Alumno</th>
-          <th>Entrenador</th>
-          <th>Última Asistencia</th>
-          <th>Estado</th>
-        </tr>
-      </thead>
-      <tbody>
-        @if (loading()) {
-          @for (row of [1,2,3,4,5,6,7,8]; track row) {
-            <tr class="skeleton-row">
-              <td><div class="skeleton-cell"><ion-skeleton-text class="skeleton-avatar" [animated]="true"></ion-skeleton-text><ion-skeleton-text class="skeleton-text-lg" [animated]="true"></ion-skeleton-text></div></td>
-              <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
-              <td><ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text></td>
-              <td><ion-skeleton-text class="skeleton-badge" [animated]="true"></ion-skeleton-text></td>
-            </tr>
-          }
-        } @else {
-          @for (alumno of pagedAlumnos(); track alumno.id) {
-            <tr>
-              <!-- Alumno -->
-              <td class="td-clickable" (click)="viewProfile(alumno)"><div class="alumno-cell">
-                  @if (alumno.fotografia) {
-                    <img class="alumno-avatar" [src]="alumno.fotografia" [alt]="alumno.nombrecompleto" />
-                  } @else {
-                    <div class="alumno-avatar alumno-avatar-fallback">
-                      {{ iniciales(alumno.nombrecompleto) }}
-                    </div>
-                  }
-                  <div class="alumno-name-group">
-                    <span class="alumno-name">{{ alumno.nombrecompleto }}</span>
-                    <span class="alumno-apellido">{{ alumno.apellido_paterno }} {{ alumno.apellido_materno ?? '' }}</span>
-                    <span class="alumno-edad">{{ edad(alumno.fecha_nacimiento) }} años</span>
-                  </div>
-                </div>
-              </td>
-              <!-- Entrenador -->
-              <td>
-                <div class="maestro-name-group">
-                  <span class="alumno-name">{{ maestroNombre(alumno.maestro_id) }}</span>
-                  <span class="alumno-apellido">{{ maestroApellido(alumno.maestro_id) }}</span>
-                </div>
-              </td>
-              <!-- Última Asistencia -->
-              <td class="td-muted">{{ asistenciaStr(alumno.id) }}</td>
-              <!-- Estado -->
-              <td>
-                <ion-badge class="status-badge" [class.status-inactive]="!alumno.is_active">
-                  {{ alumno.is_active ? 'Activo' : 'Inactivo' }}
-                </ion-badge>
-              </td>
-            </tr>
-          }
-          @empty {
-            <tr>
-              <td colspan="4" class="td-empty">
-                <div class="empty-state">
-                  <ion-icon name="people-outline"></ion-icon>
-                  <p>No se encontraron alumnos</p>
-                </div>
-              </td>
-            </tr>
-          }
-        }
-      </tbody>
-    </table>
+  <!-- Cards Grid -->
+  <div class="cards-grid">
+    @if (loading()) {
+      @for (row of [1,2,3,4,5,6]; track row) {
+        <div class="alumno-card skeleton-card">
+          <div class="card-header">
+            <ion-skeleton-text class="skeleton-avatar" [animated]="true"></ion-skeleton-text>
+            <div class="card-title-group">
+              <ion-skeleton-text class="skeleton-text-lg" [animated]="true"></ion-skeleton-text>
+              <ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text>
+            </div>
+          </div>
+          <div class="card-body">
+            <ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text>
+            <ion-skeleton-text class="skeleton-text" [animated]="true"></ion-skeleton-text>
+          </div>
+        </div>
+      }
+    } @else {
+      @for (alumno of pagedAlumnos(); track alumno.id) {
+        <div class="alumno-card" (click)="viewProfile(alumno)">
+          <div class="card-header">
+            @if (alumno.fotografia) {
+              <img class="alumno-avatar" [src]="alumno.fotografia" [alt]="alumno.nombrecompleto" />
+            } @else {
+              <div class="alumno-avatar alumno-avatar-fallback">{{ iniciales(alumno.nombrecompleto) }}</div>
+            }
+            <div class="card-title-group">
+              <span class="card-name">{{ alumno.nombrecompleto }}</span>
+              <span class="card-meta">{{ edad(alumno.fecha_nacimiento) }} años · {{ alumno.rama }}</span>
+            </div>
+          </div>
+
+          <div class="card-info">
+            <div class="info-row">
+              <ion-icon name="body-outline"></ion-icon>
+              <span>{{ maestroNombre(alumno.maestro_id) }} {{ maestroApellido(alumno.maestro_id) }}</span>
+            </div>
+            <div class="info-row">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>{{ asistenciaStr(alumno.id) }}</span>
+            </div>
+          </div>
+
+          <div class="card-status">
+            <ion-badge class="status-badge" [class.status-inactive]="!alumno.is_active">
+              {{ alumno.is_active ? '✓ Alumno' : '✗ Alumno' }}
+            </ion-badge>
+            @if (alumno.membresia_activa) {
+              <ion-badge class="status-badge" [class.status-inactive]="!alumno.membresia_activa.is_active || alumno.membresia_activa.esta_vencida">
+                {{ membresiaLabel(alumno.membresia_activa) }}
+              </ion-badge>
+              <span class="vencimiento">{{ fechaCorto(alumno.membresia_activa.fecha_vencimiento) }}</span>
+            } @else {
+              <ion-badge class="status-badge status-inactive">Sin membresía</ion-badge>
+            }
+          </div>
+        </div>
+      }
+      @empty {
+        <div class="empty-state">
+          <ion-icon name="people-outline"></ion-icon>
+          <p>No se encontraron alumnos</p>
+        </div>
+      }
+    }
   </div>
 
   <!-- Footer -->
@@ -139,20 +135,6 @@
     <span class="footer-count">
       {{ filtered().length }} alumno{{ filtered().length !== 1 ? 's' : '' }}
     </span>
-    @if (totalPages() > 1) {
-      <div class="pagination">
-        <ion-button class="page-btn" [disabled]="page() === 1" (click)="goToPage(page() - 1)" fill="outline">
-          <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
-        </ion-button>
-        @for (p of [].constructor(totalPages()); track $index; let i = $index) {
-          <ion-button class="page-btn" [class.page-active]="i + 1 === page()" (click)="goToPage(i + 1)" fill="outline">
-            {{ i + 1 }}
-          </ion-button>
-        }
-        <ion-button class="page-btn" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)" fill="outline">
-          <ion-icon name="chevron-forward-outline" slot="icon-only"></ion-icon>
-        </ion-button>
-      </div>
-    }
+    <app-pagination [currentPage]="page()" [totalPages]="totalPages()" (pageChange)="onPageChange($event)"></app-pagination>
   </div>
 </div>

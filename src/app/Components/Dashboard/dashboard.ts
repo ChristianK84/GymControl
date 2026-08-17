@@ -18,6 +18,7 @@ import {
   bodyOutline,
   checkmarkCircleOutline,
   personOutline,
+  personCircleOutline,
   logOutOutline,
   menuOutline,
   chevronBackOutline,
@@ -67,7 +68,7 @@ export class Dashboard implements OnInit, OnDestroy {
   clockDate = signal(this.formatDate());
   clockTime = signal(this.formatTime());
 
-  readonly fullNavItems = [
+readonly fullNavItems = [
     { icon: 'people-outline', label: 'Alumnos', route: '/dashboard/alumnos' as string | null, roles: [1, 2] },
     { icon: 'body-outline', label: 'Maestros', route: '/dashboard/maestros' as string | null, roles: [1] },
     { icon: 'checkmark-circle-outline', label: 'Asistencias', route: '/dashboard/asistencias' as string | null, roles: [1, 2] },
@@ -77,21 +78,31 @@ export class Dashboard implements OnInit, OnDestroy {
     { icon: 'settings-outline', label: 'Administración', route: '/dashboard/administracion' as string | null, roles: [1] },
     { icon: 'document-text-outline', label: 'Documentos', route: '/dashboard/reglamentos' as string | null, roles: [1], exact: true },
     { icon: 'checkmark-done-outline', label: 'Firmas', route: '/dashboard/reglamentos/firmas' as string | null, roles: [1], exact: true },
+    { icon: 'person-circle-outline', label: 'Mi Perfil', route: '/dashboard/maestros/profile' as string | null, roles: [2], profileRoute: true },
   ];
 
   get navItems() {
     const role = this.user?.role_id ?? 0;
     const username = this.user?.username ?? '';
-    return this.fullNavItems.filter(item => {
-      if (item.route === '/dashboard/administracion' && username !== 'Admin') return false;
-      return item.roles.includes(role) && item.route;
-    });
+    const maestroId = this.user?.maestro_id ?? null;
+    return this.fullNavItems
+      .filter(item => {
+        if (item.route === '/dashboard/administracion' && username !== 'Admin') return false;
+        return item.roles.includes(role);
+      })
+      .map(item => {
+        if (item.profileRoute && maestroId) {
+          return { ...item, route: `/dashboard/maestros/${maestroId}` };
+        }
+        return item;
+      })
+      .filter(item => item.route);
   }
 
   constructor() {
     addIcons({
       gridOutline, peopleOutline, bodyOutline, checkmarkCircleOutline,
-      personOutline, logOutOutline, menuOutline,
+      personOutline, personCircleOutline, logOutOutline, menuOutline,
       chevronBackOutline, chevronForwardOutline,
       documentTextOutline, checkmarkDoneOutline,
       pricetagOutline, cardOutline,

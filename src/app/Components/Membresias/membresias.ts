@@ -7,6 +7,7 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { createOutline, warningOutline, fileTrayOutline, addOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline, checkmarkCircleOutline, alertCircleOutline, searchOutline, mailOutline, logoWhatsapp } from 'ionicons/icons';
+import { Pagination } from '../Shared/Pagination/pagination';
 import { ApiService } from '../../Services/api-service';
 import { WhatsAppService } from '../../Services/whatsapp.service';
 import { Membresia } from '../../Models/membresias';
@@ -25,6 +26,7 @@ const ESTADO_LABELS: Record<number, { label: string; css: string }> = {
     FormsModule,
     IonButton, IonIcon, IonSkeletonText, IonSelect, IonSelectOption,
     IonInput, IonSpinner,
+    Pagination,
   ],
   templateUrl: './membresias.html',
   styleUrl: './membresias.css',
@@ -199,6 +201,8 @@ export class Membresias implements OnInit {
     });
     await modal.present();
   }
+
+  onPageChange(p: number): void { this.page.set(p); }
 
   private async showToast(message: string, color: 'success' | 'danger' = 'success'): Promise<void> {
     const toast = await this.toastCtrl.create({

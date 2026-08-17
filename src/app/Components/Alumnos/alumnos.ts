@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonIcon, IonButton, IonInput, IonSelect, IonSelectOption, IonSkeletonText, IonBadge, ToastController, ModalController } from '@ionic/angular/standalone';
 import { ApiService } from '../../Services/api-service';
 import { SessionService } from '../../Services/session.service';
-import { Alumno } from '../../Models/alumnos';
+import { Alumno, MembresiaResumen } from '../../Models/alumnos';
 import { Maestro } from '../../Models/maestros';
 import { AlumnoFormModal } from './alumno-form-modal';
 import { AlumnosCumpleaniosModal } from './alumnos-cumpleanios-modal';
@@ -13,11 +13,13 @@ import { addIcons } from 'ionicons';
 import {
   addOutline, searchOutline, closeCircleOutline,
   chevronBackOutline, chevronForwardOutline, giftOutline,
+  bodyOutline, timeOutline,
 } from 'ionicons/icons';
+import { Pagination } from '../Shared/Pagination/pagination';
 
 @Component({
   selector: 'app-alumnos',
-  imports: [FormsModule, IonIcon, IonButton, IonInput, IonSelect, IonSelectOption, IonSkeletonText, IonBadge],
+  imports: [FormsModule, IonIcon, IonButton, IonInput, IonSelect, IonSelectOption, IonSkeletonText, IonBadge, Pagination],
   templateUrl: './alumnos.html',
   styleUrl: './alumnos.css',
 })
@@ -42,15 +44,13 @@ export class Alumnos implements OnInit {
   readonly pageSize = 8;
 
   constructor() {
-    addIcons({ addOutline, searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline, giftOutline });
+    addIcons({ addOutline, searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline, giftOutline, bodyOutline, timeOutline });
   }
 
   ngOnInit(): void {
     const miId = this.isMaestro ? this.session.getMaestroId() : null;
     if (this.isMaestro && !miId) {
       this.allAlumnos.set([]);
-      this.tryFinishLoading();
-      this.tryFinishLoading();
       this.loading.set(false);
       return;
     }
@@ -178,10 +178,6 @@ export class Alumnos implements OnInit {
     this.page.set(1);
   }
 
-  goToPage(p: number): void {
-    if (p >= 1 && p <= this.totalPages()) this.page.set(p);
-  }
-
   viewProfile(alumno: Alumno): void {
     this.router.navigate(['/dashboard/alumnos', alumno.id]);
   }
@@ -229,5 +225,20 @@ export class Alumnos implements OnInit {
       cssClass: 'custom-toast',
     });
     await toast.present();
+  }
+
+  onPageChange(p: number): void {
+    this.page.set(p);
+  }
+
+  membresiaLabel(m: MembresiaResumen): string {
+    if (m.esta_vencida) return '✗ Vencida';
+    if (m.is_active) return '✓ Membresía';
+    return '✗ Membresía';
+  }
+
+  fechaCorto(fecha: string): string {
+    const d = new Date(fecha + 'T00:00:00');
+    return d.toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' });
   }
 }

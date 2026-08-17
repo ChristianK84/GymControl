@@ -80,7 +80,9 @@ export class Login implements OnInit {
         this.session.saveSession(res);
         (document.activeElement as HTMLElement)?.blur();
         this.showToast('Inicio de sesión exitoso', 'success');
-        const destino = res.role_id === 2 ? '/dashboard/alumnos' : '/dashboard';
+        const destino = res.role_id === 2
+          ? (res.maestro_id ? `/dashboard/maestros/${res.maestro_id}` : '/dashboard/alumnos')
+          : '/dashboard';
         this.router.navigate([destino], { replaceUrl: true });
       },
       error: (err) => {

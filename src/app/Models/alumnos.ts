@@ -27,6 +27,13 @@ export interface FichaMedica {
   nss: string | null;
 }
 
+export interface MembresiaResumen {
+  is_active: boolean;
+  fecha_vencimiento: string;
+  esta_vencida: boolean;
+  estado: string | null;
+}
+
 export interface Alumno {
   id: number;
   nombrecompleto: string;
@@ -44,4 +51,5 @@ export interface Alumno {
   tutor: Tutor | null;
   contacto_emergencia: ContactoEmergencia | null;
   ficha_medica: FichaMedica | null;
+  membresia_activa: MembresiaResumen | null;
 }

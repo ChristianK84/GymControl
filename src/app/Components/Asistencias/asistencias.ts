@@ -18,12 +18,13 @@ import {
   warningOutline, qrCodeOutline, checkmarkCircleOutline,
   alertCircleOutline, cameraOutline, stopOutline,
 } from 'ionicons/icons';
+import { Pagination } from '../Shared/Pagination/pagination';
 import { AsistenciaEditModal } from './asistencia-edit-modal';
 import { AsistenciaRegisterModal } from './asistencia-register-modal';
 
 @Component({
   selector: 'app-asistencias',
-  imports: [FormsModule, IonIcon, IonButton, IonInput, IonSkeletonText, IonBadge, IonSelect, IonSelectOption, IonSpinner],
+  imports: [FormsModule, IonIcon, IonButton, IonInput, IonSkeletonText, IonBadge, IonSelect, IonSelectOption, IonSpinner, Pagination],
   templateUrl: './asistencias.html',
   styleUrl: './asistencias.css',
 })
@@ -343,6 +344,8 @@ export class Asistencias implements OnInit, OnDestroy {
   goToPage(p: number): void {
     if (p >= 1 && p <= this.totalPages()) this.page.set(p);
   }
+
+  onPageChange(p: number): void { this.page.set(p); }
 
   async openEditModal(asis: Asistencia): Promise<void> {
     const modal = await this.modalCtrl.create({

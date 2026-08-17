@@ -44,7 +44,7 @@ export const routes: Routes = [
         path: 'maestros/:id',
         loadComponent: () =>
           import('./Components/PerfilMaestro/perfil-maestro').then((m) => m.PerfilMaestro),
-        data: { roles: [1] },
+        data: { roles: [1, 2] },
       },
       {
         path: 'asistencias',

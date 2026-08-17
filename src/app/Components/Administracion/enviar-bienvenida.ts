@@ -11,6 +11,7 @@ import {
 } from 'ionicons/icons';
 import { ApiService } from '../../Services/api-service';
 import { Maestro } from '../../Models/maestros';
+import { SessionService } from '../../Services/session.service';
 
 @Component({
   selector: 'app-enviar-bienvenida',
@@ -23,6 +24,9 @@ import { Maestro } from '../../Models/maestros';
 export class EnviarBienvenida implements OnInit {
   private api = inject(ApiService);
   private toastCtrl = inject(ToastController);
+  private session = inject(SessionService);
+
+  currentUserId = computed(() => this.session.getUser()?.user_id ?? null);
 
   maestros = signal<Maestro[]>([]);
   loading = signal(true);
@@ -51,9 +55,11 @@ export class EnviarBienvenida implements OnInit {
   }
 
   filteredMaestros = computed(() => {
+    const adminId = this.currentUserId();
+    const base = adminId ? this.maestros().filter(m => m.user_id !== adminId) : this.maestros();
     const term = this.searchTerm().toLowerCase().trim();
-    if (!term) return this.maestros();
-    return this.maestros().filter(m =>
+    if (!term) return base;
+    return base.filter(m =>
       m.nombre.toLowerCase().includes(term) ||
       m.apellido_paterno.toLowerCase().includes(term) ||
       (m.email ?? '').toLowerCase().includes(term)

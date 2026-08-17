@@ -10,10 +10,11 @@ import {
   addOutline, searchOutline, closeCircleOutline,
   chevronBackOutline, chevronForwardOutline, giftOutline,
 } from 'ionicons/icons';
+import { Pagination } from '../Shared/Pagination/pagination';
 
 @Component({
   selector: 'app-maestros',
-  imports: [FormsModule, IonIcon, IonButton, IonInput, IonSelect, IonSelectOption, IonSkeletonText, IonBadge],
+  imports: [FormsModule, IonIcon, IonButton, IonInput, IonSelect, IonSelectOption, IonSkeletonText, IonBadge, Pagination],
   templateUrl: './maestros.html',
   styleUrl: './maestros.css',
 })
@@ -158,6 +159,8 @@ export class Maestros implements OnInit {
       this.showToast('Maestro actualizado con éxito', 'success');
     }
   }
+
+  onPageChange(p: number): void { this.page.set(p); }
 
   private async showToast(message: string, color: 'success' | 'danger' = 'success'): Promise<void> {
     const icons: Record<string, string> = { success: 'checkmark-circle', danger: 'close-circle' };

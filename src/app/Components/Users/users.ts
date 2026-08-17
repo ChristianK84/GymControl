@@ -10,6 +10,7 @@ import {
   chevronBackOutline,
   chevronForwardOutline,
 } from 'ionicons/icons';
+import { Pagination } from '../Shared/Pagination/pagination';
 import { ApiService } from '../../Services/api-service';
 import { User } from '../../Models/users';
 import { Rol } from '../../Models/catalogs';
@@ -18,7 +19,7 @@ import { UserFormModal } from './user-edit-modal';
 
 @Component({
   selector: 'app-users',
-  imports: [FormsModule, IonIcon, IonButton, IonInput, IonSelect, IonSelectOption, IonSkeletonText, IonBadge],
+  imports: [FormsModule, IonIcon, IonButton, IonInput, IonSelect, IonSelectOption, IonSkeletonText, IonBadge, Pagination],
   templateUrl: './users.html',
   styleUrl: './users.css',
 })
@@ -153,6 +154,8 @@ export class Users implements OnInit {
       this.page.set(p);
     }
   }
+
+  onPageChange(p: number): void { this.page.set(p); }
 
   async addUser(): Promise<void> {
     const modal = await this.modalCtrl.create({

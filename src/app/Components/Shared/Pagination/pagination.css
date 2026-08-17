@@ -1,0 +1,28 @@
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.page-btn {
+  --color: #2a1714;
+  --border-color: #e5e2e1;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+}
+
+.page-btn-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.page-indicator {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #2a1714;
+  font-weight: 500;
+  padding: 0 0.5rem;
+  white-space: nowrap;
+}

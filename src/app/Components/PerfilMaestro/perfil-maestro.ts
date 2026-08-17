@@ -13,6 +13,7 @@ import { ApiService } from '../../Services/api-service';
 import { Maestro } from '../../Models/maestros';
 import { Alumno } from '../../Models/alumnos';
 import { Asistencia } from '../../Models/asistencias';
+import { SessionService } from '../../Services/session.service';
 import { addIcons } from 'ionicons';
 import {
   personOutline, callOutline, mailOutline, calendarOutline,
@@ -22,7 +23,9 @@ import {
   barChartOutline, starOutline, shieldCheckmarkOutline,
   searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline,
   pencilOutline, timeOutline,
+  lockClosedOutline, eyeOutline, eyeOffOutline,
 } from 'ionicons/icons';
+import { Pagination } from '../Shared/Pagination/pagination';
 
 const CLOUDINARY_URL = environment.cloudinary.uploadUrl;
 const UPLOAD_PRESET = environment.cloudinary.maestroPreset;
@@ -34,6 +37,7 @@ const UPLOAD_PRESET = environment.cloudinary.maestroPreset;
     IonLabel, IonSelect, IonSelectOption, IonButton, IonInput,
     IonCard, IonCardHeader, IonCardTitle, IonCardContent,
     IonBadge,
+    Pagination,
   ],
   templateUrl: './perfil-maestro.html',
   styleUrl: './perfil-maestro.css',
@@ -44,6 +48,14 @@ export class PerfilMaestro implements OnInit {
   private api = inject(ApiService);
   private toastCtrl = inject(ToastController);
   private cdr = inject(ChangeDetectorRef);
+  private session = inject(SessionService);
+
+  currentUser = this.session.getUser();
+  isMaestroSelfView = computed(() => {
+    const u = this.currentUser;
+    const m = this.maestro();
+    return u?.role_id === 2 && !!m && u.maestro_id === m.id;
+  });
 
   maestro = signal<Maestro | null>(null);
   alumnos = signal<Alumno[]>([]);
@@ -68,7 +80,7 @@ export class PerfilMaestro implements OnInit {
 
   // Edit form
   editNombre = ''; editApellidoP = ''; editApellidoM = '';
-  editTelefono = ''; editFechaNac = ''; editIsActive = true;
+  editTelefono = ''; editEmail = ''; editFechaNac = ''; editIsActive = true;
   editCreatedAt = '';
 
   // Alumnos tab
@@ -92,6 +104,21 @@ export class PerfilMaestro implements OnInit {
   changingPassword = signal(false);
   passwordSuccess = signal('');
   passwordError = signal('');
+  hideCurrentPassword = signal(true);
+  hideNewPassword = signal(true);
+  hideConfirmPassword = signal(true);
+
+  toggleCurrentPasswordVisibility(): void {
+    this.hideCurrentPassword.set(!this.hideCurrentPassword());
+  }
+
+  toggleNewPasswordVisibility(): void {
+    this.hideNewPassword.set(!this.hideNewPassword());
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.hideConfirmPassword.set(!this.hideConfirmPassword());
+  }
 
   constructor() {
     addIcons({
@@ -102,6 +129,7 @@ export class PerfilMaestro implements OnInit {
       barChartOutline, starOutline, shieldCheckmarkOutline,
       searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline,
       pencilOutline, timeOutline,
+      lockClosedOutline, eyeOutline, eyeOffOutline,
     });
   }
 
@@ -172,6 +200,7 @@ export class PerfilMaestro implements OnInit {
     this.editApellidoP = m.apellido_paterno;
     this.editApellidoM = m.apellido_materno ?? '';
     this.editTelefono = m.telefono ?? '';
+    this.editEmail = m.email ?? '';
     this.editFechaNac = m.fecha_nacimiento ?? '';
     this.editIsActive = m.is_active;
     this.editCreatedAt = new DatePipe('es-MX').transform(m.created_at, "d 'de' MMMM 'del' yyyy")!;
@@ -207,6 +236,7 @@ export class PerfilMaestro implements OnInit {
       apellido_paterno: this.editApellidoP || undefined,
       apellido_materno: this.editApellidoM || null,
       telefono: this.editTelefono || null,
+      email: this.editEmail || null,
       fecha_nacimiento: this.editFechaNac || null,
       is_active: this.editIsActive,
       ...(fotoUrl !== undefined ? { foto: fotoUrl } : {}),
@@ -394,6 +424,9 @@ export class PerfilMaestro implements OnInit {
   }
 
   // ── Toast ──
+
+  onAlumnoPageChange(p: number): void { this.alumnoPage.set(p); }
+  onAsisPageChange(p: number): void { this.asisPage.set(p); }
 
   private async showToast(message: string, color: 'success' | 'danger'): Promise<void> {
     const icons: Record<string, string> = { success: 'checkmark-circle', danger: 'close-circle' };

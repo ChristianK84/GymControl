@@ -10,6 +10,7 @@ import { addIcons } from 'ionicons';
 import {
   documentTextOutline, chevronBackOutline, chevronForwardOutline,
 } from 'ionicons/icons';
+import { Pagination } from '../Shared/Pagination/pagination';
 import { ApiService } from '../../Services/api-service';
 import { FirmaReglamento, Reglamento } from '../../Models/reglamentos';
 
@@ -19,6 +20,7 @@ import { FirmaReglamento, Reglamento } from '../../Models/reglamentos';
     FormsModule, DatePipe,
     IonButton, IonIcon, IonSkeletonText,
     IonSelect, IonSelectOption,
+    Pagination,
   ],
   templateUrl: './reglamento-firmas.html',
   styleUrl: './reglamento-firmas.css',
@@ -108,6 +110,8 @@ export class ReglamentoFirmas implements OnInit {
       window.open(f.url_pdf_cloudinary, '_blank');
     }
   }
+
+  onPageChange(p: number): void { this.page.set(p); }
 
   private async showToast(message: string, color: 'success' | 'danger'): Promise<void> {
     const toast = await this.toastCtrl.create({
