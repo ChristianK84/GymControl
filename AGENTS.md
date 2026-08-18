@@ -4,7 +4,56 @@ App híbrida Angular 20 + Ionic 8 para gestión de gimnasio (alumnos, maestros, 
 
 El backend vive en `https://gymcontrol-api-sne4.onrender.com/api/v1/`. Este repo es solo el frontend.
 
-Cambios recientes: maestro solo cambia foto del alumno, envío de recibos por WhatsApp, documentos con/sin firma, pestaña Expediente, login flexible (trim + case-insensitive).
+Cambios recientes: maestro solo cambia foto del alumno, envío de recibos por WhatsApp, documentos con/sin firma, pestaña Expediente, login flexible (trim + case-insensitive), vista de cards en directorio de alumnos.
+
+---
+
+## Vista de cards en el directorio de alumnos
+
+El directorio `/dashboard/alumnos` (`Components/Alumnos/`) usa una grid de cards responsiva (en vez de tabla).
+
+### Modelo (`src/app/Models/alumnos.ts`)
+
+Cada `Alumno` incluye, además de las relaciones base (`tutor`, `contacto_emergencia`, `ficha_medica`), dos campos de resumen de membresía:
+
+- `inscripcion: MembresiaResumen | null` — membresía con `tipo_membresia_id = 1` (Inscripción)
+- `membresia: MembresiaResumen | null` — membresía regular con `tipo_membresia_id >= 2`
+
+```typescript
+export interface MembresiaResumen {
+  is_active: boolean;
+  fecha_vencimiento: string;
+  esta_vencida: boolean;
+  pagado: boolean;
+  estado: string | null;
+}
+```
+
+### Convención `tipo_membresia_id`
+
+- `1` = Inscripción (registro inicial)
+- `>= 2` = Membresía regular (Básica, Competitiva, Sábados, etc.)
+
+### UI: 2 badges por alumno
+
+Cada card muestra un badge de **Inscripción** (`alumno.inscripcion`) y otro de **Membresía** (`alumno.membresia`), con la misma lógica de 3 colores + gris:
+
+| Estado | Color | Icono |
+|---|---|---|
+| Vigente + pagado | 🟢 verde (`#16a34a`) | ✓ `checkmark-circle-outline` |
+| Vigente + impago | 🟠 naranja (`#c2410c`) | ⚠ `warning-outline` |
+| Vencida / cancelada | 🔴 rojo | — |
+| Sin inscripción / membresía | ⚫ gris | — |
+
+Iconos registrados en `addIcons()`: `warningOutline`, `checkmarkCircleOutline`. Helpers en `alumnos.ts`: `esInactiva()`, `esPendiente()`, `esPagado()`.
+
+### Card
+
+Cada card muestra: avatar, nombre (`{{ alumno.nombrecompleto }} {{ alumno.apellido_paterno }}`) con wrap a 2 líneas (`line-clamp: 2`, `font-size: 0.85rem`), edad y rama, los 2 badges, y el maestro asignado.
+
+### Componente compartido `Pagination`
+
+En `src/app/Components/Shared/Pagination/` (`pagination.ts|html|css`). Paginación client-side reutilizable para listas; reemplaza los bucles `@for` de páginas.
 
 ---
 

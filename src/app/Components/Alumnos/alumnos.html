@@ -90,7 +90,7 @@
               <div class="alumno-avatar alumno-avatar-fallback">{{ iniciales(alumno.nombrecompleto) }}</div>
             }
             <div class="card-title-group">
-              <span class="card-name">{{ alumno.nombrecompleto }}</span>
+              <span class="card-name">{{ alumno.nombrecompleto }} {{ alumno.apellido_paterno }}</span>
               <span class="card-meta">{{ edad(alumno.fecha_nacimiento) }} años · {{ alumno.rama }}</span>
             </div>
           </div>
@@ -107,14 +107,32 @@
           </div>
 
           <div class="card-status">
-            <ion-badge class="status-badge" [class.status-inactive]="!alumno.is_active">
-              {{ alumno.is_active ? '✓ Alumno' : '✗ Alumno' }}
-            </ion-badge>
-            @if (alumno.membresia_activa) {
-              <ion-badge class="status-badge" [class.status-inactive]="!alumno.membresia_activa.is_active || alumno.membresia_activa.esta_vencida">
-                {{ membresiaLabel(alumno.membresia_activa) }}
+            @if (alumno.inscripcion) {
+              <ion-badge class="status-badge"
+                [class.status-warning]="esPendiente(alumno.inscripcion)"
+                [class.status-inactive]="esInactiva(alumno.inscripcion)">
+                @if (esPendiente(alumno.inscripcion)) {
+                  <ion-icon name="warning-outline" class="badge-icon"></ion-icon>
+                } @else if (esPagado(alumno.inscripcion)) {
+                  <ion-icon name="checkmark-circle" class="badge-icon"></ion-icon>
+                }
+                Inscripción
               </ion-badge>
-              <span class="vencimiento">{{ fechaCorto(alumno.membresia_activa.fecha_vencimiento) }}</span>
+            } @else {
+              <ion-badge class="status-badge status-inactive">Sin Inscripción</ion-badge>
+            }
+            @if (alumno.membresia) {
+              <ion-badge class="status-badge"
+                [class.status-warning]="esPendiente(alumno.membresia)"
+                [class.status-inactive]="esInactiva(alumno.membresia)">
+                @if (esPendiente(alumno.membresia)) {
+                  <ion-icon name="warning-outline" class="badge-icon"></ion-icon>
+                } @else if (esPagado(alumno.membresia)) {
+                  <ion-icon name="checkmark-circle" class="badge-icon"></ion-icon>
+                }
+                Membresía
+              </ion-badge>
+              <span class="vencimiento">{{ fechaCorto(alumno.membresia.fecha_vencimiento) }}</span>
             } @else {
               <ion-badge class="status-badge status-inactive">Sin membresía</ion-badge>
             }

@@ -13,7 +13,7 @@ import { addIcons } from 'ionicons';
 import {
   addOutline, searchOutline, closeCircleOutline,
   chevronBackOutline, chevronForwardOutline, giftOutline,
-  bodyOutline, timeOutline,
+  bodyOutline, timeOutline, warningOutline, checkmarkCircleOutline,
 } from 'ionicons/icons';
 import { Pagination } from '../Shared/Pagination/pagination';
 
@@ -44,7 +44,7 @@ export class Alumnos implements OnInit {
   readonly pageSize = 8;
 
   constructor() {
-    addIcons({ addOutline, searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline, giftOutline, bodyOutline, timeOutline });
+    addIcons({ addOutline, searchOutline, closeCircleOutline, chevronBackOutline, chevronForwardOutline, giftOutline, bodyOutline, timeOutline, warningOutline, checkmarkCircleOutline });
   }
 
   ngOnInit(): void {
@@ -231,10 +231,21 @@ export class Alumnos implements OnInit {
     this.page.set(p);
   }
 
-  membresiaLabel(m: MembresiaResumen): string {
-    if (m.esta_vencida) return '✗ Vencida';
-    if (m.is_active) return '✓ Membresía';
-    return '✗ Membresía';
+  esInactiva(m: MembresiaResumen): boolean {
+    if (m.esta_vencida) return true;
+    if (m.is_active) return false;
+    if (m.estado?.toLowerCase() === 'pendiente') {
+      return m.pagado;
+    }
+    return true;
+  }
+
+  esPendiente(m: MembresiaResumen): boolean {
+    return !this.esInactiva(m) && !m.pagado;
+  }
+
+  esPagado(m: MembresiaResumen): boolean {
+    return !this.esInactiva(m) && m.pagado;
   }
 
   fechaCorto(fecha: string): string {

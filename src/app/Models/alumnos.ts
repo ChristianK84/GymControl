@@ -31,6 +31,7 @@ export interface MembresiaResumen {
   is_active: boolean;
   fecha_vencimiento: string;
   esta_vencida: boolean;
+  pagado: boolean;
   estado: string | null;
 }
 
@@ -51,5 +52,6 @@ export interface Alumno {
   tutor: Tutor | null;
   contacto_emergencia: ContactoEmergencia | null;
   ficha_medica: FichaMedica | null;
-  membresia_activa: MembresiaResumen | null;
+  inscripcion: MembresiaResumen | null;
+  membresia: MembresiaResumen | null;
 }
