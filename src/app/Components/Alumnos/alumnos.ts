@@ -16,6 +16,7 @@ import {
   bodyOutline, timeOutline, warningOutline, checkmarkCircleOutline,
 } from 'ionicons/icons';
 import { Pagination } from '../Shared/Pagination/pagination';
+import { edad as calcularEdad } from '../../Utils/date-utils';
 
 @Component({
   selector: 'app-alumnos',
@@ -110,12 +111,7 @@ export class Alumnos implements OnInit {
   }
 
   edad(fechaNacimiento: string): number {
-    const hoy = new Date();
-    const nac = new Date(fechaNacimiento);
-    let e = hoy.getFullYear() - nac.getFullYear();
-    const m = hoy.getMonth() - nac.getMonth();
-    if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) e--;
-    return e;
+    return calcularEdad(fechaNacimiento);
   }
 
   iniciales(nombre: string): string {

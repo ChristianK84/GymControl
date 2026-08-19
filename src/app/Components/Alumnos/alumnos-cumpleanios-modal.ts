@@ -8,6 +8,11 @@ import { addIcons } from 'ionicons';
 import { closeOutline, giftOutline, calendarOutline } from 'ionicons/icons';
 import { ApiService } from '../../Services/api-service';
 import { Alumno } from '../../Models/alumnos';
+import {
+  diasRestantes as calcularDiasRestantes,
+  edadACumplir as calcularEdadACumplir,
+  formatoDiaMes,
+} from '../../Utils/date-utils';
 
 @Component({
   selector: 'app-alumnos-cumpleanios-modal',
@@ -51,32 +56,14 @@ export class AlumnosCumpleaniosModal implements OnInit {
   }
 
   formatDate(dateStr: string): string {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('es-MX', { day: 'numeric', month: 'long' });
-  }
-
-  proximoCumple(dateStr: string): Date {
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
-    const nac = new Date(dateStr);
-    const prox = new Date(hoy.getFullYear(), nac.getMonth(), nac.getDate());
-    if (prox < hoy) {
-      prox.setFullYear(prox.getFullYear() + 1);
-    }
-    return prox;
+    return formatoDiaMes(dateStr);
   }
 
   diasRestantes(dateStr: string): number {
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
-    const prox = this.proximoCumple(dateStr);
-    prox.setHours(0, 0, 0, 0);
-    return Math.ceil((prox.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24));
+    return calcularDiasRestantes(dateStr);
   }
 
   edadACumplir(dateStr: string): number {
-    const prox = this.proximoCumple(dateStr);
-    const nac = new Date(dateStr);
-    return prox.getFullYear() - nac.getFullYear();
+    return calcularEdadACumplir(dateStr);
   }
 }

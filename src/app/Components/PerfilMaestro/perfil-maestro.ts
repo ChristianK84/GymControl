@@ -14,6 +14,7 @@ import { Maestro } from '../../Models/maestros';
 import { Alumno } from '../../Models/alumnos';
 import { Asistencia } from '../../Models/asistencias';
 import { SessionService } from '../../Services/session.service';
+import { edad as calcularEdad } from '../../Utils/date-utils';
 import { addIcons } from 'ionicons';
 import {
   personOutline, callOutline, mailOutline, calendarOutline,
@@ -169,12 +170,7 @@ export class PerfilMaestro implements OnInit {
 
   edad(fecha: string | null): string {
     if (!fecha) return '—';
-    const hoy = new Date();
-    const nac = new Date(fecha);
-    let e = hoy.getFullYear() - nac.getFullYear();
-    const mes = hoy.getMonth() - nac.getMonth();
-    if (mes < 0 || (mes === 0 && hoy.getDate() < nac.getDate())) e--;
-    return `${e} años`;
+    return `${calcularEdad(fecha)} años`;
   }
 
   fechaFormato(fecha: string): string {

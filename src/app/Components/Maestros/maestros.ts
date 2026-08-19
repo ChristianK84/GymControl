@@ -11,6 +11,7 @@ import {
   chevronBackOutline, chevronForwardOutline, giftOutline,
 } from 'ionicons/icons';
 import { Pagination } from '../Shared/Pagination/pagination';
+import { edad as calcularEdad } from '../../Utils/date-utils';
 
 @Component({
   selector: 'app-maestros',
@@ -56,12 +57,7 @@ export class Maestros implements OnInit {
 
   edad(fechaNacimiento: string | null): string {
     if (!fechaNacimiento) return '—';
-    const hoy = new Date();
-    const nac = new Date(fechaNacimiento);
-    let e = hoy.getFullYear() - nac.getFullYear();
-    const m = hoy.getMonth() - nac.getMonth();
-    if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) e--;
-    return `${e} años`;
+    return `${calcularEdad(fechaNacimiento)} años`;
   }
 
   filtered = computed(() => {

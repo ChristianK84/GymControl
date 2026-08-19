@@ -18,6 +18,7 @@ import { SessionService } from '../../Services/session.service';
 import { WhatsAppService } from '../../Services/whatsapp.service';
 import { Alumno } from '../../Models/alumnos';
 import { Maestro } from '../../Models/maestros';
+import { edad as calcularEdad } from '../../Utils/date-utils';
 import { Asistencia } from '../../Models/asistencias';
 import { Membresia } from '../../Models/membresias';
 import { FirmaReglamento } from '../../Models/reglamentos';
@@ -183,12 +184,7 @@ export class PerfilAlumno implements OnInit {
   }
 
   edad(fecha: string): number {
-    const hoy = new Date();
-    const nac = new Date(fecha);
-    let e = hoy.getFullYear() - nac.getFullYear();
-    const m = hoy.getMonth() - nac.getMonth();
-    if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) e--;
-    return e;
+    return calcularEdad(fecha);
   }
 
   fechaFormato(fecha: string): string {
