@@ -1,0 +1,110 @@
+<div class="report-page">
+  <header class="report-header">
+    <h1 class="report-title">
+      <ion-icon name="bar-chart-outline"></ion-icon>
+      Asistencias por Maestro
+    </h1>
+    <p class="report-subtitle">
+      Conteo de asistencias (asistio=true) por maestro y semana ISO (lunes-domingo)
+    </p>
+  </header>
+
+  <section class="filters-card">
+    <div class="filters-grid">
+      <label class="filter-field">
+        <span class="filter-label">Desde</span>
+        <input
+          type="date"
+          class="filter-input"
+          [ngModel]="fechaInicio()"
+          (ngModelChange)="fechaInicio.set($event)"
+        />
+      </label>
+      <label class="filter-field">
+        <span class="filter-label">Hasta</span>
+        <input
+          type="date"
+          class="filter-input"
+          [ngModel]="fechaFin()"
+          (ngModelChange)="fechaFin.set($event)"
+        />
+      </label>
+      <label class="filter-field">
+        <span class="filter-label">Maestro</span>
+        <select
+          class="filter-input"
+          [ngModel]="maestroId()"
+          (ngModelChange)="setMaestroId($event)"
+        >
+          <option [ngValue]="null">Todos</option>
+          @for (m of maestros(); track m.id) {
+            <option [ngValue]="m.id">{{ m.nombre }} {{ m.apellido_paterno }}</option>
+          }
+        </select>
+      </label>
+    </div>
+    <div class="filters-actions">
+      <ion-button size="small" color="primary" (click)="aplicar()">
+        <ion-icon slot="start" name="refresh-outline"></ion-icon>
+        Aplicar
+      </ion-button>
+      <ion-button size="small" fill="outline" (click)="resetFiltros()">
+        Limpiar
+      </ion-button>
+    </div>
+  </section>
+
+  @if (!loading() && response()) {
+    <section class="summary-bar">
+      <span>{{ totalMaestros() }} maestros</span>
+      <span class="dot">•</span>
+      <span>{{ totalAsistencias() }} asistencias totales</span>
+    </section>
+  }
+
+  <section class="table-card">
+    @if (loading()) {
+      <div class="skeleton-list">
+        @for (i of [1,2,3,4,5]; track i) {
+          <ion-skeleton-text animated style="height: 20px"></ion-skeleton-text>
+        }
+      </div>
+    } @else if (response() && response()!.maestros.length > 0) {
+      <div class="table-scroll">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th class="sticky-col maestro-col">Maestro</th>
+              @for (s of response()!.semanas; track s) {
+                <th class="week-col" [title]="s">{{ semanaLabel(s) }}</th>
+              }
+              <th class="total-col">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (m of response()!.maestros; track m.maestro_id) {
+              <tr>
+                <td class="sticky-col maestro-col">
+                  <span class="maestro-name">{{ m.maestro_nombre }} {{ m.maestro_apellido_paterno }}</span>
+                </td>
+                @for (s of response()!.semanas; track s) {
+                  <td class="week-col">
+                    <span class="cell-num" [class.highlight]="m.semanas[s] > 0">
+                      {{ m.semanas[s] }}
+                    </span>
+                  </td>
+                }
+                <td class="total-col total-val">{{ m.total_general }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="empty-state">
+        <ion-icon name="bar-chart-outline"></ion-icon>
+        <p>No hay asistencias en el rango seleccionado.</p>
+      </div>
+    }
+  </section>
+</div>

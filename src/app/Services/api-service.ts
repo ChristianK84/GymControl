@@ -14,6 +14,7 @@ import { Membresia, TipoMembresia } from '../Models/membresias';
 import { Transaccion, ProfitMensual } from '../Models/transacciones';
 import { EstadoMembresia } from '../Models/catalogs';
 import { Reglamento, FirmaReglamento, GenerarLinksPayload } from '../Models/reglamentos';
+import { AsistenciasPorMaestroResponse } from '../Models/reportes';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -544,6 +545,21 @@ export class ApiService {
 
   getDashboardData(): Observable<DashboardData> {
     return this.http.get<DashboardData>(`${this.baseUrl}reportes/dashboard`);
+  }
+
+  getAsistenciasPorMaestro(params: {
+    fecha_inicio?: string;
+    fecha_fin?: string;
+    maestro_id?: number;
+  } = {}): Observable<AsistenciasPorMaestroResponse> {
+    const query: Record<string, string | number | boolean> = {};
+    if (params.fecha_inicio) query['fecha_inicio'] = params.fecha_inicio;
+    if (params.fecha_fin) query['fecha_fin'] = params.fecha_fin;
+    if (params.maestro_id) query['maestro_id'] = params.maestro_id;
+    return this.http.get<AsistenciasPorMaestroResponse>(
+      `${this.baseUrl}reportes/asistencias-por-maestro`,
+      { params: query },
+    );
   }
 
   publishAppVersion(

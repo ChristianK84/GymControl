@@ -1,0 +1,221 @@
+.report-page {
+  padding: 16px;
+  font-family: 'Inter', sans-serif;
+}
+
+.report-header {
+  margin-bottom: 16px;
+}
+
+.report-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2a1714;
+  margin: 0;
+}
+
+.report-title ion-icon {
+  font-size: 1.4rem;
+  color: #b45309;
+}
+
+.report-subtitle {
+  font-size: 0.8rem;
+  color: #7c6f6a;
+  margin: 4px 0 0;
+}
+
+.filters-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 1px 3px rgba(42, 23, 20, 0.08);
+  margin-bottom: 14px;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filter-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #7c6f6a;
+}
+
+.filter-input {
+  border: 1px solid #e5ddd9;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  color: #2a1714;
+  background: #faf7f5;
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: #b45309;
+}
+
+.filters-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.summary-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2a1714;
+  margin-bottom: 12px;
+}
+
+.summary-bar .dot {
+  color: #b45309;
+}
+
+.table-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(42, 23, 20, 0.08);
+  overflow: hidden;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+  font-size: 0.85rem;
+}
+
+.report-table thead th {
+  background: #faf7f5;
+  color: #7c6f6a;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding: 12px 10px;
+  text-align: center;
+  border-bottom: 1px solid #e5ddd9;
+  white-space: nowrap;
+}
+
+.report-table thead th.sticky-col,
+.report-table tbody td.sticky-col {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  text-align: left;
+}
+
+.report-table thead th.sticky-col {
+  background: #faf7f5;
+  z-index: 3;
+}
+
+.report-table tbody td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #f0eae6;
+}
+
+.report-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.report-table tbody tr:hover td {
+  background: #fdf8f4;
+}
+
+.maestro-col {
+  min-width: 180px;
+  max-width: 220px;
+}
+
+.maestro-name {
+  font-weight: 600;
+  color: #2a1714;
+}
+
+.week-col {
+  min-width: 72px;
+}
+
+.cell-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  color: #7c6f6a;
+}
+
+.cell-num.highlight {
+  background: #fef3e2;
+  color: #b45309;
+  font-weight: 600;
+}
+
+.total-col {
+  min-width: 64px;
+  font-weight: 700;
+}
+
+.total-val {
+  color: #2a1714;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 40px 16px;
+  color: #7c6f6a;
+}
+
+.empty-state ion-icon {
+  font-size: 2.4rem;
+  opacity: 0.5;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+}
+
+@media (max-width: 480px) {
+  .filters-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -29,6 +29,7 @@ import {
   cloudUploadOutline,
   checkmarkDoneOutline,
   settingsOutline,
+  barChartOutline,
 } from 'ionicons/icons';
 
 const ROLE_MAP: Record<number, string> = {
@@ -73,6 +74,7 @@ readonly fullNavItems = [
     { icon: 'body-outline', label: 'Maestros', route: '/dashboard/maestros' as string | null, roles: [1] },
     { icon: 'checkmark-circle-outline', label: 'Asistencias', route: '/dashboard/asistencias' as string | null, roles: [1, 2] },
     { icon: 'card-outline', label: 'Membresías', route: '/dashboard/membresias' as string | null, roles: [1] },
+    { icon: 'bar-chart-outline', label: 'Asistencias por Maestro', route: '/dashboard/reportes/asistencias-por-maestro' as string | null, roles: [1], exact: true },
     { icon: 'pricetag-outline', label: 'Tipos Membresía', route: '/dashboard/tipos-membresia' as string | null, roles: [1] },
     { icon: 'person-outline', label: 'Usuarios', route: '/dashboard/usuarios' as string | null, roles: [1] },
     { icon: 'settings-outline', label: 'Administración', route: '/dashboard/administracion' as string | null, roles: [1] },
@@ -106,7 +108,7 @@ readonly fullNavItems = [
       chevronBackOutline, chevronForwardOutline,
       documentTextOutline, checkmarkDoneOutline,
       pricetagOutline, cardOutline,
-      cloudUploadOutline, settingsOutline,
+      cloudUploadOutline, settingsOutline, barChartOutline,
     });
   }
 

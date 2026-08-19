@@ -4,7 +4,7 @@ App híbrida Angular 20 + Ionic 8 para gestión de gimnasio (alumnos, maestros, 
 
 El backend vive en `https://gymcontrol-api-sne4.onrender.com/api/v1/`. Este repo es solo el frontend.
 
-Cambios recientes: maestro solo cambia foto del alumno, envío de recibos por WhatsApp, documentos con/sin firma, pestaña Expediente, login flexible (trim + case-insensitive), vista de cards en directorio de alumnos.
+Cambios recientes: maestro solo cambia foto del alumno, envío de recibos por WhatsApp, documentos con/sin firma, pestaña Expediente, login flexible (trim + case-insensitive), vista de cards en directorio de alumnos, módulo Administración (publicar versión/auditoría/enviar bienvenida), modal de cumpleaños, modal de membresías impagas, utilidades de fecha centralizadas (`Utils/date-utils.ts`).
 
 ---
 
@@ -88,6 +88,7 @@ No hay script de lint ni typecheck separado. `ng build` ya verifica tipos y lint
 - **Todos los componentes son standalone** — sin NgModules. Cada componente declara su arreglo `imports`.
 - **DI funcional en todas partes**: usa `inject()` en vez de inyección por constructor.
 - **Guards/interceptors funcionales**: `authGuard` (`CanActivateFn`) y `authInterceptor` (`HttpInterceptorFn`) — no basados en clases.
+- **Guards**: `Guards/auth.guard.ts` → `authGuard` (`CanActivateFn`): verifica `session.isAuthenticated()`, redirige a `/login`. `Guards/role.guard.ts` → `roleGuard` (`CanActivateChildFn`): valida `data.roles` contra `session.user().role_id`, redirige a `/dashboard` si no coincide. Se usa con `canActivateChild` en las rutas hijas del dashboard.
 - **Uso intensivo de signals**: `signal()`, `computed()`. Prefiere signals sobre RxJS subjects para estado de componentes.
 - **Todas las rutas son lazy**: cada ruta usa `loadComponent` con imports dinámicos. Las rutas nuevas deben seguir el mismo patrón.
 - **UI en español**: locale `es-MX` registrado globalmente en `app.config.ts`. El formateo de fechas usa convenciones españolas. Mantén el texto de UI en español.
@@ -102,12 +103,18 @@ src/app/
   Services/
     api-service.ts                 # Todos los HTTP calls — fuente única de verdad para la API
     session.service.ts             # JWT + user en localStorage, signal isAuthenticated
-  Guards/auth.guard.ts             # Redirige a /login si no está autenticado
+    whatsapp.service.ts            # Compartir recibos por WhatsApp
+    update.service.ts              # Wrapper OTA (@capgo/capacitor-updater)
+  Guards/
+    auth.guard.ts                  # authGuard: redirige a /login si no está autenticado
+    role.guard.ts                  # roleGuard: valida role_id contra data.roles
   Interceptors/auth.interceptor.ts # Agrega Bearer token; 401 → limpia sesión
+  Utils/
+    date-utils.ts                  # Funciones de fecha centralizadas (edad, cumpleaños, etc.)
   Components/<Nombre>/<nombre>.ts|html|css
 ```
 
-Cada carpeta de Componente tiene el componente, su template, estilos, y un modal hermano (ej. `alumnos.ts` + `alumno-form-modal.ts`) cuando el CRUD es vía modal.
+Cada carpeta de Componente tiene el componente, su template, estilos, y un modal hermano (ej. `alumnos.ts` + `alumno-form-modal.ts`) cuando el CRUD es vía modal. También hay componentes/estructuras especiales: `Components/Shared/` (reutilizables como `Pagination`), `Components/Administracion/` (módulo admin), `Components/OtaUpdate/` (modal de actualización OTA).
 
 ---
 
@@ -228,23 +235,89 @@ export interface GenerarLinksPayload {
 
 ### Métodos del ApiService (`Services/api-service.ts`)
 
-Reglamentos (`:542-596`):
+**Auth**
+```typescript
+login(username, password): Observable<TokenResponse>          // POST auth/login
+logout(): Observable<{ message }>                             // POST auth/logout
+refreshToken(): Observable<TokenResponse>                     // POST auth/refresh
+changePassword(currentPassword, newPassword): Observable<{ message }>  // POST auth/change-password
+```
+
+**Roles / Users / Maestros**
+```typescript
+getRoles(), getRol(id)
+getUsers(includeDeleted), getUser(id), createUser, updateUser, deleteUser, resetPassword(id)
+getMaestros(includeDeleted, includeInactive), getMaestro, createMaestro, updateMaestro, deleteMaestro
+```
+
+**Alumnos**
+```typescript
+getAlumnos(includeDeleted, maestroId?): Observable<Alumno[]>   // GET alumnos/
+getAlumno(id), createAlumno, updateAlumno, deleteAlumno
+getCumpleanios(): Observable<Cumpleanio[]>                      // GET alumnos/cumpleaños (próximos 30 días)
+enviarQrAlumno(alumnoId): Observable<{ message }>               // POST alumnos/:id/enviar-qr
+```
+
+**Asistencias**
+```typescript
+getAsistencias(params), registrarAsistencia(scanResult), deleteAsistencia(id)
+scanAsistencia(alumnoId, maestroId): Observable<ScanResult>     // POST asistencias/scan
+```
+
+**Membresías**
+```typescript
+getMembresias(params), getMembresia(id), createMembresia, updateMembresia, deleteMembresia
+getMembresiasImpagas(): Observable<MembresiaImpaga[]>           // GET membresias/impagas
+descargarReciboMembresia(id): Observable<Blob>                  // GET membresias/:id/recibo.pdf
+reenviarReciboMembresia(id): Observable<{ message }>            // POST membresias/:id/enviar-recibo
+```
+
+**Catálogos**
+```typescript
+getTiposMembresia/getTipoMembresia/createTipoMembresia/updateTipoMembresia
+getEstadosMembresia()
+```
+
+**Transacciones**
+```typescript
+getTransacciones(params), createTransaccion, updateTransaccion, deleteTransaccion
+getProfitMensual(anio): Observable<ProfitMensual>               // GET transacciones/reportes/profit
+```
+
+**Administración (admin only)**
+```typescript
+enviarBienvenida(maestroIds: number[]): Observable<{ enviados; fallidos }>  // POST administracion/enviar-bienvenida
+getAuditLogs(filters): Observable<AuditLogEntry[]>              // GET audit-logs/
+publishAppVersion(platform, body): Observable<AppVersion>       // PUT app/version/:platform
+```
+
+**Reglamentos**
 ```typescript
 getReglamentos(includeDeleted = false): Observable<Reglamento[]>
 createReglamento(body: { titulo, descripcion?, version, url_pdf_cloudinary, cloudinary_public_id, requires_firma? }): Observable<Reglamento>
-deleteReglamento(id: number): Observable<void>
-updateReglamento(id: number, body: { titulo?, descripcion?, version?, is_active?, requires_firma?, url_pdf_cloudinary?, cloudinary_public_id? }): Observable<Reglamento>
-generarLinks(body: GenerarLinksPayload): Observable<{ enviados: number; total: number; ya_firmados: number }>
+deleteReglamento(id): Observable<void>
+updateReglamento(id, body): Observable<Reglamento>
+generarLinks(body: GenerarLinksPayload): Observable<{ enviados; total; ya_firmados }>
 getFirmas(reglamentoId?, alumnoId?, estado?): Observable<FirmaReglamento[]>
-getFirmasByAlumno(alumnoId: number): Observable<FirmaReglamento[]>
+getFirmasByAlumno(alumnoId): Observable<FirmaReglamento[]>
 ```
 
-Membresías:
+**Reportes / Dashboard**
 ```typescript
-descargarReciboMembresia(id: number): Observable<Blob>  // GET /membresias/{id}/recibo.pdf
+getDashboardData(): Observable<DashboardData>                   // GET reportes/dashboard
 ```
+`DashboardData` incluye `total_alumnos_activos`, `ingreso_mensual`, `tasa_asistencia_promedio`, `ausentismo_prolongado`, `asistencia_semanal`.
 
-WhatsApp: `Services/whatsapp.service.ts` recibe una `Membresia`, descarga el recibo como Blob y usa `navigator.share` (fallback a descarga + `wa.me`).
+### Modelos — campos recientes
+
+**`Models/membresias.ts`**
+- `MembresiaAlumno.tutor: { id; nombre; apellido_paterno; telefono; email? } | null` — datos del tutor para WhatsApp/recibos.
+- `TipoMembresia.limite_dias_semana: number | null` — límite de días a la semana (ej. plan "Sábados").
+- `TipoMembresia.costo_dia_extra_sabado: number | null` — costo extra por asistir otro día.
+
+**`Models/maestros.ts`**
+- `Maestro.email: string | null` — email de contacto.
+- `Maestro.generated_password?: string` — contraseña generada, devuelta solo al crear (admin).
 
 ### Rutas (`app.routes.ts`)
 
@@ -259,6 +332,22 @@ WhatsApp: `Services/whatsapp.service.ts` recibe una `Membresia`, descarga el rec
   loadComponent: () => import('./Components/Reglamentos/reglamento-firmas').then(m => m.ReglamentoFirmas),
   data: { roles: [1] },
 },
+// /dashboard/administracion/* (admin only, username === 'Admin')
+{
+  path: 'administracion',
+  loadComponent: () => import('./Components/Administracion/administracion').then(m => m.Administracion),
+  data: { roles: [1] },
+  children: [
+    { path: '', pathMatch: 'full', redirectTo: 'menu' },
+    { path: 'menu', loadComponent: () => import('./Components/Administracion/admin-menu').then(m => m.AdminMenu) },
+    { path: 'enviar-bienvenida', loadComponent: () => import('./Components/Administracion/enviar-bienvenida').then(m => m.EnviarBienvenida) },
+    { path: 'publicar-version', loadComponent: () => import('./Components/Administracion/admin-menu').then(m => m.AdminMenu) },
+    { path: 'auditoria', loadComponent: () => import('./Components/Administracion/admin-menu').then(m => m.AdminMenu) },
+  ],
+},
+// Compatibilidad: redirects de rutas viejas
+{ path: 'auditoria', redirectTo: '/dashboard/administracion/auditoria' },
+{ path: 'publicar-version', redirectTo: '/dashboard/administracion/publicar-version' },
 ```
 
 ### Navegación (sidebar del Dashboard)
@@ -268,6 +357,14 @@ En `dashboard.ts` → `fullNavItems`:
 ```typescript
 { icon: 'document-text-outline', label: 'Documentos', route: '/dashboard/reglamentos', roles: [1], exact: true },
 { icon: 'checkmark-done-outline', label: 'Firmas', route: '/dashboard/reglamentos/firmas', roles: [1], exact: true },
+// Auditoría y Publicar Versión consolidados en un solo item
+{ icon: 'settings-outline', label: 'Administración', route: '/dashboard/administracion', roles: [1],
+  // visible solo en runtime si session.user().username === 'Admin'
+},
+// "Mi Perfil" dinámico para maestro
+{ icon: 'person-circle-outline', label: 'Mi Perfil', route: '/dashboard/maestros/profile', roles: [2],
+  profileRoute: true, // se reescribe dinámicamente a /dashboard/maestros/{maestroId} si existe
+},
 ```
 
 Registrar iconos: `import { documentTextOutline, checkmarkDoneOutline } from 'ionicons/icons';` (ya registrado en `constructor()`)
@@ -285,6 +382,13 @@ Registrar iconos: `import { documentTextOutline, checkmarkDoneOutline } from 'io
 - Botón de WhatsApp en la lista de membresías (`membresias.ts/html`) y en cada tarjeta del perfil del alumno (tab Membresía).
 - `Services/whatsapp.service.ts` normaliza el teléfono del tutor (`52` + 10 dígitos), descarga el PDF vía `descargarReciboMembresia()` y abre el share nativo; en web/Electron hace fallback a descarga + enlace `https://wa.me/<tel>?text=<msg>`.
 
+Flujo completo (`whatsapp.service.ts`):
+1. Recibe una `Membresia` → extrae el teléfono del tutor de `MembresiaAlumno.tutor.telefono`.
+2. Normaliza: prefijo `52` + 10 dígitos (México).
+3. Llama `descargarReciboMembresia(id)` → obtiene el PDF como `Blob`.
+4. Intenta `navigator.share({ files: [pdfBlob] })` (share nativo en móvil).
+5. Fallback (web/Electron): descarga el PDF + abre `https://wa.me/<tel>?text=<msg>` con un mensaje plantilla (saluda al tutor y menciona al alumno).
+
 ## Documentos con/sin firma
 
 - Cada `Reglamento` tiene `requires_firma: boolean` (default `true`).
@@ -301,3 +405,93 @@ Registrar iconos: `import { documentTextOutline, checkmarkDoneOutline } from 'io
 
 - El frontend hace `trim()` de username y password antes de enviar.
 - El backend normaliza username a minúsculas y acepta la contraseña tal cual o en minúsculas (fallback).
+
+---
+
+## Utilidades de fecha (`src/app/Utils/date-utils.ts`)
+
+Funciones centralizadas (commit `1c1db5a`) para evitar duplicación entre componentes. Usadas por `alumnos.ts`, `alumnos-cumpleanios-modal.ts`, `maestros.ts`, `perfil-alumno.ts`, `perfil-maestro.ts`:
+
+- `edad(fechaNacimiento: string): number` — edad en años completos.
+- `proximoCumple(fechaNacimiento: string): Date` — fecha del siguiente cumpleaños.
+- `diasRestantes(fechaNacimiento: string): number` — días hasta el próximo cumple (≤0 si es hoy/negativo).
+- `edadACumplir(fechaNacimiento: string): number` — edad que cumplirá.
+- `formatoDiaMes(fecha: string | Date): string` — formato `"22 de agosto"` en español.
+- Helper interno `partesFecha(fecha)` — descompone `YYYY-MM-DD`.
+
+---
+
+## Módulo: Administración (admin)
+
+Solo visible para usuarios con `username === 'Admin'`. Agrupa Publicar Versión, Auditoría y Enviar Bienvenida.
+
+Archivos (`Components/Administracion/`):
+- `administracion.{ts,html,css}` — layout con sub-nav.
+- `admin-menu.{ts,html,css}` — cards de acceso rápido a las sub-secciones.
+- `enviar-bienvenida.{ts,html,css}` — selección múltiple de maestros (checkbox) + envío masivo.
+
+API:
+```typescript
+enviarBienvenida(maestroIds: number[]): Observable<{ enviados: number; fallidos: number }>  // POST administracion/enviar-bienvenida
+```
+
+Uso: al crear un maestro nuevo, este flujo permite enviarle el email de bienvenida con su contraseña generada.
+
+---
+
+## Modal: Cumpleaños próximos 30 días
+
+Botón "Cumpleaños" en `Components/Alumnos/alumnos.html` → abre `AlumnosCumpleaniosModal`.
+
+```typescript
+// api-service.ts
+getCumpleanios(): Observable<{ alumno_id; nombre; apellido_paterno; fecha_nacimiento; dias_restantes; edad_a_cumplir; rama }[]>
+```
+
+Cada card muestra: avatar, nombre, rama (chip coloreado), fecha del cumple, edad a cumplir, badge con días restantes (urgente si ≤3 días con animación pulse). Mensaje empty: "No hay cumpleaños en los próximos 30 días". Usa `diasRestantes()`, `edadACumplir()`, `formatoDiaMes()` de `date-utils`.
+
+---
+
+## Modal: Membresías impagas
+
+Botón "Impagas" en `Components/Membresias/membresias.html` → abre `MembresiaImpagasModal`.
+
+```typescript
+// api-service.ts
+getMembresiasImpagas(): Observable<MembresiaImpaga[]>
+```
+
+Muestra por membresía impaga: nombre, tipo, costo, fecha de vencimiento y % de beca.
+
+---
+
+## Reporte: Asistencias por Maestro
+
+Pantalla solo-admin en `/dashboard/reportes/asistencias-por-maestro` (`Components/Reportes/asistencias-por-maestro.{ts,html,css}`). Muestra una tabla con filas = maestros y columnas = semanas ISO (lunes-domingo), con el # de asistencias (`asistio=true`) por celda y el total por maestro.
+
+- Modelos: `Models/reportes.ts` (`MaestroAsistencias`, `AsistenciasPorMaestroResponse`).
+- API: `getAsistenciasPorMaestro({ fecha_inicio?, fecha_fin?, maestro_id? })` → `GET reportes/asistencias-por-maestro`.
+- Filtros: rango de fechas (default últimas 8 semanas) + selector de maestro.
+- Tabla con sticky headers, scroll horizontal y celdas resaltadas si hay asistencia (>0).
+- Item sidebar: `bar-chart-outline` "Asistencias por Maestro", roles `[1]`, exact: true.
+
+---
+
+## OTA Update (actualización de la app)
+
+Archivos:
+- `Services/update.service.ts` — wrapper sobre `@capgo/capacitor-updater`.
+- `Components/OtaUpdate/ota-update-modal.{ts,html,css}` — modal con la UI de actualización.
+
+Flujo:
+1. La app arranca → consulta `GET /api/v1/app/version/android` (via `getAppVersion`).
+2. Si hay una versión más nueva → `OtaUpdateModal` se muestra.
+3. El usuario acepta → se descarga el bundle desde `bundle_url`.
+4. Se aplica la actualización vía `CapacitorUpdater`.
+
+Solo activo en plataforma nativa (`Capacitor.isNativePlatform()`).
+
+API backend:
+```typescript
+publishAppVersion(platform: 'android' | 'web', body: { version; version_code; bundle_url; release_notes }): Observable<AppVersion>  // PUT app/version/:platform
+```

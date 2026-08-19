@@ -73,6 +73,14 @@ export const routes: Routes = [
         data: { roles: [1] },
       },
       {
+        path: 'reportes/asistencias-por-maestro',
+        loadComponent: () =>
+          import('./Components/Reportes/asistencias-por-maestro').then(
+            (m) => m.AsistenciasPorMaestro,
+          ),
+        data: { roles: [1] },
+      },
+      {
         path: 'auditoria',
         redirectTo: 'administracion/auditoria',
         pathMatch: 'full',
